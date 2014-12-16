@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Collection;
 use Muratsplat\Multilang\Exceptions\PickerUndefinedProperty;
+use Muratsplat\Multilang\Exceptions\PickerOnlyArray;
 
 /**
  * Simple Picker Class
@@ -24,6 +25,20 @@ class Picker {
      * @var array 
      */
     private $data = array();
+    
+    /**
+     * Firstly post data stored in there.
+     * 
+     * @var array 
+     */
+    private $rawPost = array();
+    
+    /**
+     * A prefix for realizing multi language content
+     * 
+     * @var string 
+     */
+    private $defaultPrefix = '@';    
     
 
         /**
@@ -88,6 +103,26 @@ class Picker {
             
             return;
         }
+        
+        /**
+         * To import raw post data
+         * 
+         * @param array $post
+         */
+        public function import(array $post=array()) {
+            
+            $this->rawPost = $post;
+            
+            
+                       
+        }
+        
+        private function convertToObject() {
+            
+            
+        }
+        
+        
         
         
         

@@ -3,6 +3,7 @@
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Tests\Base;
 
+
 /**
  * a test class for \Muratsplat\Multilang\Picker
  *
@@ -12,7 +13,31 @@ use Muratsplat\Multilang\Tests\Base;
  */
 class TestPicker  extends Base {
     
-      
+    /*
+     * Simple Post Data
+     * 
+     */
+    private $rawPost  = array(
+        
+        "enable"    => 1,
+        "visible"   => 0,
+        
+        'title@1'   => "Foo English",
+        'content@1' => "Simple example of content in English",
+        
+        'title@2'   => 'Foo Türkçe',
+        'content@2' => 'Türkçe bir içerik langur lungur bir yoğurt',
+        
+        "title@3"   => 'здравствуйте',
+        "content@3" => 'Путинхороший человек. Он любит русские , я думаю, россияне любят его.'      
+    );
+    
+    /**
+     *
+     * @var Muratsplat\Multilang\Picker 
+     */
+    protected $obj = null;
+       
         /*
          * testing IoC Container
          */
@@ -22,10 +47,16 @@ class TestPicker  extends Base {
             
         }
         
+        public function setUp() {
+            parent::setUp();
+            
+            $this->obj = $picker =  new Picker(new \Illuminate\Support\Collection());
+        }
+        
         
         public function testOverloading() {
             
-            $picker =  new Picker(new \Illuminate\Support\Collection());
+            $picker = $this->obj;
             
             $picker->test1 = 'test1';
             
@@ -41,9 +72,16 @@ class TestPicker  extends Base {
             
             unset($picker->test1);
             
-            $this->assertNull($picker->test1);
-                       
+            $this->assertNull($picker->test1);      
             
+        }
+        
+        public function testImport() {
+            
+          $this->obj->import($this->rawPost);
+          
+          
+                
             
         }
         
