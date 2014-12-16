@@ -1,9 +1,7 @@
 <?php namespace Muratsplat\Multilang;
 
-
 use Illuminate\Support\Collection;
-
-
+use Muratsplat\Multilang\Exceptions\PickerUndefinedProperty;
 
 /**
  * Simple Picker Class
@@ -83,13 +81,15 @@ class Picker {
             
             if (!$this->$name) {
                 
-                return;
+                throw new PickerUndefinedProperty("[$name] property is undefined!");
             }
             
             unset($this->data[$name]);
             
-            return;          
+            return;
         }
+        
+        
         
         
         

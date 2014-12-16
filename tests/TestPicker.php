@@ -42,9 +42,7 @@ class TestPicker  extends Base {
             unset($picker->test1);
             
             $this->assertNull($picker->test1);
-            
-            
-            
+                       
             
             
         }
