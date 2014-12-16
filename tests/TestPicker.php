@@ -50,38 +50,16 @@ class TestPicker  extends Base {
         public function setUp() {
             parent::setUp();
             
-            $this->obj = $picker =  new Picker(new \Illuminate\Support\Collection());
-        }
-        
-        
-        public function testOverloading() {
+            $this->obj = new Picker(new \Illuminate\Support\Collection());
             
-            $picker = $this->obj;
-            
-            $picker->test1 = 'test1';
-            
-            $picker->test2 = 'test2';
-            
-            $this->assertEquals($picker->test1, 'test1');
-            
-            $this->assertEquals($picker->test2, 'test2');
-            
-            $this->assertTrue(isset($picker->test1));
-            
-            $this->assertFalse(isset($picker->test99));
-            
-            unset($picker->test1);
-            
-            $this->assertNull($picker->test1);      
             
         }
         
+       
         public function testImport() {
             
           $this->obj->import($this->rawPost);
-          
-          
-                
+                         
             
         }
         

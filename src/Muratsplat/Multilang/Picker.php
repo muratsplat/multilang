@@ -1,7 +1,7 @@
 <?php namespace Muratsplat\Multilang;
 
 use Illuminate\Support\Collection;
-use Muratsplat\Multilang\Exceptions\PickerUndefinedProperty;
+use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\Exceptions\PickerOnlyArray;
 
 /**
@@ -18,13 +18,7 @@ class Picker {
      * 
      * @var \Illuminate\Support\Collection
      */
-    protected $collection;   
-    
-    /**
-     * For overloaded data
-     * @var array 
-     */
-    private $data = array();
+    protected $collection;
     
     /**
      * Firstly post data stored in there.
@@ -36,10 +30,16 @@ class Picker {
     /**
      * A prefix for realizing multi language content
      * 
+     * Example:
+     * 
+     * array(foo@1=> value,foo@2=> value);
+     * 
+     * In this examle, '@' charecters is a prefix and
+     * the number which is the right side of it must be language id. 
+     * 
      * @var string 
      */
     private $defaultPrefix = '@';    
-    
 
         /**
          * Connstructor
@@ -51,59 +51,7 @@ class Picker {
             $this->collection = $collection;      
             
         }        
-        
-        /**
-         * Set Method for overloading
-         * 
-         * @param string $name
-         * @param mixed $value
-         * @return void
-         */
-        public function __set($name, $value) {
-            
-            $this->data[$name] = $value;
-        }        
-        
-        /**
-         * Getter method for overloading
-         * 
-         * @param type $name
-         * @return mixes|null 
-         */
-        public function __get($name) {
-            
-            return in_array($name, $this->data) ? $this->data[$name] :  null;
-        }
-
-        /**
-         * Isset method for checking overloading properties
-         *
-         * @param string
-         * @return boolean
-         */
-        public function __isset($name) {
-            
-            return in_array($name, $this->data);
-        }
-        
-        /**
-         * Unset method for overloading properties
-         * 
-         * @param string $name
-         * @return void
-         */
-        public function __unset($name) {
-            
-            if (!$this->$name) {
-                
-                throw new PickerUndefinedProperty("[$name] property is undefined!");
-            }
-            
-            unset($this->data[$name]);
-            
-            return;
-        }
-        
+   
         /**
          * To import raw post data
          * 
@@ -113,14 +61,82 @@ class Picker {
             
             $this->rawPost = $post;
             
+        }
+                
+        /*
+         * Simple picker multi language elements
+         * 
+         */
+        private function pickerMultiLangElemets(array $array=array()) {
             
-                       
+            foreach ($array as $k => $v) {   
+
+                $pos =strpos($k, $this->defaultPrefix); 
+
+                if($pos !== false) {
+                                        
+                    // deleting the prefix
+                    $cleanedKey = $this->removePrefixAndId($k, $pos);
+                    
+
+                    /**
+                     * array(Language id => array(post key => post value));
+                     */
+                    $this->translateFieldById[substr($k, $pos+1, strlen($k))][$cleanedKey] =  $v;
+                }    
+            }            
+            
         }
         
-        private function convertToObject() {
+        /**
+         * To remove lang prefix and id 
+         * and return key
+         * 
+         * @param string $name
+         * @param integer $pos position of the number of prefix is will be deleted
+         * @return string
+         */
+        private function removePrefixAndId($name, $pos) {
+
+            return substr($name, 0, $pos);
+        }
+        
+        
+        protected function createOrUpdate($id, $key, $value) {
+            
+            foreach ($this->collection->all() as $v) {
+                
+                if (!$v->multilang) {
+                    
+                    continue;
+                }
+                
+                if ($v->lang_id === (integer) $id) {
+                    
+                    $v->$key = $value;
+                    
+                    return true;
+                }                
+            }
             
             
         }
+        
+        protected function create($id,$key, $value, $multilang = false) {
+            
+            $item = new Element();
+            
+            $item->$key = $value;
+            
+            $item->multilang = $multilang;            
+            
+            $this->collection->push($item);
+        }
+        
+        
+        
+        
+        
         
         
         

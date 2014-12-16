@@ -8,4 +8,4 @@ use Exception as ex;
  *
  * @author Murat Ödünç <murat.asya@gmail.com>
  */
-class PickerUndefinedProperty extends ex { }
+class ElementUndefinedProperty extends ex { }
