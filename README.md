@@ -1,7 +1,6 @@
 highLevelStat
 =============
-[![Build Status](https://github.com/muratsplat/multilang.git)](https://travis-ci.org/muratsplat/multilang)
-
+[![Build Status](https://travis-ci.org/muratsplat/multilang.svg?branch=master)](https://travis-ci.org/muratsplat/multilang)
 
 A Laravel extension is make be easy to CRUD ORM proccess for multi languages contents..
 

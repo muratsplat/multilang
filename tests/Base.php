@@ -1,8 +1,6 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
-require '../../../bootstrap/autoload.php';
-use Illuminate\Foundation\Testing\TestCase as UnitTest;
-
+use PHPUnit_Framework_TestCase as UnitTest;
 
 /**
  * Test Base Class
@@ -10,23 +8,9 @@ use Illuminate\Foundation\Testing\TestCase as UnitTest;
  * @author Murat Ödünç <murat.asya@gmail.com>
  */
 class Base  extends UnitTest {
-            
-
+    
+    public function testExample() {
         
-        public function createApplication() {
-            
-            $unitTesting = true;
-            $testEnvironment = 'testing';
-            
-            return require '../../../bootstrap/start.php';
-        }
         
-        public function testExample() {
-            
-            $this->assertTrue(true);
-        }
-        
-       
-          
-
+    }  
 }

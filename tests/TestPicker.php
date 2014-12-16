@@ -18,15 +18,14 @@ class TestPicker  extends Base {
          */
         public function testFirst() {
             
-            $picker = \App::make('pickerML');
+            $picker = new Picker(new \Illuminate\Support\Collection());
             
-            $this->assertInstanceOf('Muratsplat\Multilang\Picker', $picker);
         }
         
         
         public function testOverloading() {
             
-            $picker = \App::make('pickerML');
+            $picker =  new Picker(new \Illuminate\Support\Collection());
             
             $picker->test1 = 'test1';
             
