@@ -83,9 +83,8 @@ class TestPicker  extends Base {
                 
                 $this->assertTrue(true);               
 
-            }            
-            
-            
+            }
+                       
         }
         
         

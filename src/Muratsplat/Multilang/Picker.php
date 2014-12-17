@@ -125,19 +125,11 @@ class Picker {
                     $v = $this->update($v, $key, $value, $multilang);
                     
                     return true;
-                }
-                
-                                
-                if ($v->isMultiLang() && $this->isExisted($key)) {
-                    
-                    
-                    $v = $this->update($v, $key, $value, $multilang);
-                    
-                }
+                }                        
+               
             }
             
-            return $this->create($id, $key, $value, $multilang);
-            
+            return $this->create($id, $key, $value, $multilang);            
             
         }
                 
@@ -197,7 +189,7 @@ class Picker {
          * @param boolean $multilang
          * @return boolean
          */
-        private function isExisted($key, $multilang = false) {
+        private function isKeyExisted($key, $multilang = false) {
            
             $existed = false;
                        
@@ -224,6 +216,7 @@ class Picker {
             
             return $existed;           
         }
+
         
         
         public function getById($lang_id) {
