@@ -180,44 +180,6 @@ class Picker {
                        
         }
         
-        /**
-         * to check that inputed key is existed
-         * in the collection object except that
-         * non-multilang content
-         * 
-         * @param string $key
-         * @param boolean $multilang
-         * @return boolean
-         */
-        private function isKeyExisted($key, $multilang = false) {
-           
-            $existed = false;
-                       
-            foreach ($this->collection->all() as $v) {
-                
-                if ($multilang && $v->isMultilang()) {
-                    
-                    continue;                  
-                    
-                }
-                
-                try {
-                    
-                    $v->$key;
-                    
-                    $existed = true;                    
-                    
-                } catch (ElementUndefinedProperty $exc) {
-                    
-                    continue;
-                }
-                            
-            }
-            
-            return $existed;           
-        }
-
-        
         
         public function getById($lang_id) {
             
