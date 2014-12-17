@@ -1,7 +1,7 @@
 <?php namespace Muratsplat\Multilang;
 
 use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
-use Muratsplat\Multilang\Exceptions\ElementPropertyAlreadyDefined;
+
 /**
  * Simple Picker Class
  * 
@@ -72,8 +72,7 @@ class Element {
                  *  It doesn't metter for us.
                  */                
                 return false;
-            }
-            
+            }            
                        
             if (is_string($value) && strlen(trim($value)) === 0) {
                                  
@@ -82,7 +81,6 @@ class Element {
             
             return false;
         }
-
 
         /**
          * Getter method for overloading
@@ -171,5 +169,7 @@ class Element {
             
             $this->multilang = (boolean) $isMultilang;
         }
+        
+        
 
 }

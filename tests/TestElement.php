@@ -99,9 +99,7 @@ class TestElement  extends Base {
             $this->obj->setMultilang(true);
             
             // now  Overloaded properties must be deleted
-            
-            $this->obj->content = "";
-                      
+            $this->obj->content = "";                      
             
             try {
                 
@@ -114,7 +112,5 @@ class TestElement  extends Base {
                 $this->assertTrue(true);
             }            
             
-        }
-
-       
+        }       
 }

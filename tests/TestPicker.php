@@ -51,18 +51,40 @@ class TestPicker  extends Base {
             parent::setUp();
             
             $this->obj = new Picker(new \Illuminate\Support\Collection());
-            
-            
+                  
         }   
-        
        
         public function testImport() {
             
             $this->assertEquals(5, $this->obj->import($this->rawPost));
             // testing update methods..
             $this->assertEquals(5, $this->obj->import($this->rawPost));
-          
-                         
+                    
+            // testing update methods..
+            $this->assertEquals(5, $this->obj->import($this->rawPost));           
+            
+        }
+        
+        public function testCheckElemen1() {
+            
+            $this->obj->import($this->rawPost);
+            // retu
+            $firstElem = $this->obj->getCollection()->first();
+
+            $this->assertEquals($firstElem->enable, 1);
+            
+            try {
+                
+                $this->assertEquals($firstElem->title, "Foo Türkçe" );
+                
+                $this->assertTrue(false);
+                
+            } catch (\Muratsplat\Multilang\Exceptions\ElementUndefinedProperty $e) {
+                
+                $this->assertTrue(true);               
+
+            }            
+            
             
         }
         

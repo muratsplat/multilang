@@ -3,7 +3,6 @@
 use Illuminate\Support\Collection;
 use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
-use Muratsplat\Multilang\Exceptions\ElementPropertyAlreadyDefined;
 
 /**
  * Simple Picker Class
@@ -57,6 +56,7 @@ class Picker {
          * To import raw post data
          * 
          * @param array $post
+         * @return boolean
          */
         public function import(array $post=array()) {
             
@@ -66,22 +66,13 @@ class Picker {
                 
                 $this->pickerMultiLangElemets($post);
                 
-                return $this->collection->count();
+               return true;
                                 
-            } catch (ElementPropertyAlreadyDefined $e) {
+            } catch (ElementUndefinedProperty $e) {
                
                 return false;
                 
-            }
-
-
-
-            
-            
-            
-           
-            
-                    
+            }                    
         }
                 
         /*
@@ -137,7 +128,7 @@ class Picker {
                 }
                 
                                 
-                if (!$v->isMultiLang() && $this->isExisted($key)) {
+                if ($v->isMultiLang() && $this->isExisted($key)) {
                     
                     
                     $v = $this->update($v, $key, $value, $multilang);
@@ -197,6 +188,15 @@ class Picker {
                        
         }
         
+        /**
+         * to check that inputed key is existed
+         * in the collection object except that
+         * non-multilang content
+         * 
+         * @param string $key
+         * @param boolean $multilang
+         * @return boolean
+         */
         private function isExisted($key, $multilang = false) {
            
             $existed = false;
@@ -226,16 +226,26 @@ class Picker {
         }
         
         
+        public function getById($lang_id) {
+            
+            
+        }
+        
+        public function getNonMultilang() {
+            
+            
+        }
+        
+        public function toArray() {
+            
+            return $this->collection->toArray();
+        }
         
         
+        public function getCollection() {
+            
+            return $this->collection;
+        }
         
         
-        
-        
-        
-        
-        
-        
- 
- 
- }
+}
