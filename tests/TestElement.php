@@ -71,5 +71,50 @@ class TestElement  extends Base {
             }
                        
         }
+
+        
+        public function testSimpleEmptyValueNonMultiLang() {
+            
+            $this->obj->content = "bla bla bla";
+            
+            $this->obj->content = "";
+            
+             try {
+                
+                $this->obj->content;
+                
+                $this->assertTrue(true);
+                
+            } catch (\Muratsplat\Multilang\Exceptions\ElementUndefinedProperty $ex) {
+                
+                $this->assertTrue(false);
+            }            
+            
+        }
+        
+        public function testSimpleEmptyValueMultiLang() {
+            
+            $this->obj->content = "bla bla bla";
+            
+            $this->obj->setMultilang(true);
+            
+            // now  Overloaded properties must be deleted
+            
+            $this->obj->content = "";
+                      
+            
+            try {
+                
+                $this->obj->content;
+                
+                $this->assertTrue(false);
+                
+            } catch (\Muratsplat\Multilang\Exceptions\ElementUndefinedProperty $ex) {
+                
+                $this->assertTrue(true);
+            }            
+            
+        }
+
        
 }

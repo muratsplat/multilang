@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Collection;
 use Muratsplat\Multilang\Element;
-use Muratsplat\Multilang\Exceptions\PickerOnlyArray;
+use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
+use Muratsplat\Multilang\Exceptions\ElementPropertyAlreadyDefined;
 
 /**
  * Simple Picker Class
@@ -61,6 +62,26 @@ class Picker {
             
             $this->rawPost = $post;
             
+            try {
+                
+                $this->pickerMultiLangElemets($post);
+                
+                return $this->collection->count();
+                                
+            } catch (ElementPropertyAlreadyDefined $e) {
+               
+                return false;
+                
+            }
+
+
+
+            
+            
+            
+           
+            
+                    
         }
                 
         /*
@@ -76,14 +97,16 @@ class Picker {
                 if($pos !== false) {
                                         
                     // deleting the prefix
-                    $cleanedKey = $this->removePrefixAndId($k, $pos);
+                    $key = $this->removePrefixAndId($k, $pos);
                     
-
-                    /**
-                     * array(Language id => array(post key => post value));
-                     */
-                    $this->translateFieldById[substr($k, $pos+1, strlen($k))][$cleanedKey] =  $v;
-                }    
+                    $id = substr($k, $pos+1, strlen($k));
+                    
+                    $this->createOrUpdate($id, $key, $v, $multilang = true);
+                    
+                    continue;
+                }
+                
+                $this->createOrUpdate($id=null,$k, $v, $multilang=false);
             }            
             
         }
@@ -102,35 +125,104 @@ class Picker {
         }
         
         
-        protected function createOrUpdate($id, $key, $value) {
+        protected function createOrUpdate($id, $key, $value, $multilang=false) {
             
             foreach ($this->collection->all() as $v) {
                 
-                if (!$v->multilang) {
+                if ($v->isMultilang() === true && $v->getId() === (integer) $id) {
                     
-                    continue;
-                }
-                
-                if ($v->lang_id === (integer) $id) {
-                    
-                    $v->$key = $value;
+                    $v = $this->update($v, $key, $value, $multilang);
                     
                     return true;
-                }                
+                }
+                
+                                
+                if (!$v->isMultiLang() && $this->isExisted($key)) {
+                    
+                    
+                    $v = $this->update($v, $key, $value, $multilang);
+                    
+                }
             }
+            
+            return $this->create($id, $key, $value, $multilang);
             
             
         }
-        
+                
+        /**
+         * to create new multi-language content
+         * 
+         * @param int $id
+         * @param string $key
+         * @param mixed $value
+         * @param boolean $multilang
+         * @return boolean
+         */
         protected function create($id,$key, $value, $multilang = false) {
             
             $item = new Element();
             
             $item->$key = $value;
             
-            $item->multilang = $multilang;            
+            $item->setId($id);
+            
+            $item->setMultilang($multilang);            
             
             $this->collection->push($item);
+            
+            return $this->collection->last() === $item;
+        }
+        
+        /**
+         * to update element
+         * 
+         * @param Element $item
+         * @param type $key
+         * @param type $value
+         * @param type $multilang
+         * @return Muratsplat\Multilang\Element
+         */
+        protected function update(Element $item, $key, $value, $multilang = null) {
+            
+            $item->$key=$value;
+            
+            if (!is_null($multilang)) {
+                
+                $item->setMultilang($multilang);                  
+                
+            }            
+            
+            return $item;
+                       
+        }
+        
+        private function isExisted($key, $multilang = false) {
+           
+            $existed = false;
+                       
+            foreach ($this->collection->all() as $v) {
+                
+                if ($multilang && $v->isMultilang()) {
+                    
+                    continue;                  
+                    
+                }
+                
+                try {
+                    
+                    $v->$key;
+                    
+                    $existed = true;                    
+                    
+                } catch (ElementUndefinedProperty $exc) {
+                    
+                    continue;
+                }
+                            
+            }
+            
+            return $existed;           
         }
         
         

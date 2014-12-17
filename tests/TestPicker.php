@@ -53,12 +53,15 @@ class TestPicker  extends Base {
             $this->obj = new Picker(new \Illuminate\Support\Collection());
             
             
-        }
+        }   
         
        
         public function testImport() {
             
-          $this->obj->import($this->rawPost);
+            $this->assertEquals(5, $this->obj->import($this->rawPost));
+            // testing update methods..
+            $this->assertEquals(5, $this->obj->import($this->rawPost));
+          
                          
             
         }

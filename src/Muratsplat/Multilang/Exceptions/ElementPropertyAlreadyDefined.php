@@ -8,4 +8,4 @@ use Exception as ex;
  *
  * @author Murat Ödünç <murat.asya@gmail.com>
  */
-class PickerOnlyArray extends ex { }
+class ElementPropertyAlreadyDefined extends ex { }
