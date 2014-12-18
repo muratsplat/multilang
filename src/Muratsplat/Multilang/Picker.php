@@ -163,12 +163,9 @@ class Picker {
                     
                     return true;
                 }
-            }
+            }            
             
-            
-            return $this->create($id, $key, $value, $multilang);     
-            
-            
+            return $this->create($id, $key, $value, $multilang);           
         }
                 
         /**
@@ -183,8 +180,8 @@ class Picker {
         protected function create($id,$key, $value, $multilang = false) {
             
             $item = new Element();
-            
-            $item->$key = $value;
+            // for non-multilang elements it is not need to set null,
+            $item->$key = $this->valueSelecter($value, $multilang);                    
             
             $item->setId($id);
             
@@ -205,14 +202,18 @@ class Picker {
          * @return Muratsplat\Multilang\Element
          */
         protected function update(Element $item, $key, $value, $multilang = null) {
-            
-            $item->$key=$value;
-            
-            if (!is_null($multilang)) {
+                       
+            if (is_null($multilang) || $multilang === false) {               
                 
-                $item->setMultilang($multilang);                  
+                $item->$key=$value;
                 
-            }            
+                return $item;
+               
+            }
+            
+            $item->setMultilang($multilang);
+            
+            $item->$key = $this->valueSelecter($value, $multilang);
             
             return $item;
                        
@@ -332,6 +333,23 @@ class Picker {
             };
             
             return $this->collection->filter($callback);      
+        }
+        
+        /**
+         * An helper for setting value.
+         * while multilang element's property is setting,
+         * if the value is empty, this method will mark by return null.
+         * 
+         * for non-multilang element it doesn't metter 
+         *  
+         * @param mixed $value
+         * @param boolean $multilang
+         * @return mixed
+         */
+        private function valueSelecter($value, $multilang=false) {
+            
+            
+            return $multilang && $this->isEmpty($value) ? null: $value;                    
         }
       
         

@@ -143,12 +143,127 @@ class TestPicker  extends Base {
             //  after upate the number of items is 4!
             $collection = $this->obj->getCollection()->all();
             
-            $this->assertEquals(4, count($collection));
-            
-          
-            
-            
+            $this->assertEquals(4, count($collection));           
         }
+        
+        public function testExampleUpdate2() {
+            
+            /*
+             * Simple Post Data for updating
+             * 
+             */
+            $rawPostUpdate  = array(
+
+                "enable"    => 1,
+                "visible"   => 0,
+
+                'title@1'   => "Foo English",
+                'content@1' => "",
+
+                'title@2'   => '',
+                'content@2' => 'Türkçe bir içerik langur lungur bir yoğurt',
+
+                "title@3"   => '',
+                "content@3" => ''      
+            );
+
+            $this->obj->import($rawPostUpdate);
+           
+            //  after upate the number of items is 4!
+            $collection = $this->obj->getCollection()->all();
+                                  
+            $this->assertEquals(4, count($collection));           
+        }
+        
+        public function testExampleUpdate3() {
+            
+            /*
+             * Simple Post Data for updating
+             * 
+             */
+            $rawPostUpdate  = array(
+
+                'title@1'   => "Foo English",
+                'content@1' => "",
+
+                'title@2'   => '',
+                'content@2' => 'Türkçe bir içerik langur lungur bir yoğurt',
+
+                "enable"    => 1,
+                "visible"   => 0,
+                
+                "title@3"   => '',
+                "content@3" => ''      
+            );
+
+            $this->obj->import($rawPostUpdate);
+           
+            //  after upate the number of items is 4!
+            $collection = $this->obj->getCollection()->all();
+                                  
+            $this->assertEquals(4, count($collection));           
+        }
+        
+        public function testExampleUpdate4() {
+            
+            /*
+             * Simple Post Data for updating
+             * 
+             */
+            $rawPostUpdate  = array(
+
+                'title@1'   => "Foo English",
+                'content@1' => "",
+
+                'title@2'   => '',
+                'content@2' => 'Türkçe bir içerik langur lungur bir yoğurt',
+
+                              
+                "title@3"   => '',
+                "content@3" => ''      
+            );
+
+            $this->obj->import($rawPostUpdate);
+           
+            //  after upate the number of items is 4!
+            $collection = $this->obj->getCollection()->all();
+                                  
+            $this->assertEquals(2, count($collection));           
+        }
+        
+        public function testExampleUpdate5() {
+            
+            /*
+             * Simple Post Data for updating
+             * 
+             */
+            $rawPostUpdate  = array(
+
+                'title@1'   => "Foo English",
+                'content@1' => "",
+
+                'title@2'   => '',
+                'content@2' => 'Türkçe bir içerik langur lungur bir yoğurt',
+
+                              
+                "title@3"   => '',
+                "content@3" => ''      
+            );
+            
+            $this->obj->import($rawPostUpdate);
+            
+            $this->assertEquals(2, count($this->obj->getCollection()->all()));   
+            
+            $this->obj->import($this->rawPost);
+          
+            $collection = $this->obj->getCollection()->all();
+                                  
+            $this->assertEquals(5, count($collection));           
+        }
+        
+        
+        
+        
         
         
 }
