@@ -97,7 +97,7 @@ class Picker {
                     continue;
                 }
                 
-                $this->createOrUpdate($id=null,$k, $v, $multilang=false);
+               $this->createOrUpdate($id=null,$k, $v, $multilang=false);
             }            
             
         }
@@ -125,11 +125,30 @@ class Picker {
                     $v = $this->update($v, $key, $value, $multilang);
                     
                     return true;
-                }                        
-               
+                }
+                
+                $item = $this->getById($id);
+                
+                if (!is_null($item) && $item->isMultiLang()
+                        && 
+                        $item->isKeyExisted($key) && $this->isEmpty($value)) {
+                    
+                    $v = $this->update($item, $key, null, $item->isMultiLang());
+                       
+                    return true;  
+                    
+                }                
+              
+                if (is_null($id) && !$v->isMultiLang() && $this->isKeyExist($v, $key)) {                   
+                
+                   $v = $this->update($v, $key, $value, $multilang);
+                    
+                    return true;
+                }
             }
             
-            return $this->create($id, $key, $value, $multilang);            
+            return $this->create($id, $key, $value, $multilang);     
+            
             
         }
                 
@@ -180,10 +199,67 @@ class Picker {
                        
         }
         
+        private function isKeyExist($v, $key) {
+            
+            
+            try {
+                
+                if($v->getId() === 0 && !$v->isMultilang()) {
+                
+                    $v->$key;
+                
+                    return true;
+                }                
+                
+                $v->$key;
+                
+                return true;
+                
+            } catch (ElementUndefinedProperty $ex) {
+                
+                return false;
+
+            }
+            
+           
+            
+
+            
+        }
         
+        public function isEmpty($value) {
+            
+            if(is_string($value) && !strlen(trim($value))) {
+                
+                return true;
+            }
+            
+            if(is_array($value) && !count($value)) {
+                
+                return true;
+            }
+            
+            return false;
+        }
+        
+        /**
+         * get element by id
+         * 
+         * @param int $lang_id
+         * @return \Muratsplat\Multilang\Element;
+         */
         public function getById($lang_id) {
             
+            foreach ($this->collection->all() as $v ) {
+                
+                if ($v->getId() === (integer) $lang_id) {
+                   
+                    return $v;
+                    
+                }                
+            }
             
+            return null;           
         }
         
         public function getNonMultilang() {

@@ -170,6 +170,39 @@ class Element {
             $this->multilang = (boolean) $isMultilang;
         }
         
+        /**
+         * to check overloaded property
+         * 
+         * @param string $key
+         * @return boolean
+         */
+        public function isKeyExisted($key) {
+            
+            if (is_null($key)) {
+                
+                return false;
+            }
+            
+            return array_key_exists($key, $this->data);
+        }
+        
+        /**
+         * if all property is null,
+         * return true, not false
+         * 
+         * @return boolean
+         */
+        public function allkeyNull() {
+            
+            $callback = function($property){
+                
+                return is_null($property);
+                
+            };
+            
+            return 0 === count(array_filter($this->data, $callback));           
+        }
+        
         
 
 }

@@ -102,7 +102,6 @@ class TestElement  extends Base {
             $this->obj->content = "";                      
             
             try {
-                
                 $this->obj->content;
                 
                 $this->assertTrue(false);
@@ -112,5 +111,23 @@ class TestElement  extends Base {
                 $this->assertTrue(true);
             }            
             
-        }       
+        } 
+        
+        public function testAllkeyNull() {
+            
+            $this->obj->setMultilang(true);
+            
+            $this->obj->content = "bla bla bla";
+             
+            $this->obj->title = "bilmem ne";
+            
+            // uptating
+            
+            $this->obj->content = "";
+             
+            $this->obj->title = "";
+           
+            $this->assertTrue($this->obj->allkeyNull());          
+            
+        }
 }
