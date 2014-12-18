@@ -143,7 +143,7 @@ class TestPicker  extends Base {
             //  after upate the number of items is 4!
             $collection = $this->obj->getCollection()->all();
             
-            //$this->assertEquals(4, count($firstElem));
+            $this->assertEquals(4, count($collection));
             
           
             

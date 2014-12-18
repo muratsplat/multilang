@@ -66,7 +66,9 @@ class Picker {
                 
                 $this->pickerMultiLangElemets($post);
                 
-               return true;
+                $this->collection = $this->cleanCollection();
+                
+                return true;
                                 
             } catch (ElementUndefinedProperty $e) {
                
@@ -116,19 +118,26 @@ class Picker {
         }
         
         
+        /**
+         *  Create or update method
+         * 
+         * If element is already created, it will be updated,
+         * or not creating new one
+         * 
+         * @param type $id
+         * @param type $key
+         * @param type $value
+         * @param type $multilang
+         * @return boolean
+         */
         protected function createOrUpdate($id, $key, $value, $multilang=false) {
             
             foreach ($this->collection->all() as $v) {
                 
-                if ($v->isMultilang() === true && $v->getId() === (integer) $id) {
-                    
-                    $v = $this->update($v, $key, $value, $multilang);
-                    
-                    return true;
-                }
+                 $item = $this->getById($id);
                 
-                $item = $this->getById($id);
-                
+                // İf before created mutlilang element is updated by empty value
+                // to mark let's make null to it
                 if (!is_null($item) && $item->isMultiLang()
                         && 
                         $item->isKeyExisted($key) && $this->isEmpty($value)) {
@@ -137,8 +146,17 @@ class Picker {
                        
                     return true;  
                     
-                }                
-              
+                }         
+                
+                // Updating existed element..
+                if ($v->isMultilang() === true && $v->getId() === (integer) $id) {
+                    
+                    $v = $this->update($v, $key, $value, $multilang);
+                    
+                    return true;
+                }
+                
+                // updating non-miltilang element..
                 if (is_null($id) && !$v->isMultiLang() && $this->isKeyExist($v, $key)) {                   
                 
                    $v = $this->update($v, $key, $value, $multilang);
@@ -146,6 +164,7 @@ class Picker {
                     return true;
                 }
             }
+            
             
             return $this->create($id, $key, $value, $multilang);     
             
@@ -199,8 +218,16 @@ class Picker {
                        
         }
         
-        private function isKeyExist($v, $key) {
-            
+        /**
+         * to check the property of the element.
+         * it is supported to non-multilang and multilang
+         * elements 
+         * 
+         * @param Muratsplat\Multilang\Element $v
+         * @param string $key
+         * @return boolean
+         */
+        private function isKeyExist($v, $key) {            
             
             try {
                 
@@ -219,14 +246,16 @@ class Picker {
                 
                 return false;
 
-            }
-            
-           
-            
-
-            
+            }   
         }
         
+        /**
+         * to check that inputed value is 
+         * empty
+         * 
+         * @param mixed $value
+         * @return boolean
+         */
         public function isEmpty($value) {
             
             if(is_string($value) && !strlen(trim($value))) {
@@ -267,16 +296,44 @@ class Picker {
             
         }
         
+        /**
+         * Get the collection of elements as a plain array.
+         * 
+         * @return array
+         */
         public function toArray() {
             
             return $this->collection->toArray();
         }
         
-        
+        /**
+         * Get the collection of elements as plain array
+         * 
+         * @return Illuminate\Support\Collection
+         */
         public function getCollection() {
             
             return $this->collection;
         }
+        
+        /**
+         * Only return items are which one has 
+         * all overloaded property(key) not be null   
+         *
+         * @return Illuminate\Support\Collection
+         */
+        protected function cleanCollection() {
+            
+            $callback = function(Element $item) {
+                
+                
+                return !$item->allkeyNull();
+                            
+            };
+            
+            return $this->collection->filter($callback);      
+        }
+      
         
         
 }

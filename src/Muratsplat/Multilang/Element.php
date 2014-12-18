@@ -196,11 +196,21 @@ class Element {
             
             $callback = function($property){
                 
-                return is_null($property);
+                if (!$this->isMultiLang()) {
+                    
+                    return true;
+                }
+                
+                if(is_string($property)) {
+                    
+                    return true;
+                }
+                
+                return !is_null($property);
                 
             };
             
-            return 0 === count(array_filter($this->data, $callback));           
+            return  0 === count(array_filter($this->data, $callback));           
         }
         
         
