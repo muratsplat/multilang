@@ -4,7 +4,7 @@ use Illuminate\Support\Collection;
 use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 use Muratsplat\Multilang\Exceptions\PickerUnknownError;
-
+use Muratsplat\Multilang\Exceptions\PickerError;
 /**
  * Simple Picker Class
  * 
@@ -109,11 +109,15 @@ class Picker {
                                 
             } catch (ElementUndefinedProperty $e) {
                 
+                throw new PickerError($e->getMessage());
+                
             } catch (PickerUnknownError $e) {
+                
+                throw new PickerError('Probably you have founded a bug..!');
                            
             }
             
-            return false;
+           
             
         }
                         
@@ -365,8 +369,23 @@ class Picker {
                 
             };
             
-            return $this->collection->filter($callback);
+            return $this->collection->filter($callback);            
+        }
+        
+        /**
+         * to get only multilang element
+         * 
+         * @return Illuminate\Support\Collection 
+         */
+        public function getMultilang() {
             
+            $callback = function(Element $item) {
+                
+                return $item->isMultilang();
+                
+            };
+            
+            return $this->collection->filter($callback);            
         }
         
         /**
@@ -508,5 +527,5 @@ class Picker {
                 
                 throw new PickerUnknownError("Post data is not imported in succes!");
             }
-        }        
+        }
 }

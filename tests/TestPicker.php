@@ -32,6 +32,62 @@ class TestPicker  extends Base {
         "title@3"   => 'здравствуйте',
         "content@3" => 'Путинхороший человек. Он любит русские , я думаю, россияне любят его.'      
     );
+    
+    /**
+     * Another Example
+     * 
+     * @var type 
+     */
+    private $anotherPost = array( 
+        //1 | n-1 for array
+       'parent_id' => '0',
+        //2
+        'enable' => "1",
+         //3
+        'slug' => '',
+        //4
+        'alias' => '',
+        //5
+        'image_url' => 'image_url', 
+         // 6
+        'name@1' => 'Türkçe Name',
+        'tags@1' => 'TÜrkçe Tags',
+        'meta_desc@1' => 'Türkçe Tanımlamalar',
+        'meta_keys@1' => 'Türkçe Anahtarlar',
+        'about@1' => 'Türkçe Hakkında',          
+         // 7
+        'name@2' => '',
+        'tags@2' => 'ingilizce Tags',
+        'meta_desc@2' => 'İngilizce Tanımlamalar',
+        'meta_keys@2' => 'İngilizce Anahtarlar',
+        'about@2' => 'İngilizce Hakkında',
+         // 8
+        'name@3' => 'Kategori İsmi Almanca',
+        'tags@3' => 'Almanca Tags',
+        'meta_desc@3' => 'Almanca Tanımlamalar',
+        'meta_keys@3' => 'Almanca Anahtarlar',
+        'about@3' => 'Almanca Hakkında',
+         //9
+        'name@4' => 'Kategori İsmi fransızca',
+        'tags@4' => 'Fransızca Tags',
+        'meta_desc@4' => 'Fransıca Tanımlamalar',
+        'meta_keys@4' => 'Fransıca Anahtarlar',
+        'about@4' => 'Fransıca Hakkında',
+         // 10
+        'name@5' => 'Kategori İsmi rusça',
+        'tags@5' => 'Rusça Tags',
+        'meta_desc@5' => 'Rusça Tanımlamalar ',
+        'meta_keys@5' => 'Rusça Anahtarlar',
+        'about@5' => 'Rusça Hakkında',
+         // 11
+        'name@6' => 'Kategori İsmi arapça',
+        'tags@6' => 'Arapça Tags',
+        'meta_desc@6' => 'Arapça Tanımlamalar',
+        'meta_keys@6' => 'Arapça Anahtarlar',
+        'about@6' => 'Arapça Hakkında',            
+
+       );
+            
        
     /**
      *
@@ -290,57 +346,7 @@ class TestPicker  extends Base {
         
         public function testExampleCreateAndUpdateAgain() {
             
-            $creatPostSuccess = array( 
-             //1 | n-1 for array
-            'parent_id' => '0',
-             //2
-             'enable' => "1",
-              //3
-             'slug' => '',
-             //4
-             'alias' => '',
-             //5
-             'image_url' => 'image_url', 
-              // 6
-             'name@1' => 'Türkçe Name',
-             'tags@1' => 'TÜrkçe Tags',
-             'meta_desc@1' => 'Türkçe Tanımlamalar',
-             'meta_keys@1' => 'Türkçe Anahtarlar',
-             'about@1' => 'Türkçe Hakkında',          
-              // 7
-             'name@2' => '',
-             'tags@2' => 'ingilizce Tags',
-             'meta_desc@2' => 'İngilizce Tanımlamalar',
-             'meta_keys@2' => 'İngilizce Anahtarlar',
-             'about@2' => 'İngilizce Hakkında',
-              // 8
-             'name@3' => 'Kategori İsmi Almanca',
-             'tags@3' => 'Almanca Tags',
-             'meta_desc@3' => 'Almanca Tanımlamalar',
-             'meta_keys@3' => 'Almanca Anahtarlar',
-             'about@3' => 'Almanca Hakkında',
-              //9
-             'name@4' => 'Kategori İsmi fransızca',
-             'tags@4' => 'Fransızca Tags',
-             'meta_desc@4' => 'Fransıca Tanımlamalar',
-             'meta_keys@4' => 'Fransıca Anahtarlar',
-             'about@4' => 'Fransıca Hakkında',
-              // 10
-             'name@5' => 'Kategori İsmi rusça',
-             'tags@5' => 'Rusça Tags',
-             'meta_desc@5' => 'Rusça Tanımlamalar ',
-             'meta_keys@5' => 'Rusça Anahtarlar',
-             'about@5' => 'Rusça Hakkında',
-              // 11
-             'name@6' => 'Kategori İsmi arapça',
-             'tags@6' => 'Arapça Tags',
-             'meta_desc@6' => 'Arapça Tanımlamalar',
-             'meta_keys@6' => 'Arapça Anahtarlar',
-             'about@6' => 'Arapça Hakkında',            
-
-            );
-            
-            $this->obj->import($creatPostSuccess);
+            $this->obj->import($this->anotherPost);
             
             $collaction = $this->obj->getCollection();
             
@@ -351,5 +357,32 @@ class TestPicker  extends Base {
             $this->assertEquals('Türkçe Tanımlamalar', $collaction->all()[5]->meta_desc);
             
             $this->assertEquals('Arapça Hakkında', $collaction->last()->about);
-        }        
+            
+            $this->assertCount(5, $this->obj->getNonMultilang());
+            
+            $this->assertCount(6, $this->obj->getMultilang());
+        }
+        
+        public function testGetById() {
+            
+            $this->obj->import($this->anotherPost);
+            
+            $frenchs = $this->obj->getById(4);
+
+            //  'name@4' => 'Kategori İsmi fransızca',
+            //  'tags@4' => 'Fransızca Tags',
+            //  'meta_desc@4' => 'Fransıca Tanımlamalar',
+            //  'meta_keys@4' => 'Fransıca Anahtarlar',
+            //  'about@4' => 'Fransıca Hakkında',
+            
+            $this->assertEquals($this->anotherPost['name@4'], $frenchs->name);
+            
+            $this->assertEquals($this->anotherPost['tags@4'], $frenchs->tags);
+            
+            $this->assertEquals($this->anotherPost['meta_desc@4'], $frenchs->meta_desc);
+            
+            $this->assertEquals($this->anotherPost['meta_keys@4'], $frenchs->meta_keys);
+            
+            $this->assertEquals($this->anotherPost['about@4'], $frenchs->about);
+        }
 }
