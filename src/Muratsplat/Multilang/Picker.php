@@ -471,7 +471,7 @@ class Picker {
          * @param boolean $multilang
          * @return null|Muratsplat\Multilang\Element  null, if it is not succesed
          */
-        protected function updateMultilang($id,Element $Createditem, $key,$value, $multilang=true) {
+        protected function updateMultilang($id, Element $Createditem, $key,$value, $multilang=true) {
             
             $item =$this->getById($id);
             
@@ -523,7 +523,7 @@ class Picker {
                 return false;
             };
             
-            if (!empty((array_filter($this->pickerResults, $callback)))) {
+            if (!empty(array_filter($this->pickerResults, $callback))) {
                 
                 throw new PickerUnknownError("Post data is not imported in succes!");
             }
