@@ -189,6 +189,7 @@ class Element {
         /**
          * if all property is null,
          * return true, not false
+         *
          * 
          * @return boolean
          */
@@ -213,6 +214,16 @@ class Element {
             return  0 === count(array_filter($this->data, $callback));           
         }
         
-        
+        /**
+         * To get new Object
+         * 
+         * @return \Muratsplat\Multilang\Element
+         */
+        public function newElement() {
+            
+            $className = get_class($this);
+             
+            return new $className(); 
+        }       
 
 }

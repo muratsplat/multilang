@@ -3,6 +3,7 @@
 use Illuminate\Support\Collection;
 use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
+use Muratsplat\Multilang\Exceptions\PickerUnknownError;
 
 /**
  * Simple Picker Class
@@ -28,7 +29,7 @@ class Picker {
     private $rawPost = array();
     
     /**
-     * A prefix for realizing multi language content
+     * A prefix for realizing multi-language content
      * 
      * Example:
      * 
@@ -39,68 +40,137 @@ class Picker {
      * 
      * @var string 
      */
-    private $defaultPrefix = '@';    
+    private $defaultPrefix = '@';
+    
+    /**
+     * Picker element result will be 
+     * recorded into this property
+     *
+     * @var array 
+     */
+    private $pickerResults = array();
+    
+    /**
+     *
+     * @var \Muratsplat\Multilang\Element 
+     */
+    private $element;
 
         /**
          * Connstructor
          * 
          * @param Collection $collection
          */
-        public function __construct(Collection $collection) {
+        public function __construct(Collection $collection, Element $element) {
            
-            $this->collection = $collection;      
+            $this->collection = $collection;
+            
+            $this->element = $element;
             
         }        
    
         /**
          * To import raw post data
-         * 
+         *  
          * @param array $post
          * @return boolean
          */
-        public function import(array $post=array()) {
+        public function import(array $post=array(), $oldDelete = true) {
+            
+            if($oldDelete) {
+                // delete old items
+                $this->collection = $this->collection->filter(function($item) {
+                    
+                    return false;                    
+                });
+            }
             
             $this->rawPost = $post;
             
+            return $this->startPicker();                      
+        }        
+        
+        /**
+         * simple starter for picker jobs
+         * 
+         * @return boolean
+         */
+        protected function startPicker() {
+            
             try {
                 
-                $this->pickerMultiLangElemets($post);
+                $this->pickerMultiLangElemets($this->rawPost);
+                
+                $this->anyfails();
                 
                 $this->collection = $this->cleanCollection();
                 
                 return true;
                                 
             } catch (ElementUndefinedProperty $e) {
-               
-                return false;
                 
-            }                    
+            } catch (PickerUnknownError $e) {
+                           
+            }
+            
+            return false;
+            
         }
-                
+                        
         /*
          * Simple picker multi language elements
          * 
          */
         private function pickerMultiLangElemets(array $array=array()) {
-            
+                        
             foreach ($array as $k => $v) {   
 
-                $pos =strpos($k, $this->defaultPrefix); 
+                $pos = $this->isMultilang($k); 
 
-                if($pos !== false) {
+                if(!is_bool($pos)) {
                                         
                     // deleting the prefix
                     $key = $this->removePrefixAndId($k, $pos);
                     
-                    $id = substr($k, $pos+1, strlen($k));
+                    $id = $this->getLangId($k, $pos); //substr($k, $pos+1, strlen($k));
                     
-                    $this->createOrUpdate($id, $key, $v, $multilang = true);
+                    $this->addResult($this->createOrUpdate($id, $key, $v, $multilang = true));
                     
                     continue;
                 }
-                
-               $this->createOrUpdate($id=null,$k, $v, $multilang=false);
-            }            
+                // creating new non-multilang element
+                $this->addResult($this->createOrUpdate($id=null,$k, $v, $multilang=false));
+            }
+            
+        }
+        
+        /**
+         * to check that element is multilang 
+         * or not by looking the prefix
+         * 
+         * @param string $key
+         * @return boolean|int false, if it is non-multilang.
+         */
+        private function isMultilang($key) {
+            
+            return strpos($key, $this->defaultPrefix);
+            
+        }
+        
+        /**
+         * to get lang id from $key by looking
+         * prefix position . Lang id location is right side of the prefix
+         * 
+         * @param string $key element key
+         * @param int $pos  prefix possition
+         * @return int|null lang id number in key. null, if lang id doesn't
+         * existed.
+         */
+        private function getLangId($key, $pos) {            
+            
+            $lang_id = substr($key, $pos+1, strlen($key));
+            
+            return (is_string($lang_id) && !strlen(trim($lang_id))) ? null : (integer) $lang_id ;            
             
         }
         
@@ -132,37 +202,27 @@ class Picker {
          */
         protected function createOrUpdate($id, $key, $value, $multilang=false) {
             
-            foreach ($this->collection->all() as $v) {
+            foreach ($this->collection->all() as $v) {           
                 
-                 $item = $this->getById($id);
+                 // trying to updating non-miltilang element..                
+                $resultNon = $this->updateNonMultilang($v, $key, $value);
                 
-                // İf before created mutlilang element is updated by empty value
-                // to mark let's make null to it
-                if (!is_null($item) && $item->isMultiLang()
-                        && 
-                        $item->isKeyExisted($key) && $this->isEmpty($value)) {
+                if (!is_null($resultNon)) {                   
                     
-                    $v = $this->update($item, $key, null, $item->isMultiLang());
-                       
-                    return true;  
-                    
-                }         
-                
-                // Updating existed element..
-                if ($v->isMultilang() === true && $v->getId() === (integer) $id) {
-                    
-                    $v = $this->update($v, $key, $value, $multilang);
+                    $v = $resultNon;
                     
                     return true;
                 }
                 
-                // updating non-miltilang element..
-                if (is_null($id) && !$v->isMultiLang() && $this->isKeyExist($v, $key)) {                   
+                // Updating existed multilang element..
+                $result = $this->updateMultilang($id, $v, $key, $value, $multilang);
                 
-                   $v = $this->update($v, $key, $value, $multilang);
+                if (!is_null($result)) {                   
+                                    
+                    $v = $result;
                     
                     return true;
-                }
+                }                
             }            
             
             return $this->create($id, $key, $value, $multilang);           
@@ -179,7 +239,7 @@ class Picker {
          */
         protected function create($id,$key, $value, $multilang = false) {
             
-            $item = new Element();
+            $item = $this->element->newElement();
             // for non-multilang elements it is not need to set null,
             $item->$key = $this->valueSelecter($value, $multilang);                    
             
@@ -274,6 +334,7 @@ class Picker {
         
         /**
          * get element by id
+         * it only return multilang element 
          * 
          * @param int $lang_id
          * @return \Muratsplat\Multilang\Element;
@@ -284,16 +345,27 @@ class Picker {
                 
                 if ($v->getId() === (integer) $lang_id) {
                    
-                    return $v;
-                    
+                    return $v;                    
                 }                
             }
             
             return null;           
         }
         
+        /**
+         * to get only non-multilang element
+         * 
+         * @return Illuminate\Support\Collection 
+         */
         public function getNonMultilang() {
             
+            $callback = function(Element $item) {
+                
+                return !$item->isMultilang();
+                
+            };
+            
+            return $this->collection->filter($callback);
             
         }
         
@@ -325,8 +397,7 @@ class Picker {
          */
         protected function cleanCollection() {
             
-            $callback = function(Element $item) {
-                
+            $callback = function(Element $item) {                
                 
                 return !$item->allkeyNull();
                             
@@ -351,7 +422,93 @@ class Picker {
             
             return $multilang && $this->isEmpty($value) ? null: $value;                    
         }
-      
         
+        /**
+         * Updater for non-multilang elements
+         * 
+         * @param Element $item
+         * @param string $key
+         * @param mixed $value
+         * @return null|Muratsplat\Multilang\Element  null, if it is not succesed
+         */
+        protected function updateNonMultilang(Element $item, $key, $value) {
+            
+             // updating non-miltilang element..
+            if (!$item->isMultiLang() && $this->isKeyExist($item, $key)) {                   
+
+                return $this->update($item, $key, $value, false);
+            }
+            
+            return null;
+        }
+        
+        /**
+         * Updater for multilang elements
+         * 
+         * @param int $id
+         * @param ElemMuratsplat\Multilang\Elementent $Createditem
+         * @param string $key
+         * @param mixed $value
+         * @param boolean $multilang
+         * @return null|Muratsplat\Multilang\Element  null, if it is not succesed
+         */
+        protected function updateMultilang($id,Element $Createditem, $key,$value, $multilang=true) {
+            
+            $item =$this->getById($id);
+            
+            if (is_null($item)) {
+                
+                return null;
+            }
+            
+            if ($Createditem->isMultiLang() && $Createditem->isKeyExisted($key) && $this->isEmpty($value)) {               
+                
+                return $this->update($Createditem, $key, null, true);              
+            }
+            
+            // Updating existed element..
+            if ($Createditem->isMultilang() && $Createditem->getId() === (integer) $id) {
+
+                return $this->update($Createditem, $key, $value, $multilang);
+            }
+            
+            return null;            
+        }
+        
+        /**
+         * Same method resaults is may serious data 
+         * to fix issues. If there is false returned, probably
+         * a bug is in somewhere.
+         * 
+         * @param array $result
+         */
+        private function addResult($result) {
+            
+            array_push($this->pickerResults, $result);            
+        }
+        
+        /**
+         * Let's make sure everything is ok!
+         * 
+         * @return boolean true, if some process is failed!
+         */
+        protected function anyfails() {
+            
+            $callback = function($item) {
+              
+                if ($item === false) {
+                    
+                    return true;
+                }
+                
+                return false;
+            };
+            
+            if (!empty((array_filter($this->pickerResults, $callback)))) {
+                
+                throw new PickerUnknownError("Post data is not imported in succes!");
+            }
+        }
+
         
 }

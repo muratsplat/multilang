@@ -2,6 +2,7 @@
 
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Tests\Base;
+use Muratsplat\Multilang\Element;
 
 
 /**
@@ -43,14 +44,14 @@ class TestPicker  extends Base {
          */
         public function testFirst() {
             
-            $picker = new Picker(new \Illuminate\Support\Collection());
+            $picker = new Picker(new \Illuminate\Support\Collection(), new Element());
             
         }
         
         public function setUp() {
             parent::setUp();
             
-            $this->obj = new Picker(new \Illuminate\Support\Collection());
+            $this->obj = new Picker(new \Illuminate\Support\Collection(), new Element());
                   
         }   
        
@@ -259,6 +260,32 @@ class TestPicker  extends Base {
             $collection = $this->obj->getCollection()->all();
                                   
             $this->assertEquals(5, count($collection));           
+        }
+        
+        public function testExampleUpdate6() {
+            
+            /*
+             * Simple Post Data for updating
+             * 
+             */
+            $rawPostUpdate  = array(
+
+                'foo'       => 'bar',
+                'Footest'   => 'Fıı',
+            );
+            
+            $resault = $this->obj->import($this->rawPost);
+            
+            $this->assertTrue($resault);
+            
+            $this->assertEquals(5, count($this->obj->getCollection()->all()));   
+            
+            $this->obj->import($rawPostUpdate, true);
+          
+            $collection = $this->obj->getCollection()->all();
+              
+            //var_dump($collection);
+            $this->assertEquals(2, count($collection));           
         }
         
         

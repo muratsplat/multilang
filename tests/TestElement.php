@@ -147,5 +147,10 @@ class TestElement  extends Base {
            
             $this->assertTrue($this->obj->allkeyNull());
         }
+        
+        public function testNewElement() {
+            
+            $this->assertInstanceOf('Muratsplat\Multilang\Element', $this->obj->newElement());
+        }
             
 }
