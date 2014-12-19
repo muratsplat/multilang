@@ -174,7 +174,7 @@ class Picker {
             
             $lang_id = substr($key, $pos+1, strlen($key));
             
-            return (is_string($lang_id) && !strlen(trim($lang_id))) ? null : (integer) $lang_id ;            
+            return is_string($lang_id) && !strlen(trim($lang_id)) ? null : (integer) $lang_id ;            
             
         }
         
@@ -523,7 +523,8 @@ class Picker {
                 return false;
             };
             
-            if (!empty(array_filter($this->pickerResults, $callback))) {
+            
+            if (count(array_filter($this->pickerResults, $callback))) {
                 
                 throw new PickerUnknownError("Post data is not imported in succes!");
             }
