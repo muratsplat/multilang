@@ -5,6 +5,7 @@ use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 use Muratsplat\Multilang\Exceptions\PickerUnknownError;
 use Muratsplat\Multilang\Exceptions\PickerError;
+
 /**
  * Simple Picker Class
  * 
@@ -113,12 +114,8 @@ class Picker {
                 
             } catch (PickerUnknownError $e) {
                 
-                throw new PickerError('Probably you have founded a bug..!');
-                           
-            }
-            
-           
-            
+                throw new PickerError('Probably you have founded a bug..!');                           
+            }       
         }
                         
         /*
@@ -144,8 +141,7 @@ class Picker {
                 }
                 // creating new non-multilang element
                 $this->addResult($this->createOrUpdate($id=null,$k, $v, $multilang=false));
-            }
-            
+            }            
         }
         
         /**
@@ -189,8 +185,7 @@ class Picker {
         private function removePrefixAndId($name, $pos) {
 
             return substr($name, 0, $pos);
-        }
-        
+        }        
         
         /**
          *  Create or update method
