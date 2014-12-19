@@ -508,7 +508,5 @@ class Picker {
                 
                 throw new PickerUnknownError("Post data is not imported in succes!");
             }
-        }
-
-        
+        }        
 }

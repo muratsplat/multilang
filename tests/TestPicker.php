@@ -288,9 +288,68 @@ class TestPicker  extends Base {
             $this->assertEquals(2, count($collection));           
         }
         
-        
-        
-        
-        
-        
+        public function testExampleCreateAndUpdateAgain() {
+            
+            $creatPostSuccess = array( 
+             //1 | n-1 for array
+            'parent_id' => '0',
+             //2
+             'enable' => "1",
+              //3
+             'slug' => '',
+             //4
+             'alias' => '',
+             //5
+             'image_url' => 'image_url', 
+              // 6
+             'name@1' => 'Türkçe Name',
+             'tags@1' => 'TÜrkçe Tags',
+             'meta_desc@1' => 'Türkçe Tanımlamalar',
+             'meta_keys@1' => 'Türkçe Anahtarlar',
+             'about@1' => 'Türkçe Hakkında',          
+              // 7
+             'name@2' => '',
+             'tags@2' => 'ingilizce Tags',
+             'meta_desc@2' => 'İngilizce Tanımlamalar',
+             'meta_keys@2' => 'İngilizce Anahtarlar',
+             'about@2' => 'İngilizce Hakkında',
+              // 8
+             'name@3' => 'Kategori İsmi Almanca',
+             'tags@3' => 'Almanca Tags',
+             'meta_desc@3' => 'Almanca Tanımlamalar',
+             'meta_keys@3' => 'Almanca Anahtarlar',
+             'about@3' => 'Almanca Hakkında',
+              //9
+             'name@4' => 'Kategori İsmi fransızca',
+             'tags@4' => 'Fransızca Tags',
+             'meta_desc@4' => 'Fransıca Tanımlamalar',
+             'meta_keys@4' => 'Fransıca Anahtarlar',
+             'about@4' => 'Fransıca Hakkında',
+              // 10
+             'name@5' => 'Kategori İsmi rusça',
+             'tags@5' => 'Rusça Tags',
+             'meta_desc@5' => 'Rusça Tanımlamalar ',
+             'meta_keys@5' => 'Rusça Anahtarlar',
+             'about@5' => 'Rusça Hakkında',
+              // 11
+             'name@6' => 'Kategori İsmi arapça',
+             'tags@6' => 'Arapça Tags',
+             'meta_desc@6' => 'Arapça Tanımlamalar',
+             'meta_keys@6' => 'Arapça Anahtarlar',
+             'about@6' => 'Arapça Hakkında',            
+
+            );
+            
+            $this->obj->import($creatPostSuccess);
+            
+            $collaction = $this->obj->getCollection();
+            
+            $this->assertEquals(11,$collaction->count());
+            
+            $this->assertEquals('Fransızca Tags', $collaction->all()[8]->tags);
+            
+            $this->assertEquals('Türkçe Tanımlamalar', $collaction->all()[5]->meta_desc);
+            
+            $this->assertEquals('Arapça Hakkında', $collaction->last()->about);
+        }        
 }
