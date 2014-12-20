@@ -1,15 +1,17 @@
 <?php namespace Muratsplat\Multilang;
 
 use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
+use Illuminate\Support\Contracts\ArrayableInterface;
 
 /**
  * Simple Picker Class
  * 
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
- * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3
+ * @link https://github.com/muratsplat/multilang Project Page
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class Element {
+class Element implements ArrayableInterface {
 
     /**
      * If item is multi language,
@@ -224,6 +226,33 @@ class Element {
             $className = get_class($this);
              
             return new $className(); 
-        }       
+        }
+        
+        /**
+          * Get the instance as an array.
+          *
+          * @return array
+          */
+        public function toArray() {
+            
+            if(!$this->multilang) {
+                
+                return $this->data;
+            }
+            
+            return $this->multilangArray();            
+            
+        }
+        
+        /**
+          * If object is multilang element, 
+          * get the instance as an array.
+          *
+          * @return array
+          */
+        private function multilangArray() {
+                        
+            return array($this->lang_id => $this->data);
+        }
 
 }

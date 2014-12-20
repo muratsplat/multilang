@@ -7,7 +7,7 @@ use Muratsplat\Multilang\Exceptions\PickerUnknownError;
 use Muratsplat\Multilang\Exceptions\PickerError;
 
 /**
- * Simple Picker Class
+ * Picker Class
  * 
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
@@ -92,9 +92,10 @@ class Picker {
         }        
         
         /**
-         * simple starter for picker jobs
+         * To start to pick $post data up!
          * 
          * @return boolean
+         * @throws Muratsplat\Multilang\Exceptions\PickerError
          */
         protected function startPicker() {
             
@@ -516,12 +517,13 @@ class Picker {
                 }
                 
                 return false;
-            };
-            
+            };            
             
             if (count(array_filter($this->pickerResults, $callback))) {
                 
                 throw new PickerUnknownError("Post data is not imported in succes!");
             }
         }
+                
+
 }

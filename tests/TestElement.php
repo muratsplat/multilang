@@ -2,12 +2,14 @@
 
 use Muratsplat\Multilang\Tests\Base;
 use Muratsplat\Multilang\Element;
+
 /**
  * a test class for \Muratsplat\Multilang\Picker
  *
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
- * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3
+ * @link https://github.com/muratsplat/multilang Project Page
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
 class TestElement  extends Base {
 
@@ -32,7 +34,7 @@ class TestElement  extends Base {
             
             $this->obj = new Element();
         }
-        
+                
         
         public function testOverloading() {
             
@@ -151,6 +153,32 @@ class TestElement  extends Base {
         public function testNewElement() {
             
             $this->assertInstanceOf('Muratsplat\Multilang\Element', $this->obj->newElement());
+        }
+        
+        public function testToArray() {
+            
+            $this->obj->foo = 'bar';
+            
+            $this->obj->title = "Lorem";
+            
+            $testArray = ['foo' => 'bar', 'title' => 'Lorem'];
+            
+            $this->assertEquals($testArray, $this->obj->toArray());
+        }
+        
+        public function testToArrayForMultilang() {
+            
+            $this->obj->foo = 'bar';
+            
+            $this->obj->title = "Lorem";
+            
+            $this->obj->setMultilang(true);
+            
+            $this->obj->setId(1);
+            
+            $testArray = [1=> ['foo' => 'bar', 'title' => 'Lorem']];
+            
+            $this->assertEquals($testArray, $this->obj->toArray());
         }
             
 }
