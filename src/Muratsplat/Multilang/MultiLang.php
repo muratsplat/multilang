@@ -3,6 +3,8 @@
 use Illuminate\Database\Eloquent\Model;
 use Muratsplat\Multilang\Picker;
 use Illuminate\Config\Repository as Config;
+use Muratsplat\Multilang\MainInterface;
+use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 //use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 //use Muratsplat\Multilang\Exceptions\PickerUnknownError;
 //use Muratsplat\Multilang\Exceptions\PickerError;
@@ -54,22 +56,47 @@ class MultiLang {
      * @var Illuminate\Config\Repositor 
      */
     private $config;
-    
-    
-
-
+       
+        /**
+         * Constructer
+         * 
+         * @param Picker $picker
+         * @param Model $model
+         * @param Config $config
+         */
         public function __construct(Picker $picker, Model $model, Config $config) {
             
             $this->picker = $picker;
             
             $this->mainModel = $model;
             
-            $this->config= $config;
-            
-            
-    
-            
+            $this->config = $config;      
         }
         
         
+        public function create(array $post, Model $model) {            
+                
+            $this->checkMainImplement($model);
+            
+            $this->picker->import($post);
+                  
+            
+        }
+        
+        /**
+         * to check the implement for main model
+         * 
+         * @param Illuminate\Database\Eloquent\Model $model
+         * @return void
+         * @throws Muratsplat\Multilang\Exceptions\MultilangRequiredImplement
+         */
+        private function checkMainImplement($model) {
+            
+            if(! $model instanceof MainInterface ) {
+                
+              throw new MultilangRequiredImplement("Muratsplat\Multilang\MainInterface"
+                      . "must be implement by your main model!");
+              
+            }
+        }       
 }

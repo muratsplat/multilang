@@ -2,7 +2,8 @@
 
 
 use Illuminate\Database\Eloquent\Model;
-
+use Muratsplat\Multilang\MainInterface;
+use Muratsplat\Multilang\LangInterface;
 /**
  *  Simple Models For tests
  * 
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Simple Main Model
  */
-class Content extends Model {
+class Content extends Model implements MainInterface {
     //put your code here
 }
 
@@ -23,7 +24,7 @@ class Content extends Model {
 /**
  * ContantLang  will be Content's multi languages model.
  */
-class ContentLang extends Model {
+class ContentLang extends Model implements LangInterface {
     //put your code here
 }
 
