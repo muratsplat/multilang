@@ -25,7 +25,8 @@ class Content extends Model implements MainInterface {
      */
     public $rules = array(
             
-        'author'        => 'exits:users,id',
+        'enable'    => 'required',
+        'visible'   => 'required',
         
     );
     
@@ -47,11 +48,9 @@ class ContentLang extends Model implements LangInterface {
      */
     public $rules = array(
             
-        'tittle'        => 'max:100|RequiredForDefaultLang:Page Title',
+        'title'        => 'max:100|RequiredForDefaultLang:Page Title',
         'content'       => 'max:15000',
-        'meta_desc'     => 'max:400',
-        'meta_keys'     => 'max:100',
-        'translator'    => 'exits:users,id',
+      
         
     );
     

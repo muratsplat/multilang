@@ -10,7 +10,6 @@
  */
 interface MainInterface {
     
-    
     /**
      * to get validation rules
      * 

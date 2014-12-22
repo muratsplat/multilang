@@ -152,7 +152,7 @@ class Picker {
          * @param string $key
          * @return boolean|int false, if it is non-multilang.
          */
-        private function isMultilang($key) {
+        public function isMultilang($key) {
             
             return strpos($key, $this->defaultPrefix);
             
@@ -183,7 +183,7 @@ class Picker {
          * @param integer $pos position of the number of prefix is will be deleted
          * @return string
          */
-        private function removePrefixAndId($name, $pos) {
+        public function removePrefixAndId($name, $pos) {
 
             return substr($name, 0, $pos);
         }        
@@ -523,6 +523,16 @@ class Picker {
                 
                 throw new PickerUnknownError("Post data is not imported in succes!");
             }
+        }
+        
+        /**
+         * to get raw post which is imported in the object.
+         * 
+         * @return array
+         */
+        public function getSource() {
+            
+            return $this->rawPost;
         }
                 
 

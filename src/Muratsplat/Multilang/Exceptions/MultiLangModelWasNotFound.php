@@ -4,7 +4,7 @@ use Exception as ex;
 
 
 /**
- * Exceptios for general use
+ * Exceptions for general use
  *
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
@@ -12,3 +12,4 @@ use Exception as ex;
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
 class MultiLangModelWasNotFound extends ex { }
+
