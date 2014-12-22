@@ -74,20 +74,25 @@ class TestValidator extends Base {
             
             $mockedConfig = m::mock('Illuminate\Config\Repository');
             
-             $mockedConfig->shouldReceive('get')->with('prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('prefix')->andReturn('@');
             
-             $mockedConfig->shouldReceive('get')->with('appLanguageModel')->andReturn('Lang');
-
+            $mockedConfig->shouldReceive('get')->with('appLanguageModel')->andReturn('Lang');
+             
+            $mockedConfig->shouldReceive('make')->andReturn(true); 
             
             $messageBag = m::mock('Illuminate\Support\MessageBag');
             $laraValidator = m::mock('Illuminate\Validation\Factory');
-                        
-            $this->picker = new Picker(new Collection(), new Element());
             
+            $validateObj = m::mock('stdClass');
+            $validateObj->shouldReceive('fails')->andReturn('false');
+            $validateObj->shouldReceive('getMessageBag')->andReturn($messageBag);
+            
+            $laraValidator->shouldReceive('make')->andReturn($validateObj);
+            
+            $this->picker = new Picker(new Collection(), new Element());
             $this->picker->import($this->rawPost);
             
-            $this->validator = new Validator($messageBag, $laraValidator, $mockedConfig); 
-            
+            $this->validator = new Validator($messageBag, $laraValidator, $mockedConfig);            
             
 
         }
@@ -96,11 +101,7 @@ class TestValidator extends Base {
             
             $model = new Content();
             
-            $this->validator->make($this->picker, $model, array());
-            
-                       
-
-          
+            $this->assertFalse($this->validator->make($this->picker, $model, array())); 
         }
 
     

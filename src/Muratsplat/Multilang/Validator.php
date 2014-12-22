@@ -9,8 +9,6 @@ use Illuminate\Validation\Factory as Larevalidator;
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
 
-
-
 //use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 //use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 //use Muratsplat\Multilang\Exceptions\PickerUnknownError;
@@ -92,9 +90,7 @@ class Validator  implements MessageProviderInterface {
      */
     private $prefix;
     
-    
-   
-        public function __construct(MessageBag $message, Larevalidator $validator, Config $config ) {
+        public function __construct(MessageBag $message, Larevalidator $validator, Config $config) {
                            
             $this->message = $message;
             
@@ -103,6 +99,7 @@ class Validator  implements MessageProviderInterface {
             $this->config = $config;
             
             $this->prefix = $this->config->get('prefix');
+            
             
         }       
         
@@ -204,14 +201,24 @@ class Validator  implements MessageProviderInterface {
             return new $className;           
         }
         
+        /**
+         * to valitate
+         * 
+         * @return boolean false, if it is failed.
+         */
         private function validate() {
             
-           
             
-                 
+            $v = $this->validator->make($this->picker->getSource(), $this->rules);
             
-        }
-
-        
-        
+            if($v->fails()) {
+                // to set errors messages
+                $this->message = $v->getMessageBag();
+                
+                // failed!
+                return false;
+            }
+            // passed!
+            return true;            
+        }       
 }

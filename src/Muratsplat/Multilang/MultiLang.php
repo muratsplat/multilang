@@ -4,10 +4,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\MessageBag;
-use Muratsplat\Multilang\Picker;
 
+use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Interfaces\MainInterface;
 use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
+use Muratsplat\Multilang\Validator;
 //use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 //use Muratsplat\Multilang\Exceptions\PickerUnknownError;
 //use Muratsplat\Multilang\Exceptions\PickerError;
@@ -67,7 +68,13 @@ class MultiLang implements MessageProviderInterface {
      */
     private $message;
     
-       
+    /**
+     * Validator Object
+     * 
+     * @var Muratsplat\Multilang\Validator
+     */
+    private $validator;
+    
         /**
          * Constructer
          * 
@@ -75,7 +82,7 @@ class MultiLang implements MessageProviderInterface {
          * @param Model $model
          * @param Config $config
          */
-        public function __construct(Picker $picker, Model $model, Config $config, MessageBag $message) {
+        public function __construct(Picker $picker, Model $model, Config $config, MessageBag $message, Validator $validator) {
             
             $this->picker = $picker;
             
@@ -85,7 +92,7 @@ class MultiLang implements MessageProviderInterface {
             
             $this->message = $message;
             
-           
+            $this->validator= $validator;          
         }
                 
         public function create(array $post, Model $model) {            

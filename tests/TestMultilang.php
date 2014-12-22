@@ -1,11 +1,13 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
+use Illuminate\Support\Collection;
+use Illuminate\Config\Repository as Config;
+
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Tests\Base;
 use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\MultiLang;
-use Illuminate\Support\Collection;
-use Illuminate\Config\Repository as Config;
+use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\Tests\Model\Content;
 use \Mockery as m;
 
@@ -41,11 +43,14 @@ class TestMultilang extends Base {
             
             $messageBag = m::mock('Illuminate\Support\MessageBag');
             
+            $validator = m::mock('Muratsplat\Multilang\Validator');
+            
             $this->multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element()),
                     new Content(), 
                     $mockedConfig, 
-                    $messageBag );
+                    $messageBag,
+                    $validator);
             
         }
 
@@ -53,13 +58,7 @@ class TestMultilang extends Base {
 
             $this->multiLang->create(array(), new Content());
             
-        }
-
-    
-    
-    
-    
-    
+        }    
     
     
 }
