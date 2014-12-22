@@ -6,7 +6,7 @@ use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\MessageBag;
 use Muratsplat\Multilang\Picker;
 
-use Muratsplat\Multilang\MainInterface;
+use Muratsplat\Multilang\Interfaces\MainInterface;
 use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 //use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 //use Muratsplat\Multilang\Exceptions\PickerUnknownError;
@@ -87,14 +87,19 @@ class MultiLang implements MessageProviderInterface {
             
            
         }
-        
-        
+                
         public function create(array $post, Model $model) {            
                 
             $this->checkMainImplement($model);
             
             $this->picker->import($post);           
+        }
+        
+        public function update(array $post, Model $model) {            
+                
+            $this->checkMainImplement($model);
             
+            $this->picker->import($post);           
         }
         
         /**

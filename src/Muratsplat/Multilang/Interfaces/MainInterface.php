@@ -1,4 +1,4 @@
-<?php namespace Muratsplat\Multilang;
+<?php namespace Muratsplat\Multilang\Interfaces;
 
 /**
  * An interface for main models

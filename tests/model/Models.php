@@ -2,8 +2,9 @@
 
 
 use Illuminate\Database\Eloquent\Model;
-use Muratsplat\Multilang\MainInterface;
-use Muratsplat\Multilang\LangInterface;
+use Muratsplat\Multilang\Interfaces\MainInterface;
+use Muratsplat\Multilang\Interfaces\LangInterface;
+use Muratsplat\Multilang\Interfaces\AppLanguageInterface;
 /**
  *  Simple Models For tests
  * 
@@ -17,15 +18,46 @@ use Muratsplat\Multilang\LangInterface;
  * Simple Main Model
  */
 class Content extends Model implements MainInterface {
-    //put your code here
+    
+    /**
+     * Validation Rules
+     * 
+     * @var array
+     */
+    public $rules = array(
+            
+        'author'        => 'exits:users,id',
+        
+    );
 }
 
-
 /**
- * ContantLang  will be Content's multi languages model.
+ * ContentLang  will be Content's multi language model.
  */
 class ContentLang extends Model implements LangInterface {
-    //put your code here
+    
+    /**
+     * Validation Rules
+     * 
+     * @var array
+     */
+    public $rules = array(
+            
+        'tittle'        => 'max:100|RequiredForDefaultLang:Page Title',
+        'content'       => 'max:15000',
+        'meta_desc'     => 'max:400',
+        'meta_keys'     => 'max:100',
+        'translator'    => 'exits:users,id',
+        
+    );
+}
+
+/**
+ * App Language Model
+ */
+class Language extends Model implements AppLanguageInterface {
+    
+    
 }
 
 
