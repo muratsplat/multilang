@@ -206,11 +206,9 @@ class Validator  implements MessageProviderInterface {
         
         private function validate() {
             
-            $nonMultilang = $this->picker->getMultilang()->toArray();
+           
             
-            var_dump($this->picker->getSource());
-            
-            var_dump($this->rules);           
+                 
             
         }
 
