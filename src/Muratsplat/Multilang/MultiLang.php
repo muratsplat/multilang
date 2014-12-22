@@ -1,8 +1,11 @@
 <?php namespace Muratsplat\Multilang;
 
 use Illuminate\Database\Eloquent\Model;
-use Muratsplat\Multilang\Picker;
 use Illuminate\Config\Repository as Config;
+use Illuminate\Support\Contracts\MessageProviderInterface;
+use Illuminate\Support\MessageBag;
+use Muratsplat\Multilang\Picker;
+
 use Muratsplat\Multilang\MainInterface;
 use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 //use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
@@ -20,7 +23,7 @@ use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class MultiLang {
+class MultiLang implements MessageProviderInterface {
     
    /**
     * Main Model  
@@ -56,6 +59,14 @@ class MultiLang {
      * @var Illuminate\Config\Repositor 
      */
     private $config;
+    
+    /**
+     * Laravel MessageBag Object
+     * 
+     * @var Illuminate\Support\MessageBag 
+     */
+    private $message;
+    
        
         /**
          * Constructer
@@ -64,13 +75,17 @@ class MultiLang {
          * @param Model $model
          * @param Config $config
          */
-        public function __construct(Picker $picker, Model $model, Config $config) {
+        public function __construct(Picker $picker, Model $model, Config $config, MessageBag $message) {
             
             $this->picker = $picker;
             
             $this->mainModel = $model;
             
-            $this->config = $config;      
+            $this->config = $config;
+            
+            $this->message = $message;
+            
+           
         }
         
         
@@ -78,8 +93,7 @@ class MultiLang {
                 
             $this->checkMainImplement($model);
             
-            $this->picker->import($post);
-                  
+            $this->picker->import($post);           
             
         }
         
@@ -98,5 +112,16 @@ class MultiLang {
                       . "must be implement by your main model!");
               
             }
-        }       
+        }
+        
+        /**
+	 * Get the messages for the instance.
+	 *
+	 * @return \Illuminate\Support\MessageBag
+	 */
+	public function getMessageBag() {
+                        
+            return $this->message->getMessageBag();
+                        
+        }
 }
