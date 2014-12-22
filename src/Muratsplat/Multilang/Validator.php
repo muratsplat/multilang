@@ -5,7 +5,9 @@ use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Factory as Larevalidator;
+
 use Muratsplat\Multilang\Picker;
+use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
 
 
 
@@ -93,5 +95,29 @@ class Validator  implements MessageProviderInterface {
         public function make(Picker $picker, Model $model) {
             
             
+        }
+        
+        /**
+         * to get multilang model by using main model 
+         * 
+         * @param Illuminate\Database\Eloquent\Model
+         * @return Illuminate\Database\Eloquent\Model
+         * @throws MultiLangModelWasNotFound
+         */
+        private function getLangModel(Model $model) {
+            
+            $prefix = $this->config->get('appLanguageModel');
+            
+            $className = get_class($model) . $prefix;
+
+            // checking existed translation model 
+            if (!class_exists($className , $autoload = true) ) {
+
+                throw new MultiLangModelWasNotFound('Multilanguage post was detected!'
+                       . ' In case of this it needs a model for multi languages content.');
+
+            }
+            
+            return new $className;           
         }
 }

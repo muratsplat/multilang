@@ -10,9 +10,12 @@
  */
 interface MainInterface {
     
-
-
-        
-        
+    
+    /**
+     * to get validation rules
+     * 
+     * @return array
+     */
+    public function getRules();        
         
 }

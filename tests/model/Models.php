@@ -1,6 +1,5 @@
 <?php namespace Muratsplat\Multilang\Tests\Model;
 
-
 use Illuminate\Database\Eloquent\Model;
 use Muratsplat\Multilang\Interfaces\MainInterface;
 use Muratsplat\Multilang\Interfaces\LangInterface;
@@ -29,6 +28,11 @@ class Content extends Model implements MainInterface {
         'author'        => 'exits:users,id',
         
     );
+    
+    public function getRules() {
+        
+        return $this->rules;
+    }
 }
 
 /**
@@ -50,6 +54,11 @@ class ContentLang extends Model implements LangInterface {
         'translator'    => 'exits:users,id',
         
     );
+    
+    public function getRules() {
+        
+        return $this->rules;
+    }
 }
 
 /**

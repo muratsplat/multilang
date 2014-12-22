@@ -10,6 +10,15 @@
  */
 interface LangInterface {
     
+    
+    
+    /**
+     * to get validation rules
+     * 
+     * @return array
+     */
+    public function getRules();
+    
 
 
         
