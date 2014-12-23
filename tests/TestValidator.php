@@ -80,7 +80,7 @@ class TestValidator extends Base {
              
             $mockedConfig->shouldReceive('make')->andReturn(true); 
             
-            $messageBag = m::mock('Illuminate\Support\MessageBag');
+            
             $laraValidator = m::mock('Illuminate\Validation\Factory');
             
             $validateObj = m::mock('stdClass');
@@ -92,7 +92,7 @@ class TestValidator extends Base {
             $this->picker = new Picker(new Collection(), new Element());
             $this->picker->import($this->rawPost);
             
-            $this->validator = new Validator($messageBag, $laraValidator, $mockedConfig);            
+            $this->validator = new Validator($laraValidator, $mockedConfig);            
             
 
         }

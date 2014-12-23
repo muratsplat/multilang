@@ -3,7 +3,6 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Contracts\MessageProviderInterface;
-use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Factory as Larevalidator;
 
 use Muratsplat\Multilang\Picker;
@@ -89,18 +88,21 @@ class Validator  implements MessageProviderInterface {
      * @var string 
      */
     private $prefix;
-    
-        public function __construct(MessageBag $message, Larevalidator $validator, Config $config) {
-                           
-            $this->message = $message;
-            
+        
+        /**
+         * Constructer
+         * 
+         *
+         * @param Illuminate\Validation\Factory $validator
+         * @param Illuminate\Config\Repository $config
+         */
+        public function __construct(Larevalidator $validator, Config $config) {
+                      
             $this->validator = $validator;
             
             $this->config = $config;
             
-            $this->prefix = $this->config->get('prefix');
-            
-            
+            $this->prefix = $this->config->get('prefix');           
         }       
         
         /**
