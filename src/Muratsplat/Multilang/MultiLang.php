@@ -94,19 +94,63 @@ class MultiLang implements MessageProviderInterface {
             
             $this->validator= $validator;          
         }
-                
-        public function create(array $post, Model $model) {            
-                
-            $this->checkMainImplement($model);
+        
+        
+        public function create(array $post, Model $model, array $rules=array()) {  
             
-            $this->picker->import($post);           
+            if(!$this->checkdata($post, $model, $rules)) {
+                
+                return false;   
+            }
+         
         }
         
-        public function update(array $post, Model $model) {            
-                
+        public function update(array $post, Model $model, array $rules=array()) {            
+          
+        }
+        
+        /**
+         * to check required implement and import post data. In addition,
+         * validate post data.
+         * 
+         * @param array $post Post Data. It usualy is be array
+         * @param Muratsplat\Multilang\Interfaces\MainInterface $model
+         * @param array $rules not required. Laravel validation rules in a array
+         * @return boolean true, it is on success
+         */
+        protected function checkdata(array $post, Model $model, array $rules) {
+            
             $this->checkMainImplement($model);
             
-            $this->picker->import($post);           
+            $this->picker->import($post);
+            
+            if(!$this->validateAll($this->picker, $model, $rules)) {
+                                            
+                return false;                
+            }
+            
+            return true;           
+        }
+        
+        /**
+         * to validate post data with multi language content
+         * 
+         * @param Muratsplat\Multilang\Picker $picker
+         * @param Muratsplat\Multilang\Interfaces\MainInterface $model
+         * @param array $rules
+         * @return boolean  true, if it is on success
+         */
+        private function validateAll(Picker $picker, Model $model, array $rules) {
+            
+            if(!$this->validator->make($this->picker, $model, $rules)) {
+                
+                $this->message = $this->validator->getMessageBag();
+                
+                return false;               
+            }
+            
+            return true;
+            
         }
         
         /**
