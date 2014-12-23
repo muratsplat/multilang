@@ -80,7 +80,7 @@ class TestValidator extends Base {
              
             $mockedConfig->shouldReceive('make')->andReturn(true); 
             
-            
+            $messageBag = m::mock('Illuminate\Support\MessageBag');
             $laraValidator = m::mock('Illuminate\Validation\Factory');
             
             $validateObj = m::mock('stdClass');
