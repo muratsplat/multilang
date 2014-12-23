@@ -39,6 +39,12 @@ class TestMultilang extends Base {
         public function setUp() {
             parent::setUp();
             
+          
+            
+        }
+
+        public function testCheckMainImplement() {
+            
             $mockedConfig = m::mock('Illuminate\Config\Repository','Illuminate\Config\LoaderInterface');
             
             $messageBag = m::mock('Illuminate\Support\MessageBag');
@@ -53,10 +59,6 @@ class TestMultilang extends Base {
                     $mockedConfig, 
                     $messageBag,
                     $validator);
-            
-        }
-
-        public function testCheckMainImplement() {
 
             $this->assertTrue($this->multiLang->create(array(), new Content()));
             

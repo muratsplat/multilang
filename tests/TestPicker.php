@@ -386,4 +386,15 @@ class TestPicker  extends Base {
             
             $this->assertEquals($this->anotherPost['about@4'], $frenchs->about);
         }
+        
+        public function testNonMultilangToArray() {
+            
+            $this->obj->import($this->rawPost);
+            
+            $oneMustBe = [ "enable"    => 1,"visible"   => 0,];
+                
+            $this->assertEquals($oneMustBe,$this->obj->getNonMultilangToArray());
+            
+            
+        }
 }

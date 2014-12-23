@@ -534,6 +534,24 @@ class Picker {
             
             return $this->rawPost;
         }
+        
+        /**
+         * to convert items to array without array's index.
+         * 
+         * @return array
+         */
+        public function getNonMultilangToArray() {
+           
+            $tmpArray= array();
+
+            foreach ($this->getNonMultilang()->toArray() as $v) {
+
+               $tmpArray = array_merge($tmpArray, $v);
+
+            }
+
+            return $tmpArray;   
+        }
                 
 
 }
