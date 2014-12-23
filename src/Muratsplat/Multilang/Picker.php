@@ -536,7 +536,7 @@ class Picker {
         }
         
         /**
-         * to convert items to array without array's index.
+         * to convert non-multilang items to array without array's index.
          * 
          * @return array
          */
@@ -551,6 +551,36 @@ class Picker {
             }
 
             return $tmpArray;   
+        }
+        
+        /**
+         * to convert multilang items to array without array's index.
+         * 
+         * @return array
+         */
+        public function getMultilangToArray() {
+           
+            $tmpArray= array();
+
+            foreach ($this->getMultilang()->toArray() as $v) {
+
+               $tmpArray = array_merge($tmpArray, $v);
+            }
+
+            return $tmpArray;   
+        }
+        
+        /**
+         * to check that post data is multilang.
+         * If post data includes multi language elements,
+         * returns true
+         * 
+         * @return boolean
+         */
+        public function isPostMultiLang() {
+            
+            return 0 !== count($this->collection->all());            
+            
         }
                 
 

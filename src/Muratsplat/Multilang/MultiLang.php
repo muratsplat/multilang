@@ -75,6 +75,13 @@ class MultiLang implements MessageProviderInterface {
      */
     private $validator;
     
+    /**
+     * For saving instance of created main model
+     *
+     * @var Illuminate\Database\Eloquent\Model 
+     */
+    private $createdMainModel;
+    
         /**
          * Constructer
          * 
@@ -98,14 +105,42 @@ class MultiLang implements MessageProviderInterface {
         
         public function create(array $post, Model $model, array $rules=array()) {  
             
-            if(!$this->checkdata($post, $model, $rules)) {
+            if (!$this->checkdata($post, $model, $rules)) {
                 
                 return false;   
             }
             
+            if (!$this->picker->isPostMultiLang()) {
+                
+                //return $this->createMainModel();
+            }
+            
+            
+            
             return true;
          
         }
+        
+        protected function createMainModel() {
+            
+            $post = $this->picker->getNonMultilangToArray();
+            
+            $this->createdMainModel = $this->mainModel->create($post);
+            
+            return $this->createdMainModel->save();
+        }
+        
+        
+        
+        
+        protected function createLangModels() {
+            
+            
+            
+            
+    
+        }
+        
         
         public function update(array $post, Model $model, array $rules=array()) {            
           

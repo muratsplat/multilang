@@ -12,9 +12,12 @@
         "illuminate/support": "4.2.*",
         "illuminate/database" : "4.2.*",
         "illuminate/config": "4.2.*",
-        "Illuminate/Validation": "4.2.*",
-        "mockery/mockery": "0.9.*@dev"
-            
+        "Illuminate/Validation": "4.2.*"
+                   
+    },
+    "require-dev": {
+        "mockery/mockery": "0.9.*@dev",
+         "orchestra/testbench": "2.2.*"
     },
     "autoload": {
         "classmap": [

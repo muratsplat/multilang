@@ -18,6 +18,10 @@ use Muratsplat\Multilang\Interfaces\AppLanguageInterface;
  */
 class Content extends Model implements MainInterface {
     
+    protected $table = "contents";
+    
+    protected $fillable = array('enable', 'visible');
+    
     /**
      * Validation Rules
      * 
@@ -34,12 +38,26 @@ class Content extends Model implements MainInterface {
         
         return $this->rules;
     }
+    
+    /**
+     * Defining inversed relation to Content
+     * 
+     * @return Muratsplat\Multilang\Tests\Model\ContentLang
+     */
+    public function ContentLang() {
+        
+        return $this->hasMany('Muratsplat\Multilang\Tests\Model\ContentLang');
+    }
 }
 
 /**
  * ContentLang  will be Content's multi language model.
  */
 class ContentLang extends Model implements LangInterface {
+    
+    protected $table = "contentLangs";
+    
+    protected $fillable = array('content_id', 'lang_id', 'title', 'content');
     
     /**
      * Validation Rules
@@ -57,6 +75,16 @@ class ContentLang extends Model implements LangInterface {
     public function getRules() {
         
         return $this->rules;
+    }
+    
+    /**
+     * Defining inversed relation to Content
+     * 
+     * @return Muratsplat\Multilang\Tests\Model\Content
+     */
+    public function Content() {
+        
+        return $this->belongsTo('Muratsplat\Multilang\Tests\Model\Content');
     }
 }
 

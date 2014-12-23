@@ -393,8 +393,27 @@ class TestPicker  extends Base {
             
             $oneMustBe = [ "enable"    => 1,"visible"   => 0,];
                 
-            $this->assertEquals($oneMustBe,$this->obj->getNonMultilangToArray());
+            $this->assertEquals($oneMustBe,$this->obj->getNonMultilangToArray());            
             
+        }
+        
+        public function testMultilangToArray() {
+            
+            $this->obj->import($this->rawPost);
+            
+            $oneMustBe = [ "enable"    => 1,"visible"   => 0,];
+            
+            var_dump($this->obj->getMultilang()->toArray());
+                
+            var_dump($this->obj->getMultilangToArray());
+            
+        }
+        
+        public function testIsPostMultilang() {
+            
+            $this->obj->import($this->rawPost);
+            
+            $this->assertTrue($this->obj->isPostMultiLang());            
             
         }
 }
