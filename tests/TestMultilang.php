@@ -31,8 +31,7 @@ class TestMultilang extends TestCase {
      * @var Muratsplat\Multilang\MultiLang
      */
     private $multiLang;
-   
-        
+    
         public function tearDown() {
         
             parent::tearDown();        
@@ -40,6 +39,9 @@ class TestMultilang extends TestCase {
             m::close();
         }
         
+        /**
+         * When each and every test method works, first it will run
+         */
         public function setUp() {
             parent::setUp();
             
@@ -57,9 +59,7 @@ class TestMultilang extends TestCase {
             //seeder class to run individually:
             //php artisan db:seed --class=UserTableSeeder
             
-            $artisan->call('db:seed', array('--class' => 'DatabaseSeeder'));
-            
-         
+            $artisan->call('db:seed', array('--class' => 'DatabaseSeeder'));        
         }
         
 
@@ -81,8 +81,7 @@ class TestMultilang extends TestCase {
                 'prefix' => '',
             ));
 
-        }
-        
+        }        
         
         /**
         * Get Multilang package providers.
@@ -129,10 +128,32 @@ class TestMultilang extends TestCase {
             
         }
         
-        public function testCheckContentLangMigrate() {
+        public function testCheckContentLangRelation() {
             
+            $content = new Content(['enable'=>1, 'visible' => 1]);
             
+            $content->save();
+            
+            $this->assertInstanceOf('Muratsplat\Multilang\Tests\Model\ContentLang', $content->ContentLang()->getRelated());           
         }
+        
+        public function testTryCRUDContentLang() {
+            
+            $content = new Content(['enable'=>1, 'visible' => 1]);
+            
+            $content->save();
+            
+            $records = [
+                
+                ['_lang_id' => 1, 'title' => 'Foo', 'content' => 'Baar'],
+                ['_lang_id' => 2, 'title' => 'FooBus', 'content' => 'Bobuus'],
+            ];
+            
+            $createdRecords = $content->ContentLang()->createMany($records);
+            
+           $this->assertEquals(2, count($createdRecords));
+        }
+    
     
     
 }

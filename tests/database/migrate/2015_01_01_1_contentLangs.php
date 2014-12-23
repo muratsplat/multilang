@@ -19,12 +19,13 @@ class ContentLangs extends Migration {
             
             $t->increments('id');
             $t->integer('content_id')->unsigned();
-            $t->integer('lang_id')->unsigned();
+            $t->integer('_lang_id')->unsigned();
             $t->string('title', 100)->nullable();			
-            $t->string('content', 15000)->nullable();  
+            $t->string('content', 15000)->nullable();
+            $t->timestamps();
             
             $t->foreign('content_id')->references('id')->on('contens');
-            $t->foreign('lang_id')->references('id')->on('languages');
+            $t->foreign('_lang_id')->references('id')->on('languages');
               
         });
     }
