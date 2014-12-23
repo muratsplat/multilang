@@ -113,18 +113,23 @@ class Validator  implements MessageProviderInterface {
             return $this->message;                        
         }
         
+        /**
+         * to validate post data by model's rules or rules in inputted array
+         * 
+         * @param Muratsplat\Multilang\Picker $picker
+         * @param Muratsplat\Multilang\Interfaces\MainInterface $model
+         * @param array $rules
+         * @return boolean  true, if all rules are passed.
+         */
         public function make(Picker $picker, Model $model, array $rules) {
             
             $langModel = $this->getLangModel($model);
             
             $this->mainModel = $model;
             
-            $this->picker = $picker;
-            
-            if (empty($rules)) {
-                
-                $this->mergerules($model, $langModel);
-            }
+            $this->picker = $picker;      
+            // setting rules for validations    
+            $this->mergeRules($model, $langModel, $rules);     
             
             return $this->validate();
                                             
@@ -135,9 +140,17 @@ class Validator  implements MessageProviderInterface {
          *  
          * @param Muratsplat\Multilang\Interfaces\MainInterface $main
          * @param Muratsplat\Multilang\Interfaces\LangInterface $lang
+         * @param array $rules Rules for validation
          * @return void
          */
-        protected function mergeRules(Model $main, Model $lang) {
+        protected function mergeRules(Model $main, Model $lang, array $rules) {
+            
+            if(!empty($rules)) {
+                
+                $this->rules = $rules;
+                
+                return;
+            }
             
             $this->mergedrules = array_merge($main->getRules(), $lang->getRules());
             
@@ -164,13 +177,13 @@ class Validator  implements MessageProviderInterface {
                     
                     continue;
                 }
-                
+                // Has the key multilang prefix?
                 $pos = $this->picker->isMultilang($key);
-                
+                // deleting the prefix and id is right side of the prefix
                 $rmkey = $this->picker->removePrefixAndId($key, $pos);
                 
                 if(is_numeric($pos) && array_key_exists($rmkey, $this->mergedrules) ) {
-                    
+                    // re-editing rules for rawPost data..
                     $this->rules[$key] = $this->mergedrules[$rmkey];                    
                     
                 }
