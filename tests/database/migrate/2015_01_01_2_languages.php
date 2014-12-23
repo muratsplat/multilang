@@ -16,13 +16,24 @@ class languages extends Migration {
     public function up() {
         
         Schema::create('languages', function($t) {
-            
+          
+
             $t->increments('id');
-            $t->integer('page_id')->unsigned();
-            $t->integer('lang_id')->unsigned();
-            $t->string('title', 100)->nullable();			
-            $t->string('content', 15000)->nullable();       
-            
+            $t->string('lang_code', 10);
+            $t->string('name', 50);
+            $t->string('name_native', 50);
+            $t->tinyInteger('enable' )->default(0);
+            $t->boolean('default')->default(false);
+            $t->timestamps();
+            $t->softDeletes();
+
+
+            $t->index('lang_code');
+            $t->unique(array('lang_code', 'name'));
+            //$table->engine = 'InnoDB';
+
+		
+
         });
     }
     

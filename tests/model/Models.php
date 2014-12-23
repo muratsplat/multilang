@@ -93,7 +93,16 @@ class ContentLang extends Model implements LangInterface {
  */
 class Language extends Model implements AppLanguageInterface {
     
+    protected $table = "languages";
     
+    protected $fillable = array(
+        'name', 
+        'name_native', 
+        'lang_code', 
+        'enable',
+        'default',);
+    
+        
 }
 
 

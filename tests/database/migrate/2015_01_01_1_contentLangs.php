@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 
 /**
- *  Simple Models For tests
+ *  Migrations For tests
  * 
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
@@ -18,11 +18,14 @@ class ContentLangs extends Migration {
         Schema::create('ContentLangs', function($t) {
             
             $t->increments('id');
-            $t->integer('page_id')->unsigned();
+            $t->integer('content_id')->unsigned();
             $t->integer('lang_id')->unsigned();
             $t->string('title', 100)->nullable();			
-            $t->string('content', 15000)->nullable();       
+            $t->string('content', 15000)->nullable();  
             
+            $t->foreign('content_id')->references('id')->on('contens');
+            $t->foreign('lang_id')->references('id')->on('languages');
+              
         });
     }
     

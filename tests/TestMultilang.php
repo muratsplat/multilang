@@ -48,8 +48,16 @@ class TestMultilang extends TestCase {
              // Call migrations specific to our tests, e.g. to seed the db
             $artisan->call('migrate', array(
                     '--database' => 'testbench',
-                    '--path' => '../tests/migrate',
+                    '--path' => '../tests/database/migrate',
             ));
+            
+            //By default, the db:seed command runs the DatabaseSeeder class, 
+            //which may be used to call other seed classes. However, 
+            //you may use the --class option to specify a specific 
+            //seeder class to run individually:
+            //php artisan db:seed --class=UserTableSeeder
+            
+            $artisan->call('db:seed', array('--class' => 'DatabaseSeeder'));
             
          
         }
@@ -118,6 +126,11 @@ class TestMultilang extends TestCase {
             $this->assertEquals(1, $content->enable);
             
             $this->assertEquals(1, $content->visible);            
+            
+        }
+        
+        public function testCheckContentLangMigrate() {
+            
             
         }
     
