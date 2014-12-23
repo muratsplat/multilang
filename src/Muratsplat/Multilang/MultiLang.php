@@ -102,6 +102,8 @@ class MultiLang implements MessageProviderInterface {
                 
                 return false;   
             }
+            
+            return true;
          
         }
         

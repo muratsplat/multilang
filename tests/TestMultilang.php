@@ -45,6 +45,8 @@ class TestMultilang extends Base {
             
             $validator = m::mock('Muratsplat\Multilang\Validator');
             
+            $validator->shouldReceive('make')->andReturn(true);
+            
             $this->multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element()),
                     new Content(), 
@@ -56,7 +58,8 @@ class TestMultilang extends Base {
 
         public function testCheckMainImplement() {
 
-            $this->multiLang->create(array(), new Content());
+            $this->assertTrue($this->multiLang->create(array(), new Content()));
+            
             
         }    
     
