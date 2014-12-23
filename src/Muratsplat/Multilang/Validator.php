@@ -25,7 +25,7 @@ use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class Validator  implements MessageProviderInterface {
+class Validator implements MessageProviderInterface {
     
    /**
     * Main Model  
@@ -221,8 +221,7 @@ class Validator  implements MessageProviderInterface {
          * 
          * @return boolean false, if it is failed.
          */
-        private function validate() {
-            
+        private function validate() {            
             
             $v = $this->validator->make($this->picker->getSource(), $this->rules);
             

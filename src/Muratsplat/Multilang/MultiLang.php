@@ -133,7 +133,7 @@ class MultiLang implements MessageProviderInterface {
 	 */
 	public function getMessageBag() {
                         
-            return $this->message->getMessageBag();
+            return $this->message;
                         
         }
 }
