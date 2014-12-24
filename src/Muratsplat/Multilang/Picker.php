@@ -554,19 +554,27 @@ class Picker {
         }
         
         /**
-         * to convert multilang items to array without array's index.
+         * to convert multilang items to array with adding '__lang_id__' key
+         * and the item's language id as value.
+         * 
+         * Example:  
+         *      [
+         *          ['__lang_id__' => 1, 'title' => 'Foo', 'content' => 'Baar'],
+         *          ['__lang_id__' => 2, 'title' => 'FooBus', 'content' => 'Bobuus'],
+         *          ...
+         *      ]
          * 
          * @return array
          */
         public function getMultilangToArray() {
-           
-            $tmpArray= array();
-
-            foreach ($this->getMultilang()->toArray() as $v) {
-
-               $tmpArray = array_merge($tmpArray, $v);
+            
+            $tmpArray=array();
+            
+            foreach ($this->getMultilang() as $v) {                
+                
+                $tmpArray[] = array_merge($v->toArray()[$v->getId()], ['__lang_id__' => $v->getId()]);                
             }
-
+            
             return $tmpArray;   
         }
         

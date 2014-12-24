@@ -145,8 +145,8 @@ class TestMultilang extends TestCase {
             
             $records = [
                 
-                ['_lang_id' => 1, 'title' => 'Foo', 'content' => 'Baar'],
-                ['_lang_id' => 2, 'title' => 'FooBus', 'content' => 'Bobuus'],
+                ['__lang_id__' => 1, 'title' => 'Foo', 'content' => 'Baar'],
+                ['__lang_id__' => 2, 'title' => 'FooBus', 'content' => 'Bobuus'],
             ];
             
             $createdRecords = $content->ContentLang()->createMany($records);
