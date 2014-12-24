@@ -9,6 +9,8 @@ use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Interfaces\MainInterface;
 use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 use Muratsplat\Multilang\Validator;
+use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
+use Muratsplat\Multilang\Exceptions\RelationNotCorrect;
 //use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 //use Muratsplat\Multilang\Exceptions\PickerUnknownError;
 //use Muratsplat\Multilang\Exceptions\PickerError;
@@ -82,6 +84,13 @@ class MultiLang implements MessageProviderInterface {
      */
     private $createdMainModel;
     
+    /**
+     * An prefix to get model For Multi Language contents
+     * 
+     * @var string 
+     */
+    private $modelPrefix = "Lang";
+    
         /**
          * Constructer
          * 
@@ -104,7 +113,7 @@ class MultiLang implements MessageProviderInterface {
         
         
         public function create(array $post, Model $model, array $rules=array()) {  
-            
+                      
             if (!$this->checkdata($post, $model, $rules)) {
                 
                 return false;   
@@ -124,9 +133,9 @@ class MultiLang implements MessageProviderInterface {
         protected function createMainModel() {
             
             $post = $this->picker->getNonMultilangToArray();
-            
+                        
             $this->createdMainModel = $this->mainModel->create($post);
-            
+                           
             return $this->createdMainModel->save();
         }
         
@@ -135,9 +144,16 @@ class MultiLang implements MessageProviderInterface {
         
         protected function createLangModels() {
             
+            $nameLangModel = $this->getLangModelName();
             
+            $relatedModel = $this->mainModel->$nameLangModel()->getRelated();
             
-            
+            if (!$this->mainModel instanceof $relatedModel) {
+                
+                throw new RelationNotCorrect("It looks the relation is not correct between main model which is "
+                        . "[get_class($this->mainModel)] and [$nameLangModel] that is multi-language model");    
+                
+            }         
     
         }
         
@@ -214,7 +230,41 @@ class MultiLang implements MessageProviderInterface {
 	 */
 	public function getMessageBag() {
                         
-            return $this->message;
-                        
+            return $this->message;                        
         }
+        
+        /**
+         * To get the name of main model's multi language model
+         * 
+         * @return string
+         * @throws Exception
+         */
+        public function  getLangModelName() {
+
+             // To create a name of translation model
+            $className = get_class($this->mainModel) . $this->getModelPrefix();
+
+            // checking existed translation model 
+             if (!class_exists($className , $autoload = true) ) {
+
+                throw new MultiLangModelWasNotFound('Multilanguage post was detected! '
+                        . 'In case of this it needs a model for multi language content.');
+
+             }
+             
+             return $className;
+        }
+        
+        /**
+         * to get model prefix for Multilang contents
+         * 
+         * @return string
+         */
+        private function getModelPrefix(){
+            
+            $prefix = $this->config->get('modelPrefix');
+            
+            return is_null($prefix) || (strlen(trim($prefix)) === 0) ? $this->modelPrefix : $prefix; 
+        }
+        
 }

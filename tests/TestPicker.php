@@ -425,4 +425,16 @@ class TestPicker  extends Base {
             $this->assertTrue($this->obj->isPostMultiLang());            
             
         }
+        
+        public function testOnlyNonMultilangPost() {
+            
+            $post = ['doo' => 'bar', 'sede' => '1'];
+            
+            $resault = $this->obj->import($post, true);
+            
+            $this->assertTrue($resault);
+            
+            $this->assertEquals(2, count($this->obj->getCollection()->all()));   
+                      
+        }
 }

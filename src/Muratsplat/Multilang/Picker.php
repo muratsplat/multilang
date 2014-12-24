@@ -549,7 +549,7 @@ class Picker {
                $tmpArray = array_merge($tmpArray, $v);
 
             }
-
+           
             return $tmpArray;   
         }
         
@@ -587,7 +587,7 @@ class Picker {
          */
         public function isPostMultiLang() {
             
-            return 0 !== count($this->collection->all());            
+            return 0 !== count($this->getMultilang());            
             
         }
                 

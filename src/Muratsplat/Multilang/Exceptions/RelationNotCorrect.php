@@ -1,6 +1,6 @@
 <?php namespace Muratsplat\Multilang\Exceptions;
 
-use Exception as ex;
+use ErrorException as ex;
 
 /**
  * Exceptions for general use
@@ -10,5 +10,5 @@ use Exception as ex;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class MultiLangModelWasNotFound extends ex { }
+class RelationNotCorrect extends ex { }
 
