@@ -401,12 +401,22 @@ class TestPicker  extends Base {
             
             $this->obj->import($this->rawPost);
             
-            $oneMustBe = [ "enable"    => 1,"visible"   => 0,];
+            $shouldBe = [
+                    ['title'  => "Foo English",
+                    'content' => "Simple example of content in English",
+                    '__lang_id__' => 1],
+                    
+                    ['title'   => 'Foo Türkçe',
+                    'content' => 'Türkçe bir içerik langur lungur bir yoğurt',
+                    '__lang_id__' => 2],
+                        
+                    ["title"   => 'здравствуйте',
+                    "content" => 'Путинхороший человек. Он любит русские , я думаю, россияне любят его.',
+                    '__lang_id__' => 3],
+                ];
             
-            var_dump($this->obj->getMultilang()->toArray());
-                
-            var_dump($this->obj->getMultilangToArray());
             
+            $this->assertEquals($shouldBe, $this->obj->getMultilangToArray());           
         }
         
         public function testIsPostMultilang() {
