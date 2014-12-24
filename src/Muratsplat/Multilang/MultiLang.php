@@ -48,14 +48,7 @@ class MultiLang implements MessageProviderInterface {
      * @var Muratsplat\Multilang\Picker 
      */
     private $picker;
-    
-    /**
-     * an prefix to pick multi-language elements up
-     * 
-     * @var string 
-     */
-    private $prefix;
-    
+      
     /** 
      * Laravel Config Object
      *
@@ -193,8 +186,9 @@ class MultiLang implements MessageProviderInterface {
         }
         
         
-        public function update(array $post, Model $model, array $rules=array()) {            
-          
+        public function update(array $post, Model $model, array $rules=array()) {
+            
+            
         }
         
         /**
