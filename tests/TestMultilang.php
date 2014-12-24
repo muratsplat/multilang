@@ -14,6 +14,7 @@ use Muratsplat\Multilang\Tests\Model\Content;
 // for testing CRUD ORM jobs..
 use Orchestra\Testbench\TestCase;
 use \Mockery as m;
+use Illuminate\Validation\Validator as laravelValidator;
 
 
 /**
@@ -218,5 +219,18 @@ class TestMultilang extends TestCase {
             
             $this->assertEquals(2, count(Content::find(1)->ContentLangs));
            
-        } 
+        }
+        
+        public function testValidateMail() {
+            // buraya takılma, test için gerekli.
+            $trans = m::mock('Symfony\Component\Translation\TranslatorInterface');
+        
+            $v1 = new laravelValidator( $trans, ['x' =>"test4@ewr.com"],['x' => 'email']);
+
+            $this->assertTrue($v1->passes()); // passed.
+           
+            $v2 = new laravelValidator( $trans, ['x' =>"samed$^#4@ewr.com"],['x' => 'email']);
+
+            $this->assertTrue($v2->passes()); // passed!
+        }
 }

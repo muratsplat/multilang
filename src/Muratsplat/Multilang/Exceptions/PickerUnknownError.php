@@ -1,6 +1,6 @@
 <?php namespace Muratsplat\Multilang\Exceptions;
 
-use Exception as ex;
+use ErrorException as ex;
 
 
 /**
