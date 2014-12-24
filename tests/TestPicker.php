@@ -415,7 +415,6 @@ class TestPicker  extends Base {
                     '__lang_id__' => 3],
                 ];
             
-            
             $this->assertEquals($shouldBe, $this->obj->getMultilangToArray());           
         }
         

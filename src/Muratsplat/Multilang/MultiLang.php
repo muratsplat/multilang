@@ -112,7 +112,7 @@ class MultiLang implements MessageProviderInterface {
             
             if (!$this->picker->isPostMultiLang()) {
                 
-                //return $this->createMainModel();
+                return $this->createMainModel();
             }
             
             
