@@ -84,6 +84,13 @@ class MultiLang implements MessageProviderInterface {
      */
     private $modelPrefix = "Lang";
     
+    /**
+     * Model is will be updated.
+     *  
+     * @var Illuminate\Database\Eloquent\Model 
+     */
+    private $updatedMainModel;
+    
         /**
          * Constructer
          * 
@@ -101,7 +108,8 @@ class MultiLang implements MessageProviderInterface {
             
             $this->message = $message;
             
-            $this->validator= $validator;          
+            $this->validator= $validator;
+            
         }        
         
         /**
@@ -160,30 +168,44 @@ class MultiLang implements MessageProviderInterface {
         /**
          * Created new main model's multi language model
          * 
-         * @return \Illuminate\Database\Eloquent\Relations\HasMany
          * @throws \Muratsplat\Multilang\Exceptions\RelationNotCorrect
          */
-        protected function LangModel() {
+        private function checkRelation() {
             
             // we have to sure everything is ok!!
-            $nameLangModel = $this->getRelationMethodName() .'s';
-                 
-            $relatedModel = $this->mainModel->$nameLangModel()->getRelated();
-            
+            $nameLangModel = $this->getRelationName();
+                         
             $nameMain = get_class($this->mainModel);
             
             $nameLang = $this->getLangModelName();
             
-            if (!$relatedModel instanceof $nameLang) {
+            if (!$this->mainModel->$nameLangModel()->getRelated() instanceof $nameLang) {
                 
                 throw new RelationNotCorrect("It looks the relation is not correct between main model which is "
                         . "[$nameMain] and [$nameLang] that is multi-language model");    
                 
+            }          
+        }
+        
+        /**
+         * to connect multi-language model
+         * Simple switcher is on created or updated
+         * 
+         * @return \Illuminate\Database\Eloquent\Relations\HasMany
+         */
+        protected function langModel() {
+            
+            $this->checkRelation();
+            
+            $name = $this->getRelationName();
+            
+            if(!is_null($this->updatedMainModel)) {
+                
+                return $this->updatedMainModel->$name();
             }
             
-            return $this->createdMainModel->$nameLangModel();            
-            
-        }
+            return $this->createdMainModel->$name();         
+        } 
         
         
         public function update(array $post, Model $model, array $rules=array()) {
@@ -284,20 +306,24 @@ class MultiLang implements MessageProviderInterface {
             return $className;
         }
         
-        public function getRelationMethodName() {
+        /** 
+         * to get relation name to connect hasMany relalation
+         * in between main model and lang model
+         * 
+         * @return string 
+         */
+        public function getRelationName() {
             
-            $name = $this->getLangModelName();
-            
-            $isNameSpace = explode("\\", $name);
+            $isNameSpace = explode("\\", $this->getLangModelName());
             
             $num = count($isNameSpace);
             
             if($num > 1) {
                 
-                return $isNameSpace[$num-1];
+                return $isNameSpace[$num-1] . 's';
             }
 
-            return $name;
+            return $isNameSpace[0] . 's';
         }
         
         /**
