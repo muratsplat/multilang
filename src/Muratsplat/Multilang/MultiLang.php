@@ -205,9 +205,8 @@ class MultiLang implements MessageProviderInterface {
                 return $this->updatedMainModel->$name();
             }
             
-            return $this->createdMainModel->$name();         
-        } 
-        
+            return $this->createdMainModel->$name();     
+        }        
         
         public function update(array $post, Model $model, array $rules=array()) {
             
@@ -218,8 +217,7 @@ class MultiLang implements MessageProviderInterface {
                 return false;   
             }
             
-            return true;
-            
+            return true;            
             
         }
         
@@ -268,8 +266,7 @@ class MultiLang implements MessageProviderInterface {
                 return false;               
             }
             
-            return true;
-            
+            return true;            
         }
         
         /**
@@ -284,8 +281,7 @@ class MultiLang implements MessageProviderInterface {
             if(! $model instanceof MainInterface ) {
                 
               throw new MultilangRequiredImplement("Muratsplat\Multilang\MainInterface"
-                      . "must be implement by your main model!");
-              
+                      . "must be implement by your main model!");              
             }
         }
         
@@ -315,7 +311,6 @@ class MultiLang implements MessageProviderInterface {
 
                throw new MultiLangModelWasNotFound('Multilanguage post was detected! '
                        . 'In case of this it needs a model for multi language content.');
-
             }
              
             return $className;
