@@ -134,10 +134,10 @@ class TestMultilang extends TestCase {
             
             $content->save();
             
-            $this->assertInstanceOf('Muratsplat\Multilang\Tests\Model\ContentLang', $content->ContentLang()->getRelated());           
+            $this->assertInstanceOf('Muratsplat\Multilang\Tests\Model\ContentLang', $content->ContentLangs()->getRelated());           
         }
         
-        public function testTryCRUDContentLang() {
+        public function testTryCRUDContentLang() {        
             
             $content = new Content(['enable'=>1, 'visible' => 1]);
             
@@ -149,14 +149,17 @@ class TestMultilang extends TestCase {
                 ['__lang_id__' => 2, 'title' => 'FooBus', 'content' => 'Bobuus'],
             ];
             
-            $createdRecords = $content->ContentLang()->createMany($records);
+            $createdRecords = $content->ContentLangs()->createMany($records);
             
+            $this->assertTrue($content->save());
            $this->assertEquals(2, count($createdRecords));
         }
         
         public function testWithNonMultilangPost() {
             
             $mockedConfig = m::mock('Illuminate\Config\Repository','Illuminate\Config\LoaderInterface');
+            
+             $mockedConfig->shouldReceive('get')->andReturn('Lang');
             
             $messageBag = m::mock('Illuminate\Support\MessageBag');
             
@@ -199,13 +202,21 @@ class TestMultilang extends TestCase {
                     $messageBag,
                     $validator);
 
-            $post = ['enable' => 1, 'visible' => 1, 'content@1' => 'test'];
+            $post = [
+                    'enable' => 1, 
+                    'visible' => 1, 
+                    'content@1' => 'test',
+                    'title@1' => 'Title test',
+                    
+                    'content@2' => 'test',
+                    'title@2' => 'Title test',
+   
+                    ];
             $this->assertTrue($multiLang->create($post, new Content()));
             
             $this->assertEquals(1, Content::all()->count());
+            
+            $this->assertEquals(2, count(Content::find(1)->ContentLangs));
            
-        }
-    
-    
-    
+        } 
 }

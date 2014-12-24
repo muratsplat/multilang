@@ -109,9 +109,17 @@ class MultiLang implements MessageProviderInterface {
             $this->message = $message;
             
             $this->validator= $validator;          
-        }
+        }        
         
-        
+        /**
+         * to create main model and multi-languages models by using multilang post
+         * made by Picker Class
+         * 
+         * @param array $post
+         * @param Illuminate\Database\Eloquent\Model $model
+         * @param array $rules if it is empty rules will be gotten from models
+         * @return boolean
+         */
         public function create(array $post, Model $model, array $rules=array()) {  
                       
             if (!$this->checkdata($post, $model, $rules)) {
@@ -128,6 +136,11 @@ class MultiLang implements MessageProviderInterface {
          
         }
         
+        /**
+         * to create main model
+         * 
+         * @return boolean
+         */
         protected function createMainModel() {
             
             $post = $this->picker->getNonMultilangToArray();
@@ -135,26 +148,48 @@ class MultiLang implements MessageProviderInterface {
             $this->createdMainModel = $this->mainModel->create($post);
                            
             return $this->createdMainModel->save();
+        } 
+        
+        /**
+         * to create lang mode for multi-language content
+         * 
+         * @return boolean
+         */
+        protected function createLangModels() {
+             
+            $posts = $this->picker->getMultilangToArray();
+            
+            $this->LangModel()->createMany($posts);     
+    
+            return true;
         }
         
-        
-        
-        
-        protected function createLangModels() {
+        /**
+         * Created new main model's multi language model
+         * 
+         * @return \Illuminate\Database\Eloquent\Relations\HasMany
+         * @throws \Muratsplat\Multilang\Exceptions\RelationNotCorrect
+         */
+        protected function LangModel() {
             
-            $nameLangModel = $this->getRelationMethodName() .'s';     
-                
+            // we have to sure everything is ok!!
+            $nameLangModel = $this->getRelationMethodName() .'s';
+                 
             $relatedModel = $this->mainModel->$nameLangModel()->getRelated();
             
             $nameMain = get_class($this->mainModel);
             
-            if (!$this->mainModel instanceof $relatedModel) {
+            $nameLang = $this->getLangModelName();
+            
+            if (!$relatedModel instanceof $nameLang) {
                 
                 throw new RelationNotCorrect("It looks the relation is not correct between main model which is "
-                        . "[$nameMain] and [$nameLangModel] that is multi-language model");    
+                        . "[$nameMain] and [$nameLang] that is multi-language model");    
                 
-            }         
-    
+            }
+            
+            return $this->createdMainModel->$nameLangModel();            
+            
         }
         
         

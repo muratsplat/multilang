@@ -15,7 +15,7 @@ class ContentLangs extends Migration {
     
     public function up() {
         
-        Schema::create('ContentLangs', function($t) {
+        Schema::create('contentlangs', function($t) {
             
             $t->increments('id');
             $t->integer('content_id')->unsigned();
@@ -32,7 +32,7 @@ class ContentLangs extends Migration {
     
     public function down() {
         
-        Schema::drop('contentLangs');
+        Schema::drop('contentlangs');
     }
 
     

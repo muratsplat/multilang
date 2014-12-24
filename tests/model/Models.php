@@ -46,7 +46,7 @@ class Content extends Model implements MainInterface {
      */
     public function ContentLangs() {
         
-        return $this->hasMany('Muratsplat\Multilang\Tests\Model\ContentLang');
+        return $this->hasMany('Muratsplat\Multilang\Tests\Model\ContentLang', 'content_id', 'id');
     }
 }
 
@@ -55,7 +55,7 @@ class Content extends Model implements MainInterface {
  */
 class ContentLang extends Model implements LangInterface {
     
-    protected $table = "contentLangs";
+    protected $table = "contentlangs";
     
     protected $fillable = array('content_id', 'lang_id', 'title', 'content');
     
@@ -84,7 +84,7 @@ class ContentLang extends Model implements LangInterface {
      */
     public function Content() {
         
-        return $this->belongsTo('Muratsplat\Multilang\Tests\Model\Content');
+        return $this->belongsTo('Muratsplat\Multilang\Tests\Model\Content', 'id','content_id');
     }
 }
 
