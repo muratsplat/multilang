@@ -44,7 +44,7 @@ class Content extends Model implements MainInterface {
      * 
      * @return Muratsplat\Multilang\Tests\Model\ContentLang
      */
-    public function ContentLang() {
+    public function ContentLangs() {
         
         return $this->hasMany('Muratsplat\Multilang\Tests\Model\ContentLang');
     }

@@ -123,10 +123,8 @@ class MultiLang implements MessageProviderInterface {
                 
                 return $this->createMainModel();
             }
-            
-            
-            
-            return true;
+                       
+            return $this->createMainModel() && $this->createLangModels();
          
         }
         
@@ -144,14 +142,16 @@ class MultiLang implements MessageProviderInterface {
         
         protected function createLangModels() {
             
-            $nameLangModel = $this->getLangModelName();
-            
+            $nameLangModel = $this->getRelationMethodName() .'s';     
+                
             $relatedModel = $this->mainModel->$nameLangModel()->getRelated();
+            
+            $nameMain = get_class($this->mainModel);
             
             if (!$this->mainModel instanceof $relatedModel) {
                 
                 throw new RelationNotCorrect("It looks the relation is not correct between main model which is "
-                        . "[get_class($this->mainModel)] and [$nameLangModel] that is multi-language model");    
+                        . "[$nameMain] and [$nameLangModel] that is multi-language model");    
                 
             }         
     
@@ -239,20 +239,36 @@ class MultiLang implements MessageProviderInterface {
          * @return string
          * @throws Exception
          */
-        public function  getLangModelName() {
+        public function getLangModelName() {
 
-             // To create a name of translation model
+            // To create a name of translation model
             $className = get_class($this->mainModel) . $this->getModelPrefix();
 
             // checking existed translation model 
-             if (!class_exists($className , $autoload = true) ) {
+            if (!class_exists($className , $autoload = true) ) {
 
-                throw new MultiLangModelWasNotFound('Multilanguage post was detected! '
-                        . 'In case of this it needs a model for multi language content.');
+               throw new MultiLangModelWasNotFound('Multilanguage post was detected! '
+                       . 'In case of this it needs a model for multi language content.');
 
-             }
+            }
              
-             return $className;
+            return $className;
+        }
+        
+        public function getRelationMethodName() {
+            
+            $name = $this->getLangModelName();
+            
+            $isNameSpace = explode("\\", $name);
+            
+            $num = count($isNameSpace);
+            
+            if($num > 1) {
+                
+                return $isNameSpace[$num-1];
+            }
+
+            return $name;
         }
         
         /**

@@ -179,6 +179,32 @@ class TestMultilang extends TestCase {
             $this->assertEquals($post['enable'], Content::find(1)->enable);
             $this->assertEquals($post['visible'], Content::find(1)->visible);
         }
+        
+        public function testWithMultilangPost() {
+            
+            $mockedConfig = m::mock('Illuminate\Config\Repository','Illuminate\Config\LoaderInterface');
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $messageBag = m::mock('Illuminate\Support\MessageBag');
+            
+            $validator = m::mock('Muratsplat\Multilang\Validator');
+            
+            $validator->shouldReceive('make')->andReturn(true);
+            
+            $multiLang =  new MultiLang(
+                    new Picker(new Collection(),new Element()),
+                    new Content(), 
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator);
+
+            $post = ['enable' => 1, 'visible' => 1, 'content@1' => 'test'];
+            $this->assertTrue($multiLang->create($post, new Content()));
+            
+            $this->assertEquals(1, Content::all()->count());
+           
+        }
     
     
     
