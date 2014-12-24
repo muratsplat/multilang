@@ -11,6 +11,7 @@ use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
 use Muratsplat\Multilang\Exceptions\RelationNotCorrect;
+use Muratsplat\Multilang\Exceptions\MultilangPostEmpty;
 //use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 //use Muratsplat\Multilang\Exceptions\PickerUnknownError;
 //use Muratsplat\Multilang\Exceptions\PickerError;
@@ -210,6 +211,15 @@ class MultiLang implements MessageProviderInterface {
         
         public function update(array $post, Model $model, array $rules=array()) {
             
+            if (!$this->checkdata($post, $model, $rules) || !$model->exists) {
+                
+                $this->message->add('logicError', 'Model is not existed, therefore it can not updated!');
+                
+                return false;   
+            }
+            
+            return true;
+            
             
         }
         
@@ -223,28 +233,33 @@ class MultiLang implements MessageProviderInterface {
          * @return boolean true, it is on success
          */
         protected function checkdata(array $post, Model $model, array $rules) {
-            
+                        
             $this->checkMainImplement($model);
+            // if post is empty, something must be wrong!!
+            if(empty($post)) { 
+                
+                throw new MultilangPostEmpty('Post Data is empty, '
+                        . 'MultiLang is need to acceptable Post Data!');
+            }
             
             $this->picker->import($post);
             
-            if(!$this->validateAll($this->picker, $model, $rules)) {
+            if(!$this->validateAll($model, $rules)) {
                                             
                 return false;                
             }
             
-            return true;           
+            return true;
         }
         
         /**
          * to validate post data with multi language content
          * 
-         * @param Muratsplat\Multilang\Picker $picker
          * @param Muratsplat\Multilang\Interfaces\MainInterface $model
          * @param array $rules
          * @return boolean  true, if it is on success
          */
-        private function validateAll(Picker $picker, Model $model, array $rules) {
+        private function validateAll(Model $model, array $rules) {
             
             if(!$this->validator->make($this->picker, $model, $rules)) {
                 

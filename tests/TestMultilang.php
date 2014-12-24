@@ -89,20 +89,45 @@ class TestMultilang extends TestCase {
         *
         * @return array
         */
-        protected function getPackageProviders()
-                {
+        protected function getPackageProviders() {
+            
                // return array('Muratsplat\Multilang\SluggableServiceProvider');
             
             return array();
         }
+        
+        /**
+         * 
+         * @return \Mockery\MockInterface
+         */
+        protected function getMockedConfig() {
+            
+            return m::mock('Illuminate\Config\Repository','Illuminate\Config\LoaderInterface');            
+        }
+        
+        /**
+         * 
+         * @return \Mockery\MockInterface
+         */
+        protected function getMockedMessageBag() {
+            
+            return m::mock('Illuminate\Support\MessageBag');
+        }
+        
+        /**
+         * 
+         * @return \Mockery\MockInterface
+         */
+        protected function getMockedValid() {
+            
+            return m::mock('Muratsplat\Multilang\Validator');
+        }
 
         public function testCheckMainImplement() {
             
-            $mockedConfig = m::mock('Illuminate\Config\Repository','Illuminate\Config\LoaderInterface');
-            
-            $messageBag = m::mock('Illuminate\Support\MessageBag');
-            
-            $validator = m::mock('Muratsplat\Multilang\Validator');
+            $mockedConfig = $this->getMockedConfig();            
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
             
             $validator->shouldReceive('make')->andReturn(true);
             
@@ -113,7 +138,7 @@ class TestMultilang extends TestCase {
                     $messageBag,
                     $validator);
 
-            $this->assertTrue($multiLang->create(array(), new Content()));
+            $this->assertTrue($multiLang->create(['visible'=>1], new Content()));
     
         }
         
@@ -158,14 +183,12 @@ class TestMultilang extends TestCase {
         
         public function testWithNonMultilangPost() {
             
-            $mockedConfig = m::mock('Illuminate\Config\Repository','Illuminate\Config\LoaderInterface');
+            $mockedConfig = $this->getMockedConfig();            
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
             
-             $mockedConfig->shouldReceive('get')->andReturn('Lang');
-            
-            $messageBag = m::mock('Illuminate\Support\MessageBag');
-            
-            $validator = m::mock('Muratsplat\Multilang\Validator');
-            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+              
             $validator->shouldReceive('make')->andReturn(true);
             
             $multiLang =  new MultiLang(
@@ -186,15 +209,13 @@ class TestMultilang extends TestCase {
         
         public function testWithMultilangPost() {
             
-            $mockedConfig = m::mock('Illuminate\Config\Repository','Illuminate\Config\LoaderInterface');
+            $mockedConfig = $this->getMockedConfig();            
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
             
             $mockedConfig->shouldReceive('get')->andReturn('Lang');
             
-            $messageBag = m::mock('Illuminate\Support\MessageBag');
-            
-            $validator = m::mock('Muratsplat\Multilang\Validator');
-            
-            $validator->shouldReceive('make')->andReturn(true);
+            $validator->shouldReceive('make')->andReturn(true);            
             
             $multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element()),
@@ -213,24 +234,83 @@ class TestMultilang extends TestCase {
                     'title@2' => 'Title test',
    
                     ];
-            $this->assertTrue($multiLang->create($post, new Content()));
+            $this->assertTrue($multiLang->create($post, new Content()));            
             
-            $this->assertEquals(1, Content::all()->count());
+            $this->assertEquals(1, Content::all()->count());            
             
-            $this->assertEquals(2, count(Content::find(1)->ContentLangs));
-           
+            $this->assertEquals(2, count(Content::find(1)->ContentLangs));           
         }
         
-        public function testValidateMail() {
-            // buraya takılma, test için gerekli.
-            $trans = m::mock('Symfony\Component\Translation\TranslatorInterface');
+        public function testCreateEmptyPostData() {
+            
+            $mockedConfig = $this->getMockedConfig();            
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);            
+            
+            $multiLang =  new MultiLang(
+                    new Picker(new Collection(),new Element()),
+                    new Content(), 
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator);
+
+            $post = [];
+            try {
+                
+                $multiLang->create($post, new Content());
+                
+                $this->assertTrue(false);
+                
+            } catch (\Muratsplat\Multilang\Exceptions\MultilangPostEmpty $ex) {
+                
+                return $this->assertTrue(true);
+
+            }
+              
+                
+            
+        }
         
-            $v1 = new laravelValidator( $trans, ['x' =>"test4@ewr.com"],['x' => 'email']);
-
-            $this->assertTrue($v1->passes()); // passed.
-           
-            $v2 = new laravelValidator( $trans, ['x' =>"samed$^#4@ewr.com"],['x' => 'email']);
-
-            $this->assertTrue($v2->passes()); // passed!
+        public function testSimpleUpdate() {
+            
+            $mockedConfig = $this->getMockedConfig();            
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);
+            
+             $multiLang =  new MultiLang(
+                    new Picker(new Collection(),new Element()),
+                    new Content(), 
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator);
+             
+             
+             $post = [
+                    'enable' => 1, 
+                    'visible' => 1, 
+                    'content@1' => 'test',
+                    'title@1' => 'Title test',
+                    
+                    'content@2' => 'test',
+                    'title@2' => 'Title test',
+   
+                    ];
+             
+            $created = new Content();
+            
+            $created->visible = 1;
+            
+            $created->save();
+             
+            $this->assertTrue($multiLang->update($post, $created));         
+            
         }
 }
