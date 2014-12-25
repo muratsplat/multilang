@@ -216,10 +216,29 @@ class MultiLang implements MessageProviderInterface {
                 
                 return false;   
             }
+            // it will make the model to update later
+            $this->updatedMainModel = $model;
             
-            return true;            
+            if(!$this->picker->isPostMultiLang()) {
+                
+                return $this->updateMainModel();
+            }
             
+            return $this->updateMainModel() && true;            
         }
+        
+        /**
+         * to update main model
+         * 
+         * @return bool
+         */
+        protected function updateMainModel() {
+                                   
+            $result = $this->updatedMainModel->update($this->picker->getNonMultilangToArray());
+            
+            return is_int($result) && $result >= 1 ? true : $result;
+        } 
+        
         
         /**
          * to check required implement and import post data. In addition,
@@ -228,7 +247,7 @@ class MultiLang implements MessageProviderInterface {
          * @param array $post Post Data. It usualy is be array
          * @param Muratsplat\Multilang\Interfaces\MainInterface $model
          * @param array $rules not required. Laravel validation rules in a array
-         * @return boolean true, it is on success
+         * @return bool true, it is on success
          */
         protected function checkdata(array $post, Model $model, array $rules) {
                         
@@ -255,7 +274,7 @@ class MultiLang implements MessageProviderInterface {
          * 
          * @param Muratsplat\Multilang\Interfaces\MainInterface $model
          * @param array $rules
-         * @return boolean  true, if it is on success
+         * @return bool  true, if it is on success
          */
         private function validateAll(Model $model, array $rules) {
             
@@ -318,12 +337,12 @@ class MultiLang implements MessageProviderInterface {
         
         /** 
          * to get relation name to connect hasMany relalation
-         * in between main model and lang model
+         * between main model and lang model
          * 
          * @return string 
          */
         public function getRelationName() {
-            
+            // for namespace
             $isNameSpace = explode("\\", $this->getLangModelName());
             
             $num = count($isNameSpace);

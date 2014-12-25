@@ -33,6 +33,35 @@ class TestMultilang extends TestCase {
      */
     private $multiLang;
     
+    /**
+     * an example data for tests
+     *
+     * @var array 
+     */
+    private $nonMultilangPost = array(
+        
+        'enable' => 1, 
+        'visible' => 1, 
+          
+    );
+    
+    /**
+     * an example data for tests
+     * 
+     * @var array 
+     */
+    private $multilangPost = array(
+        
+        'enable' => 1, 
+        'visible' => 1, 
+        'content@1' => 'test',
+        'title@1' => 'Title test',
+
+        'content@2' => 'test',
+        'title@2' => 'Title test',
+   
+    );
+    
         public function tearDown() {
         
             parent::tearDown();        
@@ -144,7 +173,7 @@ class TestMultilang extends TestCase {
         
         public function testCheckContentsMigration() {
             
-            $content = new Content(['enable'=>1, 'visible' => 1]);
+            $content = new Content($this->nonMultilangPost);
             
             $this->assertTrue($content->save());
             
@@ -156,7 +185,7 @@ class TestMultilang extends TestCase {
         
         public function testCheckContentLangRelation() {
             
-            $content = new Content(['enable'=>1, 'visible' => 1]);
+            $content = new Content($this->nonMultilangPost);
             
             $content->save();
             
@@ -165,7 +194,7 @@ class TestMultilang extends TestCase {
         
         public function testTryCRUDContentLang() {        
             
-            $content = new Content(['enable'=>1, 'visible' => 1]);
+            $content = new Content($this->nonMultilangPost);
             
             $content->save();
             
@@ -198,13 +227,12 @@ class TestMultilang extends TestCase {
                     $messageBag,
                     $validator);
 
-            $post = ['enable' => 1, 'visible' => 1 ];
-            $this->assertTrue($multiLang->create($post, new Content()));
+            $this->assertTrue($multiLang->create($this->nonMultilangPost, new Content()));
             
             $this->assertEquals(1, Content::all()->count());
             
-            $this->assertEquals($post['enable'], Content::find(1)->enable);
-            $this->assertEquals($post['visible'], Content::find(1)->visible);
+            $this->assertEquals($this->nonMultilangPost['enable'], Content::find(1)->enable);
+            $this->assertEquals($this->nonMultilangPost['visible'], Content::find(1)->visible);
         }
         
         public function testWithMultilangPost() {
@@ -224,17 +252,7 @@ class TestMultilang extends TestCase {
                     $messageBag,
                     $validator);
 
-            $post = [
-                    'enable' => 1, 
-                    'visible' => 1, 
-                    'content@1' => 'test',
-                    'title@1' => 'Title test',
-                    
-                    'content@2' => 'test',
-                    'title@2' => 'Title test',
-   
-                    ];
-            $this->assertTrue($multiLang->create($post, new Content()));            
+            $this->assertTrue($multiLang->create($this->multilangPost, new Content()));            
             
             $this->assertEquals(1, Content::all()->count());            
             
@@ -269,13 +287,10 @@ class TestMultilang extends TestCase {
                 
                 return $this->assertTrue(true);
 
-            }
-              
-                
-            
+            }            
         }
         
-        public function testSimpleUpdate() {
+        public function testSimpleUpdateWithNonMultilang() {
             
             $mockedConfig = $this->getMockedConfig();            
             $messageBag = $this->getMockedMessageBag();            
@@ -292,25 +307,53 @@ class TestMultilang extends TestCase {
                     $messageBag,
                     $validator);
              
-             
-             $post = [
-                    'enable' => 1, 
-                    'visible' => 1, 
-                    'content@1' => 'test',
-                    'title@1' => 'Title test',
-                    
-                    'content@2' => 'test',
-                    'title@2' => 'Title test',
-   
-                    ];
-             
             $created = new Content();
             
-            $created->visible = 1;
+            $created->visible = 0;
+            
+            $created->enable = 0;
             
             $created->save();
              
-            $this->assertTrue($multiLang->update($post, $created));         
+            $this->assertTrue($multiLang->update($this->nonMultilangPost, $created));
+            
+            $this->assertEquals(1, Content::find(1)->visible);
+                        
+            $this->assertEquals(1, Content::find(1)->enable);
+            
+        }
+        
+        public function testSimpleUpdateWithMultilang() {
+            
+            $mockedConfig = $this->getMockedConfig();            
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);
+            
+             $multiLang =  new MultiLang(
+                    new Picker(new Collection(),new Element()),
+                    new Content(), 
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator);
+
+             
+            $created = new Content();
+            
+            $created->visible = 0;
+            
+            $created->enable = 0;
+            
+            $created->save();
+             
+            $this->assertTrue($multiLang->update($this->multilangPost, $created));
+            
+            $this->assertEquals(1, Content::find(1)->visible);
+                        
+            $this->assertEquals(1, Content::find(1)->enable);
             
         }
 }
