@@ -116,8 +116,7 @@ class MultiLang implements MessageProviderInterface {
             
             $this->message = $message;
             
-            $this->validator= $validator;
-            
+            $this->validator= $validator;            
         }        
         
         /**
@@ -141,8 +140,7 @@ class MultiLang implements MessageProviderInterface {
                 return $this->createMainModel();
             }
                        
-            return $this->createMainModel() && $this->createLangModels();
-         
+            return $this->createMainModel() && $this->createLangModels();         
         }
         
         /**
@@ -190,8 +188,7 @@ class MultiLang implements MessageProviderInterface {
             if (!$this->mainModel->$nameLangModel()->getRelated() instanceof $nameLang) {
                 
                 throw new RelationNotCorrect("It looks the relation is not correct between main model which is "
-                        . "[$nameMain] and [$nameLang] that is multi-language model");    
-                
+                        . "[$nameMain] and [$nameLang] that is multi-language model");                
             }          
         }
         
@@ -215,6 +212,13 @@ class MultiLang implements MessageProviderInterface {
             return $this->createdMainModel->$name();     
         }        
         
+        /**
+         * 
+         * @param array $post post data
+         * @param Illuminate\Database\Eloquent\Model $model
+         * @param array $rules optional, you may want to add new rules
+         * @return boolean
+         */
         public function update(array $post, Model $model, array $rules=array()) {
             
             if (!$this->checkdata($post, $model, $rules) || !$model->exists) {

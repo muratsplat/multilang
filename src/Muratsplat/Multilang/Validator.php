@@ -223,7 +223,7 @@ class Validator implements MessageProviderInterface {
          */
         private function validate() {            
             
-            $v = $this->validator->make($this->picker->getSource(), $this->rules);
+            $v = $this->validator->make($this->picker->getSource(), $this->mergedrules);
             
             if($v->fails()) {
                 // to set errors messages
