@@ -375,7 +375,7 @@ class MultiLang implements MessageProviderInterface {
                 
                 $this->message = $this->validator->getMessageBag();
                 
-                return false;               
+                return false;            
             }
             
             return true;            

@@ -210,9 +210,7 @@ class Validator implements MessageProviderInterface {
 
                 throw new MultiLangModelWasNotFound('Multi language post was detected!'
                        . ' In case of this it needs a model for multi languages content.');
-
-            }
-            
+            }            
             return new $className;           
         }
         
