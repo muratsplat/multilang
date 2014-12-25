@@ -367,11 +367,60 @@ class TestMultilang extends TestCase {
             unset($this->multilangPost['title@2']);
             $this->assertTrue($multiLang->update($this->multilangPost, $created));
             
+            $this->assertEquals(1, count(Content::find(1)->ContentLangs));     
+        }
+        
+        public function testUpdateWithNonMultilangAndMultilang() {
+            
+            $mockedConfig = $this->getMockedConfig();            
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);
+            
+             $multiLang =  new MultiLang(
+                    new Picker(new Collection(),new Element()),
+                    new Content(), 
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator);             
+            $created = new Content();                    
+            $created->save();             
+            $this->assertTrue($multiLang->update($this->nonMultilangPost, $created));                     
+            
+            // let!s update again.
+            $this->assertTrue($multiLang->update($this->multilangPost, $created));            
+            $this->assertEquals(2, count(Content::find(1)->ContentLangs));
+           
+        }
+        
+        public function testUpdateWithAndMultilang1() {
+            
+            $mockedConfig = $this->getMockedConfig();            
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);
+            
+             $multiLang =  new MultiLang(
+                    new Picker(new Collection(),new Element()),
+                    new Content(), 
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator);
+             
+            $created = new Content();                     
+            $created->save();            
+            $this->nonMultilangPost['content@1'] = 'test Content';             
+            $this->assertTrue($multiLang->update($this->nonMultilangPost, $created));            
             $this->assertEquals(1, count(Content::find(1)->ContentLangs));
             
-           
-           
-
-            
+            // let!s update again.
+            $this->assertTrue($multiLang->update($this->multilangPost, $created));            
+            $this->assertEquals(2, count(Content::find(1)->ContentLangs));           
         }
 }

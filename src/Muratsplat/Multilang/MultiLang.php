@@ -338,7 +338,7 @@ class MultiLang implements MessageProviderInterface {
          * validate post data.
          * 
          * @param array $post Post Data. It usualy is be array
-         * @param Muratsplat\Multilang\Interfaces\MainInterface $model
+         * @param Muratsplat\Multilang\Interfaces\MainInterface $model main model
          * @param array $rules not required. Laravel validation rules in a array
          * @return bool true, it is on success
          */
