@@ -352,8 +352,26 @@ class TestMultilang extends TestCase {
             $this->assertTrue($multiLang->update($this->multilangPost, $created));
             
             $this->assertEquals(1, Content::find(1)->visible);
-                        
+            
             $this->assertEquals(1, Content::find(1)->enable);
+            
+            $this->assertEquals(2, count(Content::find(1)->ContentLangs));
+            
+            // let!s update again.
+            $this->assertTrue($multiLang->update($this->multilangPost, $created));
+            
+            $this->assertEquals(2, count(Content::find(1)->ContentLangs));
+            
+           // let's update diffrent post            
+            unset($this->multilangPost['content@2']);           
+            unset($this->multilangPost['title@2']);
+            $this->assertTrue($multiLang->update($this->multilangPost, $created));
+            
+            $this->assertEquals(1, count(Content::find(1)->ContentLangs));
+            
+           
+           
+
             
         }
 }

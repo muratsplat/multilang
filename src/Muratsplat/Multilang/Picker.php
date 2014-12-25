@@ -337,7 +337,7 @@ class Picker {
          * it only return multilang element 
          * 
          * @param int $lang_id
-         * @return \Muratsplat\Multilang\Element;
+         * @return null\Muratsplat\Multilang\Element;
          */
         public function getById($lang_id) {
             

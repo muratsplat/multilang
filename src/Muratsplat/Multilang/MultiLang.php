@@ -92,6 +92,13 @@ class MultiLang implements MessageProviderInterface {
      */
     private $updatedMainModel;
     
+    /**
+     * Related lang models by main models
+     * 
+     * @var array 
+     */
+    private $allLang;
+    
         /**
          * Constructer
          * 
@@ -153,7 +160,7 @@ class MultiLang implements MessageProviderInterface {
         } 
         
         /**
-         * to create lang mode for multi-language content
+         * to create lang model for multi-language content
          * 
          * @return boolean
          */
@@ -161,7 +168,7 @@ class MultiLang implements MessageProviderInterface {
              
             $posts = $this->picker->getMultilangToArray();
             
-            $this->LangModel()->createMany($posts);     
+            $this->LangModels()->createMany($posts);     
     
             return true;
         }
@@ -194,14 +201,14 @@ class MultiLang implements MessageProviderInterface {
          * 
          * @return \Illuminate\Database\Eloquent\Relations\HasMany
          */
-        protected function langModel() {
+        protected function langModels() {
             
             $this->checkRelation();
             
             $name = $this->getRelationName();
             
-            if(!is_null($this->updatedMainModel)) {
-                
+            if(!is_null($this->updatedMainModel)) {                
+                                
                 return $this->updatedMainModel->$name();
             }
             
@@ -224,7 +231,7 @@ class MultiLang implements MessageProviderInterface {
                 return $this->updateMainModel();
             }
             
-            return $this->updateMainModel() && true;            
+            return $this->updateMainModel() && $this->updateLangModels();            
         }
         
         /**
@@ -237,8 +244,90 @@ class MultiLang implements MessageProviderInterface {
             $result = $this->updatedMainModel->update($this->picker->getNonMultilangToArray());
             
             return is_int($result) && $result >= 1 ? true : $result;
-        } 
+        }
         
+        /**
+         * to update lang model for multi-language content
+         * 
+         * @return boolean
+         */
+        protected function updateLangModels() {           
+
+            foreach ($this->picker->getMultilangToArray() as $v) {
+                
+                $existed = $this->existedInLangs($v['__lang_id__']);
+                
+                if(!is_null($existed)) {
+                    
+                    $existed->update($v);
+                  
+                    continue;
+                }
+                
+                $this->langModels()->create($v);            
+            }
+            
+            // deleteing all model is not existed in the post data!
+            $this->cleanModelsNotInPost();
+            
+            return $this->elementsEqualsToLangModel();          
+        }
+        
+        /**
+         * to get lang model if it is existed by looking id
+         * 
+         * @param int $id
+         * @return null|Illuminate\Database\Eloquent\Model null, if model is not existed
+         */
+        private function existedInLangs($id) {
+            
+            $callback = function($item) use ($id) {
+                
+                if((integer) $item->__lang_id__ === (integer) $id) {
+                    
+                    return true;                    
+                }               
+                return false;
+            };
+            
+            $existed = $this->langModels()->getResults()->filter($callback);
+       
+            return $existed->count() === 0 ? null : $existed->first();    
+        }
+        
+        /**
+         * to delete lang model is not in post
+         * 
+         * @return void 
+         */
+        private function cleanModelsNotInPost() {
+         
+            $callback = function($item) {
+                
+                if(is_null($this->picker->getById($item->id))) {
+                 
+                    $item->delete();               
+                }               
+            };
+            
+            $this->langModels()->getResults()->each($callback);           
+        }
+
+        /*
+         * To make bu sure what all multi language elements
+         * are existed in lang model collections
+         * 
+         * @return bool
+         */
+        private function elementsEqualsToLangModel() {
+            
+            $this->cleanModelsNotInPost();
+         
+            // the nummber of multi language elements in post must be equal to ones in
+            // the number of langauge model collections. So It can be sure everything
+            // is ok by the result
+            return $this->picker->getMultilang()->count() === $this->langModels()->getResults()->count();
+        }        
         
         /**
          * to check required implement and import post data. In addition,
