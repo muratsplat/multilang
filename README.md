@@ -1,4 +1,4 @@
-highLevelStat (in development !!!)
+MultiLang For Laravel (in development !!!)
 =============
 [![Build Status](https://travis-ci.org/muratsplat/multilang.svg?branch=master)](https://travis-ci.org/muratsplat/multilang)
 
