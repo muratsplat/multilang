@@ -423,4 +423,27 @@ class TestMultilang extends TestCase {
             $this->assertTrue($multiLang->update($this->multilangPost, $created));            
             $this->assertEquals(2, count(Content::find(1)->ContentLangs));           
         }
+        
+        public function testDeleteWithAndMultilang() {
+            
+            $mockedConfig = $this->getMockedConfig();            
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);
+            
+             $multiLang =  new MultiLang(
+                    new Picker(new Collection(),new Element()),
+                    new Content(), 
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator);
+            
+          
+            $this->assertTrue($multiLang->create($this->nonMultilangPost, new Content));            
+             
+            $this->assertEquals(0, count(Content::find(1)->ContentLangs));           
+        }
 }

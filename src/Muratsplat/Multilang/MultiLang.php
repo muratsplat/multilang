@@ -86,18 +86,18 @@ class MultiLang implements MessageProviderInterface {
     private $modelPrefix = "Lang";
     
     /**
-     * Model is will be updated.
+     * Model will be updated.
      *  
      * @var Illuminate\Database\Eloquent\Model 
      */
     private $updatedMainModel;
     
     /**
-     * Related lang models by main models
+     * Model will be deleted.
      * 
      * @var array 
      */
-    private $allLang;
+    private $deletedManinModel;
     
         /**
          * Constructer
@@ -121,7 +121,7 @@ class MultiLang implements MessageProviderInterface {
         
         /**
          * to create main model and multi-languages models by using multilang post
-         * made by Picker Class
+         * which is made by Picker Class
          * 
          * @param array $post
          * @param Illuminate\Database\Eloquent\Model $model
@@ -199,17 +199,20 @@ class MultiLang implements MessageProviderInterface {
          * @return \Illuminate\Database\Eloquent\Relations\HasMany
          */
         protected function langModels() {
-            
-            $this->checkRelation();
+            // checking relation between main model and lang models
+            // if it is not correct, it will throw an exception!
+            $this->checkRelation(); 
             
             $name = $this->getRelationName();
-            
-            if(!is_null($this->updatedMainModel)) {                
-                                
-                return $this->updatedMainModel->$name();
-            }
-            
-            return $this->createdMainModel->$name();     
+            // we can say simple hub to access lang models for this.
+            switch (true) {
+                
+                case !is_null($this->updatedMainModel) : return $this->updatedMainModel->$name();
+                    
+                case !is_null($this->createdMainModel) : return$this->createdMainModel->$name();
+                    
+                case !is_null($this->deletedManinModel) : return $this->deletedManinModel->$name();                
+            }        
         }        
         
         /**
@@ -349,7 +352,7 @@ class MultiLang implements MessageProviderInterface {
             if(empty($post)) { 
                 
                 throw new MultilangPostEmpty('Post Data is empty, '
-                        . 'MultiLang is need to acceptable Post Data!');
+                        . 'MultiLang needs to acceptable Post Data!');
             }
             
             $this->picker->import($post);
@@ -458,6 +461,34 @@ class MultiLang implements MessageProviderInterface {
             $prefix = $this->config->get('modelPrefix');
             
             return is_null($prefix) || (strlen(trim($prefix)) === 0) ? $this->modelPrefix : $prefix; 
+        }
+        
+        
+        public function delete(Model $model) {          
+             
+            if (!$model->exists) {
+                
+                $this->message->add('logicError', 'Model is not existed, therefore it can not deleted!');
+                
+                return false;   
+            }
+            
+            $this->checkMainImplement($model);
+            
+            $this->deletedManinModel = $model;
+            
+            return $this->deleteAllLangs();
+            
+        }
+        
+        private function deleteAllLangs() {
+           
+            $callback = function($item) {
+              
+                $item->delete();
+            };
+            
+            return $this->deletedManinModel->all()->each($callback)->count() === 0;
         }
         
 }
