@@ -74,9 +74,9 @@ class TestValidator extends Base {
             
             $mockedConfig = m::mock('Illuminate\Config\Repository');
             
-            $mockedConfig->shouldReceive('get')->with('prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
             
-            $mockedConfig->shouldReceive('get')->with('appLanguageModel')->andReturn('Lang');
+            $mockedConfig->shouldReceive('get')->with('multilang::appLanguageModel')->andReturn('Lang');
              
             $mockedConfig->shouldReceive('make')->andReturn(true); 
             

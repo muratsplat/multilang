@@ -99,19 +99,19 @@ class MultiLang implements MessageProviderInterface {
      */
     private $deletedManinModel;
     
+
         /**
-         * Constructer
+         * Consructer
          * 
-         * @param Picker $picker
-         * @param Model $model
-         * @param Config $config
+         * @param \Muratsplat\Multilang\Picker $picker
+         * @param \Illuminate\Config\Repository $config
+         * @param \Illuminate\Support\Contracts\MessageProviderInterface $message
+         * @param \Muratsplat\Multilang\Validator $validator
          */
-        public function __construct(Picker $picker, Model $model, Config $config, MessageBag $message, Validator $validator) {
+        public function __construct(Picker $picker, Config $config, MessageBag $message, Validator $validator) {
             
             $this->picker = $picker;
-            
-            $this->mainModel = $model;
-            
+                       
             $this->config = $config;
             
             $this->message = $message;
@@ -135,12 +135,14 @@ class MultiLang implements MessageProviderInterface {
                 return false;   
             }
             
+            $this->setMainModel($model);
+            
             if (!$this->picker->isPostMultiLang()) {
                 
-                return $this->createMainModel();
+                return $this->createMainModel($model);
             }
                        
-            return $this->createMainModel() && $this->createLangModels();         
+            return $this->createMainModel($model) && $this->createLangModels();         
         }
         
         /**
@@ -148,11 +150,11 @@ class MultiLang implements MessageProviderInterface {
          * 
          * @return boolean
          */
-        protected function createMainModel() {
-            
+        protected function createMainModel(Model $model) {
+                       
             $post = $this->picker->getNonMultilangToArray();
                         
-            $this->createdMainModel = $this->mainModel->create($post);
+            $this->createdMainModel = $model->create($post);
                            
             return $this->createdMainModel->save();
         } 
@@ -230,6 +232,8 @@ class MultiLang implements MessageProviderInterface {
                 
                 return false;   
             }
+            
+            $this->setMainModel($model);
             // it will make the model to update later
             $this->updatedMainModel = $model;
             
@@ -458,7 +462,7 @@ class MultiLang implements MessageProviderInterface {
          */
         private function getModelPrefix(){
             
-            $prefix = $this->config->get('modelPrefix');
+            $prefix = $this->config->get('multilang::modelPrefix');
             
             return is_null($prefix) || (strlen(trim($prefix)) === 0) ? $this->modelPrefix : $prefix; 
         }
@@ -504,6 +508,16 @@ class MultiLang implements MessageProviderInterface {
             $this->langModels()->getResults()->each($callback);
             
             return $this->langModels()->getResults()->count() === 0;   
+        }
+        
+        /**
+         * to set main model
+         * 
+         * @param Illuminate\Database\Eloquent\Model $model
+         */
+        public function setMainModel(Model $model) {
+            
+            $this->mainModel = $model;
         }
         
 }

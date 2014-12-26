@@ -12,6 +12,7 @@ use Muratsplat\Multilang\Exceptions\PickerError;
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3
+ * @todo imported!! adding config object to select prefix
  */
 class Picker {
  

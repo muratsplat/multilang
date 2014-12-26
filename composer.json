@@ -1,6 +1,7 @@
 {
     "name": "muratsplat/multilang",
     "description": "",
+    "licence" : "GPLv3"
     "authors": [
         {
             "name": "Murat Ödünç",

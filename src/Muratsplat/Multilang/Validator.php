@@ -102,7 +102,7 @@ class Validator implements MessageProviderInterface {
             
             $this->config = $config;
             
-            $this->prefix = $this->config->get('prefix');           
+            $this->prefix = $this->config->get('multilang::prefix');           
         }       
         
         /**
@@ -203,7 +203,7 @@ class Validator implements MessageProviderInterface {
          */
         private function getLangModel(Model $model) {
                         
-            $className = get_class($model) . $this->config->get('appLanguageModel');
+            $className = get_class($model) . $this->config->get('multilang::appLanguageModel');
 
             // checking existed translation model 
             if (!class_exists($className , $autoload = true) ) {

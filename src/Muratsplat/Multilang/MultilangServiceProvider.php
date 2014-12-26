@@ -1,8 +1,13 @@
 <?php namespace Muratsplat\Multilang;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Collection as collecter;
+use Illuminate\Support\Collection;
+
 use Muratsplat\Multilang\Picker;
+use Illuminate\Support\MessageBag;
+use Muratsplat\Multilang\Validator;
+use Muratsplat\Multilang\ValidatorWithNewRules as newRules;
+
 
 /* MultiLang Service Provider
  * 
@@ -18,7 +23,7 @@ class MultilangServiceProvider extends ServiceProvider {
 	 *
 	 * @var bool
 	 */
-	protected $defer = false;
+	protected $defer = true;
 
 	/**
 	 * Bootstrap the application events.
@@ -37,13 +42,32 @@ class MultilangServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
+            // adding new rules for our extention
+            $this->addNewRules();
 
-            $this->app->bind('pickerML', function() {
-           
-                return new Picker(new collecter());
+            $this->app->singleton('multilang', function($app) {               
+            
+                return new MultiLang(
+                        
+                        new Picker(new Collection(), new Element()),
+                        $app['config'],
+                        new MessageBag(),
+                        new Validator($app['validator'], $app['config'])
+                        );
             });
                 
 	}
+        
+        /**
+         * to add new rules to Laravel Validator object
+         */
+        private function addNewRules() {
+     
+            $this->app['validator']->resolver(function($translator, $data, $rules, $messages) {
+                
+                return new newRules($translator, $data, $rules, $messages);
+            });
+        }
 
 	/**
 	 * Get the services provided by the provider.
@@ -52,7 +76,7 @@ class MultilangServiceProvider extends ServiceProvider {
 	 */
 	public function provides()
 	{
-		return array();
+		return array('multilang');
 	}
 
 }

@@ -163,7 +163,6 @@ class TestMultilang extends TestCase {
             
             $multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element()),
-                    new Content(), 
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -222,8 +221,7 @@ class TestMultilang extends TestCase {
             $validator->shouldReceive('make')->andReturn(true);
             
             $multiLang =  new MultiLang(
-                    new Picker(new Collection(),new Element()),
-                    new Content(), 
+                    new Picker(new Collection(),new Element()),               
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -248,7 +246,6 @@ class TestMultilang extends TestCase {
             
             $multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element()),
-                    new Content(), 
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -272,7 +269,6 @@ class TestMultilang extends TestCase {
             
             $multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element()),
-                    new Content(), 
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -303,7 +299,6 @@ class TestMultilang extends TestCase {
             
              $multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element()),
-                    new Content(), 
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -336,7 +331,6 @@ class TestMultilang extends TestCase {
             
              $multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element()),
-                    new Content(), 
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -383,7 +377,6 @@ class TestMultilang extends TestCase {
             
              $multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element()),
-                    new Content(), 
                     $mockedConfig, 
                     $messageBag,
                     $validator);             
@@ -409,7 +402,6 @@ class TestMultilang extends TestCase {
             
              $multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element()),
-                    new Content(), 
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -437,7 +429,6 @@ class TestMultilang extends TestCase {
             
              $multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element()),
-                    new Content(), 
                     $mockedConfig, 
                     $messageBag,
                     $validator);

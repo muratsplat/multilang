@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\Facade;
  *
  * @author muratsplat
  */
-class Picker extends Facade {
+class Multilang extends Facade {
     //put your code here
     
     
     public static function getFacadeAccessor() {
     
-        return 'picker';
+        return 'multilang';
     }
     
 }
