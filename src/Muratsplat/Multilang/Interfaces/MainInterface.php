@@ -15,6 +15,12 @@ interface MainInterface {
      * 
      * @return array
      */
-    public function getRules();        
+    public function getRules();  
+    
+    /***
+     * If it is true the model has many model includes multi language contents
+     * @return bool
+     */
+    public function isMultilang();
         
 }

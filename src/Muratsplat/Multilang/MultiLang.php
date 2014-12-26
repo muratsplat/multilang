@@ -477,7 +477,7 @@ class MultiLang implements MessageProviderInterface {
             
             $this->deletedManinModel = $model;
             
-            return $this->deleteAllLangs();
+            return $this->deleteAllLangs() === $this->deletedManinModel->delete();
             
         }
         

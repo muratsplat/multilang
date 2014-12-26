@@ -39,6 +39,11 @@ class Content extends Model implements MainInterface {
         return $this->rules;
     }
     
+    public function isMultilang() {
+        
+        return $this->ContentLangs()->getResults()->all()->count() >= 1;
+    }
+    
     /**
      * Defining inversed relation to Content
      * 
