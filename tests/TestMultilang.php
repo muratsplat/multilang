@@ -440,10 +440,11 @@ class TestMultilang extends TestCase {
                     $mockedConfig, 
                     $messageBag,
                     $validator);
-            
-          
+                      
             $this->assertTrue($multiLang->create($this->nonMultilangPost, new Content));            
              
-            $this->assertEquals(0, count(Content::find(1)->ContentLangs));           
+            $this->assertEquals(0, count(Content::find(1)->ContentLangs));
+            
+            $this->assertNull(Content::find(1));
         }
 }
