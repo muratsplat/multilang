@@ -3,6 +3,8 @@
 /**
  * An interface for main models
  * 
+ * This interface is for main model, not multi langauge models!
+ * 
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
  * @link https://github.com/muratsplat/multilang Project Page
