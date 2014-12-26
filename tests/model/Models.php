@@ -41,7 +41,7 @@ class Content extends Model implements MainInterface {
     
     public function isMultilang() {
         
-        return $this->ContentLangs()->getResults()->all()->count() >= 1;
+        return $this->ContentLangs()->getResults()->count() >= 1;
     }
     
     /**

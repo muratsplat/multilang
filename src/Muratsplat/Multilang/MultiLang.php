@@ -463,7 +463,12 @@ class MultiLang implements MessageProviderInterface {
             return is_null($prefix) || (strlen(trim($prefix)) === 0) ? $this->modelPrefix : $prefix; 
         }
         
-        
+        /**
+         * to delete model with multi language models..
+         * 
+         * @param Model $model it will be deleted!
+         * @return boolean
+         */
         public function delete(Model $model) {          
              
             if (!$model->exists) {
@@ -474,18 +479,21 @@ class MultiLang implements MessageProviderInterface {
             }
             
             $this->checkMainImplement($model);
-            
+            // we have to save model the property of object for each methods
             $this->deletedManinModel = $model;
             
             if ($this->deletedManinModel->isMultilang()) {
                 
-                return $this->deleteAllLangs() === $this->deletedManinModel->delete();                
-            }
-            
-            
-            
+                return $this->deleteAllLangs() && $this->deletedManinModel->delete();               
+            }            
+            return $this->deletedManinModel->delete();          
         }
         
+        /**
+         * to delete all multi language models
+         * 
+         * @return bool
+         */
         private function deleteAllLangs() {
            
             $callback = function($item) {
@@ -493,7 +501,9 @@ class MultiLang implements MessageProviderInterface {
                 $item->delete();
             };
             
-            return $this->deletedManinModel->all()->each($callback)->count() === 0;
+            $this->langModels()->getResults()->each($callback);
+            
+            return $this->langModels()->getResults()->count() === 0;   
         }
         
 }

@@ -9,6 +9,7 @@ use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\MultiLang;
 use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\Tests\Model\Content;
+use Muratsplat\Multilang\Tests\Model\ContentLang;
 //use Muratsplat\Multilang\Tests\Migrate\Contents as migrateContent;
 
 // for testing CRUD ORM jobs..
@@ -444,8 +445,8 @@ class TestMultilang extends TestCase {
             $multiLang->create($this->multilangPost, new Content);            
             
             $this->assertTrue($multiLang->delete(Content::find(1)));
-            $this->assertEquals(0, count(Content::find(1)->ContentLangs));
             
             $this->assertNull(Content::find(1));
+            $this->assertEquals(0, ContentLang::all()->count());    
         }
 }
