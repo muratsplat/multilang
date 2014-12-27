@@ -17,20 +17,5 @@ interface LangInterface {
      */
     public function getRules();
     
-    /**
-     * To check model to be ready
-     * 
-     * We have to know the attributes is filled or not for each model
-     * 
-     * @return boolean
-     */
-    public function isReady();
-    
-   /**
-    * to required attributes for multilang
-    * 
-    * @return array
-    */
-   public function getRequiredAttributes();
 
 }

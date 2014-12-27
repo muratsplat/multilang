@@ -21,33 +21,5 @@ trait LangTrait  {
             return $this->rules;
         }
         
-        /**
-         * To check attributes to be ready.
-         * We dont want empty value on the view layer 
-         * 
-         * @return boolean
-         */
-        public function isReady() {
-
-            return 0 === count(array_filter($this->getRequiredAttributes(), function($item) {
-                
-                if($item === null || $item === '' || empty($item)) {
-                    
-                    return true;
-                }        
-                
-            }));
-            
-        }
-        
-        /**
-         * to required attributes for multilang
-         * 
-         * @return array
-         */
-        public function getRequiredAttributes() {
-            
-            return $this->requiredAttributes;
-        }
-      
+     
 }

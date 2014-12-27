@@ -106,6 +106,22 @@ class TestWrapper  extends MigrateAndSeed {
             $this->assertTrue($model->isExistedOnMain('visible'));            
             
             $this->assertFalse($model->isExistedOnMain('olmayan'));
+            
+            $this->assertTrue($model->isExistedOnLangModel('title'));
+            
+            $this->assertFalse($model->isExistedOnLangModel('olmayan'));
+            
+            $this->assertEquals(5, strlen($model->title));
+            
+            // for __isset methods
+            
+            $this->assertTrue(isset($model->visible));            
+            
+            $this->assertFalse(isset($model->olmayan));
+            
+            $this->assertTrue(isset($model->title));
+            
+            $this->assertFalse(isset($model->olmayan));            
         }
                 
                 

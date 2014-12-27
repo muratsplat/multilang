@@ -43,8 +43,6 @@ class Content extends Model implements MainInterface {
         return $this->rules;
     }
     
-
-    
     /**
      * Defining inversed relation to Content
      * 
@@ -77,6 +75,7 @@ class ContentLang extends Model implements LangInterface {
     protected $table = "contentlangs";
     
     protected $fillable = array('content_id', 'lang_id', 'title', 'content');
+
     
     /**
      * Validation Rules
@@ -98,8 +97,7 @@ class ContentLang extends Model implements LangInterface {
     public function Content() {
         
         return $this->belongsTo('Muratsplat\Multilang\Tests\Model\Content', 'id','content_id');
-    }
-    
+    }    
 
 }
 

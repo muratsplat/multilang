@@ -5,7 +5,8 @@ use Illuminate\Database\Eloquent\Collection;
 //use Illuminate\Config\Repository as Config;
 //use Illuminate\Support\Contracts\MessageProviderInterface;
 //use Illuminate\Support\MessageBag;
-//
+
+use Muratsplat\Multilang\Exceptions\WrapperUndefinedProperty;
 //use Muratsplat\Multilang\Picker;
 //use Muratsplat\Multilang\Interfaces\MainInterface;
 //use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
@@ -194,15 +195,54 @@ class Wrapper  {
             return $newOne;           
         }
         
+        /**
+         * to get overloaded property by looking main model and lang models
+         * 
+         * @param string $name
+         * @return mixed
+         * @throws \Muratsplat\Multilang\Exceptions\WrapperUndefinedProperty
+         */
         public function __get($name) {
             
             switch (true) {
                 
                 case $this->isExistedOnMain($name): return $this->mainModel->getAttribute($name);
                 
-               
-                
+                case $this->isExistedOnLangModel($name): return $this->getWantedLangModel()->getAttribute($name);
+                                              
+                default :
+                    
+                     if(!array_key_exists($name, $this->getDefaultLangModel()->getAttributes())) {
+                        
+                         throw new WrapperUndefinedProperty("[$name] is undefined property! Called property was not found on "
+                                 . 'main model or lang models'); 
+                     }
+                     
+                     return $this->getDefaultLangModel()->getAttribute($name);            
+            }
+        }
+        
+        /**
+         * Magic isset method for this class
+         * 
+         * @param string $name
+         * @return bool
+         */
+        public function __isset($name) {
             
+            switch (true) {
+                
+                case $this->isExistedOnMain($name): 
+                    
+                    return array_key_exists($name, $this->mainModel->getAttributes());
+                
+                case $this->isExistedOnLangModel($name): 
+                    
+                    return array_key_exists($name, $this->getWantedLangModel()->getAttributes());
+                                              
+                default :
+                    
+                    return !array_key_exists($name, $this->getDefaultLangModel()->getAttributes()) ? false : true;            
             }
         }
         
@@ -217,12 +257,21 @@ class Wrapper  {
             return array_key_exists($name, $this->mainModel->getAttributes());
         }
         
+        /**
+         * 
+         * @param type $name
+         * @return boolean
+         */
         public function isExistedOnLangModel($name) {
             
+            $lang = $this->getWantedLangModel();
             
+            if(is_null($lang)) {
+                
+                return false;
+            }
             
-                        
-            
+            return array_key_exists($name, $lang->getAttributes());   
         }
         
         /**
@@ -232,20 +281,41 @@ class Wrapper  {
          */
         public function getWantedLangModel() {
             
-            $langId = $this->getWantedLang();   
-                       
-            return $this->langModel->filter(function($item) use ($langId) {
-                
-                return (integer) $item->__lang_id__ === (integer) $langId;
-                
-            })->first();  
-            
+            return $this->getLangById($this->wantedLang);  
         }
         
+        
+        /**
+         * to get default lang model
+         * 
+         * @return \Illuminate\Database\Eloquent\Model|null 
+         */
         protected function getDefaultLangModel() {
             
+            $result = $this->getLangById($this->defaultLang);
             
-        } 
+            if(is_null($result)) {
+                
+                throw new WrapperUndefinedProperty("Default langugage was not founded!. "
+                        . "take require one language model record at the very least!.");
+            }
+            return $result;
+        }
+        
+        /**
+         * To get lang model by ID
+         * 
+         * @param int $id
+         * @return \Illuminate\Database\Eloquent\Model|null
+         */
+        private function getLangById($id) {
+            
+            return $this->langModel->filter(function($item) use ($id) {
+                
+                return (integer) $item->__lang_id__ === (integer) $id;
+                
+            })->first();            
+        }
         
                 
                 
