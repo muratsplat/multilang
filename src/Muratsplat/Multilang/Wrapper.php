@@ -20,8 +20,34 @@ use Illuminate\Database\Eloquent\Collection;
 /**
  * Wrapper Class
  * 
- * The class make be easy to manage multi language content when
- * it thinks all CRUD process by working on ORM.
+ * The class make be easy to access main model and multi language models.
+ * It can imagened what is such one single model as at one point accsessing to main model and
+ * multi language models.
+ * 
+ * We have Page model and PageLang model. In normally it can access to child language models
+ * like this:
+ *  ---
+ *    foreach($page->PageLangs as $lang) {
+ * 
+ *       if($lang->lang_id === $wantedId) {
+ *            return $lang->title; // return Foo;
+ *        }
+ *   
+ *        return null;
+ *    }
+ *  --- 
+ *  
+ *  
+ * In same example by using wrapper:
+ *  ---
+ *  $page = new Wrapper();
+ *  $wrapper = $Wrapper->createNew($page, $langs, $wantedId, $defaultId);
+ *  $page->title; Return Foo
+ *  ---
+ * 
+ * 
+ * 
+ * 
  * 
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
