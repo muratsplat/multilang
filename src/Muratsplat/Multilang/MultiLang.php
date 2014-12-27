@@ -9,6 +9,7 @@ use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Interfaces\MainInterface;
 use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 use Muratsplat\Multilang\Validator;
+use Muratsplat\Multilang\Wrapper;
 use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
 use Muratsplat\Multilang\Exceptions\RelationNotCorrect;
 use Muratsplat\Multilang\Exceptions\MultilangPostEmpty;
@@ -99,6 +100,14 @@ class MultiLang implements MessageProviderInterface {
      */
     private $deletedManinModel;
     
+    /**
+     * Wrapper to access to main model and mutli language model 
+     * by one wrapper object
+     *
+     * @var \Muratsplat\Multilang\Wrapper 
+     */
+    private $wrapper;
+    
 
         /**
          * Consructer
@@ -108,7 +117,7 @@ class MultiLang implements MessageProviderInterface {
          * @param \Illuminate\Support\Contracts\MessageProviderInterface $message
          * @param \Muratsplat\Multilang\Validator $validator
          */
-        public function __construct(Picker $picker, Config $config, MessageBag $message, Validator $validator) {
+        public function __construct(Picker $picker, Config $config, MessageBag $message, Validator $validator /*Wrapper $wrapper **/) {
             
             $this->picker = $picker;
                        
@@ -116,7 +125,9 @@ class MultiLang implements MessageProviderInterface {
             
             $this->message = $message;
             
-            $this->validator= $validator;            
+            $this->validator= $validator;
+            
+            //$this->wrapper = $wrapper;
         }        
         
         /**
@@ -211,7 +222,7 @@ class MultiLang implements MessageProviderInterface {
                 
                 case !is_null($this->updatedMainModel) : return $this->updatedMainModel->$name();
                     
-                case !is_null($this->createdMainModel) : return$this->createdMainModel->$name();
+                case !is_null($this->createdMainModel) : return $this->createdMainModel->$name();
                     
                 case !is_null($this->deletedManinModel) : return $this->deletedManinModel->$name();                
             }        
@@ -518,6 +529,11 @@ class MultiLang implements MessageProviderInterface {
         public function setMainModel(Model $model) {
             
             $this->mainModel = $model;
+        }
+        
+        public function wrapper() {     
+            
+            
         }
         
 }
