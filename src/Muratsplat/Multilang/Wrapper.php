@@ -238,11 +238,11 @@ class Wrapper  {
                 
                 case $this->isExistedOnLangModel($name): 
                     
-                    return array_key_exists($name, $this->getWantedLangModel()->getAttributes());
-                                              
-                default :
-                    
-                    return !array_key_exists($name, $this->getDefaultLangModel()->getAttributes()) ? false : true;            
+                    return array_key_exists($name, $this->getWantedLangModel()->getAttributes()) 
+                        
+                        ? true 
+                        
+                        : array_key_exists($name, $this->getDefaultLangModel()->getAttributes());            
             }
         }
         
@@ -282,8 +282,7 @@ class Wrapper  {
         public function getWantedLangModel() {
             
             return $this->getLangById($this->wantedLang);  
-        }
-        
+        }        
         
         /**
          * to get default lang model
@@ -315,13 +314,6 @@ class Wrapper  {
                 return (integer) $item->__lang_id__ === (integer) $id;
                 
             })->first();            
-        }
-        
-                
-                
-    
-        
-        
-        
+        }     
         
 }
