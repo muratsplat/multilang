@@ -42,13 +42,9 @@ use Illuminate\Database\Eloquent\Collection;
  *  ---
  *  $page = new Wrapper();
  *  $wrapper = $Wrapper->createNew($page, $langs, $wantedId, $defaultId);
- *  $page->title; Return Foo
+ *  $wrapper->title; Return Foo
  *  ---
- * 
- * 
- * 
- * 
- * 
+ *  
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
  * @link https://github.com/muratsplat/multilang Project Page
@@ -177,6 +173,48 @@ class Wrapper  {
             
             return $newOne;           
         }
+        
+        public function __get($name) {
+            
+            switch (true) {
+                
+                case $this->isExistedOnMain($name): return $this->mainModel->getAttribute($name);
+                
+               
+                
+            
+            }
+        }
+        
+        /**
+         * to check given attribute name on main model
+         * 
+         * @param string $name
+         * @return bool
+         */
+        public function isExistedOnMain($name) {
+            
+            return array_key_exists($name, $this->mainModel->getAttributes());
+        }
+        
+        public function isExistedOnLangModel($name) {
+            
+                        
+            
+        }
+        
+        public function getWantedLang() {
+            
+            
+            
+            
+        }
+        
+        protected function getDefaultLang() {
+            
+            
+        } 
+        
                 
                 
     
