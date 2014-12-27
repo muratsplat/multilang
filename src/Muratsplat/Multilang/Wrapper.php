@@ -69,18 +69,48 @@ class Wrapper  {
             
             $this->collection = $items;
         }
-    
-    
-    
+   
         public function setMainModel(Model $mainModel) {
             
-            $this->mainModel = $mainModel;           
+            $this->mainModel = $mainModel;
+            
+            return $this;
         }
         
-        public function setLangModel(Collection $langModels) {
+        public function setLangModels(Collection $langModels) {
             
+            $this->langModel = $langModels;
             
+            return $this;
         }
+        
+        public function setWantedLang($wantedLang) {
+            
+            $this->wantedLang = is_object($wantedLang) ? $wantedLang->id :(integer) $wantedLang;
+            
+            return $this;
+        }
+        
+        public function setDefaultLang($defaultLang) {
+            
+            $this->defaultLang = is_object($defaultLang) ? $defaultLang->id :(integer) $defaultLang;
+            
+            return $this;
+        }
+        
+        public function createNew(Model $mainModel, Collection $langModels, $wantedLang, $defaultLang) {
+            
+            $newOne = new static();
+            
+            $newOne->setMainModel($mainModel)
+                    ->setLangModels($langModels)
+                    ->setWantedLang($wantedLang)
+                    ->setDefaultLang($defaultLang);
+            
+            return $newOne;           
+        }
+                
+                
     
         
         
