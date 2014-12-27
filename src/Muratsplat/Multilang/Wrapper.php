@@ -64,12 +64,22 @@ class Wrapper  {
      */
     protected $collection;
     
-    
+        /**
+         * Constructer
+         * 
+         * @param array $items
+         */
         public function __construct(array $items= array()) {
             
             $this->collection = $items;
         }
    
+        /**
+         * to set main model
+         * 
+         * @param \Illuminate\Database\Eloquent\Model $mainModel
+         * @return \Muratsplat\Multilang\Wrapper
+         */
         public function setMainModel(Model $mainModel) {
             
             $this->mainModel = $mainModel;
@@ -77,6 +87,12 @@ class Wrapper  {
             return $this;
         }
         
+        /**
+         * to set multi language models in Collection object
+         * 
+         * @param \Illuminate\Database\Eloquent\Collection $langModels
+         * @return \Muratsplat\Multilang\Wrapper
+         */
         public function setLangModels(Collection $langModels) {
             
             $this->langModel = $langModels;
@@ -84,6 +100,12 @@ class Wrapper  {
             return $this;
         }
         
+        /**
+         * to set wanted Language's id. it can pass language model
+         * 
+         * @param  Illuminate\Database\Eloquent\Model|int $wantedLang
+         * @return \Muratsplat\Multilang\Wrapper
+         */
         public function setWantedLang($wantedLang) {
             
             $this->wantedLang = is_object($wantedLang) ? $wantedLang->id :(integer) $wantedLang;
@@ -91,6 +113,16 @@ class Wrapper  {
             return $this;
         }
         
+        /**
+         * to set default Language's id. it can pass language model
+         * 
+         * In generally Laravel Apps has a model for managing supported languages.
+         * In the app default language's model can be prameter to set it. It is optional
+         * to passed language model. 
+         *   
+         * @param  Illuminate\Database\Eloquent\Model|int $defaultLang
+         * @return \Muratsplat\Multilang\Wrapper
+         */
         public function setDefaultLang($defaultLang) {
             
             $this->defaultLang = is_object($defaultLang) ? $defaultLang->id :(integer) $defaultLang;
@@ -98,6 +130,16 @@ class Wrapper  {
             return $this;
         }
         
+        /**
+         * to create new wrapper with main model and multi language models.
+         * 
+         *  
+         * @param Illuminate\Database\Eloquent\Model $mainModel
+         * @param Illuminate\Database\Eloquent\Collection $langModels
+         * @param Illuminate\Database\Eloquent\Model|int $wantedLang
+         * @param Illuminate\Database\Eloquent\Model|int $defaultLang
+         * @return \static
+         */
         public function createNew(Model $mainModel, Collection $langModels, $wantedLang, $defaultLang) {
             
             $newOne = new static();
