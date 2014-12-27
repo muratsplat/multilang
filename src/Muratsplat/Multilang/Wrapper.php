@@ -153,6 +153,26 @@ class Wrapper  {
         }
         
         /**
+         * to get default language ID
+         * 
+         * @return int Language ID
+         */
+        public function getDefaultLang() {
+            
+            return (integer) $this->defaultLang;
+        }
+        
+        /**
+         * to get wanted language ID
+         * 
+         * @return int Language ID
+         */
+        public function getWantedLang() {
+            
+            return (integer) $this->wantedLang;
+        }
+        
+        /**
          * to create new wrapper with main model and multi language models.
          * 
          *  
@@ -162,7 +182,7 @@ class Wrapper  {
          * @param Illuminate\Database\Eloquent\Model|int $defaultLang
          * @return \static
          */
-        public function createNew(Model $mainModel, Collection $langModels, $wantedLang, $defaultLang) {
+        public function createNew(Model $mainModel, Collection $langModels, $wantedLang=1, $defaultLang=1) {
             
             $newOne = new static();
             
@@ -199,18 +219,30 @@ class Wrapper  {
         
         public function isExistedOnLangModel($name) {
             
+            
+            
                         
             
         }
         
-        public function getWantedLang() {
+        /**
+         * to get wanted languge model
+         * 
+         * @return \Illuminate\Database\Eloquent\Model|null
+         */
+        public function getWantedLangModel() {
             
-            
-            
+            $langId = $this->getWantedLang();   
+                       
+            return $this->langModel->filter(function($item) use ($langId) {
+                
+                return (integer) $item->__lang_id__ === (integer) $langId;
+                
+            })->first();  
             
         }
         
-        protected function getDefaultLang() {
+        protected function getDefaultLangModel() {
             
             
         } 

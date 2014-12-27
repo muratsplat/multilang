@@ -103,11 +103,9 @@ class TestWrapper  extends MigrateAndSeed {
                 
             $model = $this->wrapper->createNew($content, $langs, 1, 1);
             
-            var_dump($model);
+            $this->assertTrue($model->isExistedOnMain('visible'));            
             
-           
-              
-            
+            $this->assertFalse($model->isExistedOnMain('olmayan'));
         }
                 
                 

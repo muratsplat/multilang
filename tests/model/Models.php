@@ -4,6 +4,8 @@ use Illuminate\Database\Eloquent\Model;
 use Muratsplat\Multilang\Interfaces\MainInterface;
 use Muratsplat\Multilang\Interfaces\LangInterface;
 use Muratsplat\Multilang\Interfaces\AppLanguageInterface;
+use Muratsplat\Multilang\Traits\LangTrait;
+use Muratsplat\Multilang\Traits\MainTrait;
 /**
  *  Simple Models For tests
  * 
@@ -17,6 +19,8 @@ use Muratsplat\Multilang\Interfaces\AppLanguageInterface;
  * Simple Main Model
  */
 class Content extends Model implements MainInterface {
+    
+    use MainTrait;
     
     protected $table = "contents";
     
@@ -39,10 +43,7 @@ class Content extends Model implements MainInterface {
         return $this->rules;
     }
     
-    public function isMultilang() {
-        
-        return $this->ContentLangs()->getResults()->count() >= 1;
-    }
+
     
     /**
      * Defining inversed relation to Content
@@ -52,13 +53,26 @@ class Content extends Model implements MainInterface {
     public function ContentLangs() {
         
         return $this->hasMany('Muratsplat\Multilang\Tests\Model\ContentLang', 'content_id', 'id');
-    }
+    }    
+            
+    /**
+     * to get Language Models.
+     * 
+     * use HasMany relationship to access langugae model
+     * @return  \Illuminate\Database\Eloquent\Relations\HasMany
+     */   
+     public function langModels() {
+         
+         return $this->ContentLangs();
+     }
 }
 
 /**
  * ContentLang  will be Content's multi language model.
  */
 class ContentLang extends Model implements LangInterface {
+    
+    use LangTrait;
     
     protected $table = "contentlangs";
     
@@ -72,15 +86,9 @@ class ContentLang extends Model implements LangInterface {
     public $rules = array(
             
         'title'        => 'max:100|RequiredForDefaultLang:Page Title',
-        'content'       => 'max:15000',
-      
+        'content'       => 'max:15000',      
         
-    );
-    
-    public function getRules() {
-        
-        return $this->rules;
-    }
+    ); 
     
     /**
      * Defining inversed relation to Content
@@ -91,6 +99,8 @@ class ContentLang extends Model implements LangInterface {
         
         return $this->belongsTo('Muratsplat\Multilang\Tests\Model\Content', 'id','content_id');
     }
+    
+
 }
 
 /**

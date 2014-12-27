@@ -106,8 +106,7 @@ class MultiLang implements MessageProviderInterface {
      *
      * @var \Muratsplat\Multilang\Wrapper 
      */
-    private $wrapper;
-    
+    private $wrapper;    
 
         /**
          * Consructer
