@@ -54,9 +54,9 @@ class Content extends Model implements MainInterface {
     }    
             
     /**
-     * to get Language Models.
+     * to get Language Models. 
+     * use HasMany relationship to access language model
      * 
-     * use HasMany relationship to access langugae model
      * @return  \Illuminate\Database\Eloquent\Relations\HasMany
      */   
      public function langModels() {
@@ -92,13 +92,22 @@ class ContentLang extends Model implements LangInterface {
     /**
      * Defining inversed relation to Content
      * 
-     * @return Muratsplat\Multilang\Tests\Model\Content
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function Content() {
+    public function content() {
         
         return $this->belongsTo('Muratsplat\Multilang\Tests\Model\Content', 'id','content_id');
     }    
 
+    /**
+     * reference to main model
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function mainModel() {
+        
+        return $this->content();
+    }
 }
 
 /**

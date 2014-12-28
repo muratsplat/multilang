@@ -15,7 +15,14 @@ interface LangInterface {
      * 
      * @return array
      */
-    public function getRules();
+    public function getRules();    
+    
+    /**
+     * Simple way to accass to main model
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function mainModel();
     
 
 }

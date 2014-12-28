@@ -38,13 +38,6 @@ class MultiLang implements MessageProviderInterface {
     private $mainModel;
     
     /**
-     * Language Model
-     * 
-     * @var Illuminate\Database\Eloquent\Model 
-     */
-    private $langModel;
-    
-    /**
      * Picker Object
      * 
      * @var Muratsplat\Multilang\Picker 
@@ -79,12 +72,12 @@ class MultiLang implements MessageProviderInterface {
      */
     private $createdMainModel;
     
-    /**
-     * An prefix to get model For Multi Language contents
-     * 
-     * @var string 
-     */
-    private $modelPrefix = "Lang";
+//    /**
+//     * An prefix to get model For Multi Language contents
+//     * 
+//     * @var string 
+//     */
+//    private $modelPrefix = "Lang";
     
     /**
      * Model will be updated.
@@ -183,27 +176,24 @@ class MultiLang implements MessageProviderInterface {
             return true;
         }
         
-        /**
-         * Created new main model's multi language model
-         * 
-         * @throws \Muratsplat\Multilang\Exceptions\RelationNotCorrect
-         */
-        private function checkRelation() {
-            
-            // we have to sure everything is ok!!
-            $nameLangModel = $this->getRelationName();
-                         
-            $nameMain = get_class($this->mainModel);
-            
-            $nameLang = $this->getLangModelName();
-            
-            if (!$this->mainModel->$nameLangModel()->getRelated() instanceof $nameLang) {
-                
-                throw new RelationNotCorrect("It looks the relation is not correct between main model which is "
-                        . "[$nameMain] and [$nameLang] that is multi-language model");                
-            }          
-        }
-        
+//        /**
+//         * Created new main model's multi language model
+//         * 
+//         * @throws \Muratsplat\Multilang\Exceptions\RelationNotCorrect
+//         */
+//        private function checkRelation() {
+//            
+//            // we have to sure everything is ok!!
+//              
+//            $nameLang = $this->getLangModelName();
+//            
+//            if (!$this->mainModel->langModels()->getRelated() instanceof $nameLang) {
+//                
+//                throw new RelationNotCorrect("It looks the relation is not correct "
+//                        . "between main model and multi-language models");                
+//            }          
+//        }
+//        
         /**
          * to connect multi-language model
          * Simple switcher is on created or updated
@@ -211,19 +201,15 @@ class MultiLang implements MessageProviderInterface {
          * @return \Illuminate\Database\Eloquent\Relations\HasMany
          */
         protected function langModels() {
-            // checking relation between main model and lang models
-            // if it is not correct, it will throw an exception!
-            $this->checkRelation(); 
-            
-            $name = $this->getRelationName();
+           
             // we can say simple hub to access lang models for this.
             switch (true) {
                 
-                case !is_null($this->updatedMainModel) : return $this->updatedMainModel->$name();
+                case !is_null($this->updatedMainModel) : return $this->updatedMainModel->langModels();
                     
-                case !is_null($this->createdMainModel) : return $this->createdMainModel->$name();
+                case !is_null($this->createdMainModel) : return $this->createdMainModel->langModels();
                     
-                case !is_null($this->deletedManinModel) : return $this->deletedManinModel->$name();                
+                case !is_null($this->deletedManinModel) : return $this->deletedManinModel->langModels();                
             }        
         }        
         
@@ -424,58 +410,58 @@ class MultiLang implements MessageProviderInterface {
             return $this->message;                        
         }
         
-        /**
-         * To get the name of main model's multi language model
-         * 
-         * @return string
-         * @throws Exception
-         */
-        public function getLangModelName() {
-
-            // To create a name of translation model
-            $className = get_class($this->mainModel) . $this->getModelPrefix();
-
-            // checking existed translation model 
-            if (!class_exists($className , $autoload = true) ) {
-
-               throw new MultiLangModelWasNotFound('Multilanguage post was detected! '
-                       . 'In case of this it needs a model for multi language content.');
-            }
-             
-            return $className;
-        }
-        
-        /** 
-         * to get relation name to connect hasMany relalation
-         * between main model and lang model
-         * 
-         * @return string 
-         */
-        public function getRelationName() {
-            // for namespace
-            $isNameSpace = explode("\\", $this->getLangModelName());
-            
-            $num = count($isNameSpace);
-            
-            if($num > 1) {
-                
-                return $isNameSpace[$num-1] . 's';
-            }
-
-            return $isNameSpace[0] . 's';
-        }
-        
-        /**
-         * to get model prefix for Multilang contents
-         * 
-         * @return string
-         */
-        private function getModelPrefix(){
-            
-            $prefix = $this->config->get('multilang::modelPrefix');
-            
-            return is_null($prefix) || (strlen(trim($prefix)) === 0) ? $this->modelPrefix : $prefix; 
-        }
+//        /**
+//         * To get the name of main model's multi language model
+//         * 
+//         * @return string
+//         * @throws Exception
+//         */
+//        public function getLangModelName() {
+//
+//            // To create a name of translation model
+//            $className = get_class($this->mainModel) . $this->getModelPrefix();
+//
+//            // checking existed translation model 
+//            if (!class_exists($className , $autoload = true) ) {
+//
+//               throw new MultiLangModelWasNotFound('Multilanguage post was detected! '
+//                       . 'In case of this it needs a model for multi language content.');
+//            }
+//             
+//            return $className;
+//        }
+//        
+//        /** 
+//         * to get relation name to connect hasMany relalation
+//         * between main model and lang model
+//         * 
+//         * @return string 
+//         */
+//        public function getRelationName() {
+//            // for namespace
+//            $isNameSpace = explode("\\", $this->getLangModelName());
+//            
+//            $num = count($isNameSpace);
+//            
+//            if($num > 1) {
+//                
+//                return $isNameSpace[$num-1] . 's';
+//            }
+//
+//            return $isNameSpace[0] . 's';
+//        }
+//        
+//        /**
+//         * to get model prefix for Multilang contents
+//         * 
+//         * @return string
+//         */
+//        private function getModelPrefix(){
+//            
+//            $prefix = $this->config->get('multilang::modelPrefix');
+//            
+//            return is_null($prefix) || (strlen(trim($prefix)) === 0) ? $this->modelPrefix : $prefix; 
+//        }
         
         /**
          * to delete model with multi language models..

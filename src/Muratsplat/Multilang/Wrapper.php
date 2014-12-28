@@ -314,6 +314,7 @@ class Wrapper  {
                 return (integer) $item->__lang_id__ === (integer) $id;
                 
             })->first();            
-        }     
+        }
+        
         
 }
