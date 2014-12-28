@@ -2,11 +2,12 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-//use Illuminate\Config\Repository as Config;
+use Illuminate\Config\Repository as Config;
 //use Illuminate\Support\Contracts\MessageProviderInterface;
 //use Illuminate\Support\MessageBag;
 
 use Muratsplat\Multilang\Exceptions\WrapperUndefinedProperty;
+use Muratsplat\Multilang\Base;
 //use Muratsplat\Multilang\Picker;
 //use Muratsplat\Multilang\Interfaces\MainInterface;
 //use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
@@ -51,7 +52,7 @@ use Muratsplat\Multilang\Exceptions\WrapperUndefinedProperty;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class Wrapper  {
+class Wrapper extends Base  {
     
     /**
      *  Main model
@@ -86,15 +87,17 @@ class Wrapper  {
      * @var array
      */
     protected $collection;
-    
+
         /**
          * Constructer
          * 
          * @param array $items
          */
-        public function __construct(array $items= array()) {
+        public function __construct(array $items, Config $config) {
             
             $this->collection = $items;
+            
+            $this->config = $config;
         }
    
         /**
@@ -185,14 +188,14 @@ class Wrapper  {
          */
         public function createNew(Model $mainModel, Collection $langModels, $wantedLang=1, $defaultLang=1) {
             
-            $newOne = new static();
+            $newOne = new static(array(), $this->config);
             
             $newOne->setMainModel($mainModel)
                     ->setLangModels($langModels)
                     ->setWantedLang($wantedLang)
                     ->setDefaultLang($defaultLang);
             
-            return $newOne;           
+            return $newOne;          
         }
         
         /**
@@ -212,13 +215,13 @@ class Wrapper  {
                                               
                 default :
                     
-                     if(!array_key_exists($name, $this->getDefaultLangModel()->getAttributes())) {
-                        
-                         throw new WrapperUndefinedProperty("[$name] is undefined property! Called property was not found on "
-                                 . 'main model or lang models'); 
-                     }
-                     
-                     return $this->getDefaultLangModel()->getAttribute($name);            
+                    if(!array_key_exists($name, $this->getDefaultLangModel()->getAttributes())) {
+
+                        throw new WrapperUndefinedProperty("[$name] is undefined property! Called property was not found on "
+                                . 'main model or lang models'); 
+                    }
+
+                    return $this->getDefaultLangModel()->getAttribute($name);            
             }
         }
         
@@ -302,7 +305,7 @@ class Wrapper  {
         }
         
         /**
-         * To get lang model by ID
+         * To get mutli language model by ID
          * 
          * @param int $id
          * @return \Illuminate\Database\Eloquent\Model|null
@@ -311,10 +314,8 @@ class Wrapper  {
             
             return $this->langModel->filter(function($item) use ($id) {
                 
-                return (integer) $item->__lang_id__ === (integer) $id;
+                return (integer) $item->getAttribute($this->getConfig('reservedAttribute')) === (integer) $id;
                 
             })->first();            
-        }
-        
-        
+        }        
 }

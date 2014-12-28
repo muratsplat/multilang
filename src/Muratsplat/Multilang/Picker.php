@@ -1,11 +1,14 @@
 <?php namespace Muratsplat\Multilang;
 
 use Illuminate\Support\Collection;
+use Illuminate\Config\Repository as Config;
+
 use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 use Muratsplat\Multilang\Exceptions\PickerUnknownError;
 use Muratsplat\Multilang\Exceptions\PickerError;
-use Illuminate\Config\Repository as Config;
+use Muratsplat\Multilang\Exceptions\MultiLangConfigNotCorrect;
+use Muratsplat\Multilang\Base;
 
 /**
  * Picker Class
@@ -15,7 +18,7 @@ use Illuminate\Config\Repository as Config;
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3
  * @todo imported!! adding config object to select prefix
  */
-class Picker {
+class Picker extends Base {
  
     /**
      * Collection Class 
@@ -30,21 +33,7 @@ class Picker {
      * @var array 
      */
     private $rawPost = array();
-    
-    /**
-     * A prefix for realizing multi-language content
-     * 
-     * Example:
-     * 
-     * array(foo@1=> value,foo@2=> value);
-     * 
-     * In this examle, '@' charecters is a prefix and
-     * the number which is the right side of it must be language id. 
-     * 
-     * @var string 
-     */
-    private $defaultPrefix = '@';
-    
+        
     /**
      * Picker element result will be 
      * recorded into this property
@@ -65,7 +54,7 @@ class Picker {
      * 
      * @var /Illuminate\Config\Repository 
      */
-    private $config;
+    protected $config;
 
         /**
          * Connstructor
@@ -165,7 +154,7 @@ class Picker {
          */
         public function isMultilang($key) {
             
-            return strpos($key, $this->getPrefix());
+            return strpos($key, $this->getConfig('prefix'));
             
         }
         
@@ -278,16 +267,14 @@ class Picker {
                 
                 $item->$key=$value;
                 
-                return $item;
-               
+                return $item;               
             }
             
             $item->setMultilang($multilang);
             
             $item->$key = $this->valueSelecter($value, $multilang);
             
-            return $item;
-                       
+            return $item;                       
         }
         
         /**
@@ -581,9 +568,11 @@ class Picker {
             
             $tmpArray=array();
             
+            $reservedName = $this->getConfig('reservedAttribute');
+                       
             foreach ($this->getMultilang() as $v) {                
                 
-                $tmpArray[] = array_merge($v->toArray()[$v->getId()], ['__lang_id__' => $v->getId()]);                
+                $tmpArray[] = array_merge($v->toArray()[$v->getId()], [$reservedName => $v->getId()]);                
             }
             
             return $tmpArray;   
@@ -602,15 +591,4 @@ class Picker {
             
         }
         
-        /**
-         * to get prefix to pick it up
-         * 
-         * @return string 
-         */
-        protected function getPrefix() {
-            
-            $prefix = $this->config->get('multilang::prefix');
-            
-            return empty($prefix) ? $this->defaultPrefix : $prefix;
-        }
 }

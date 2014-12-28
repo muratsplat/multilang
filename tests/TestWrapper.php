@@ -1,6 +1,6 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
-//use Illuminate\Support\Collection;
+//use Illuminate\Support\Collection;0
 //use Illuminate\Config\Repository as Config;
 //
 //use Muratsplat\Multilang\Picker;
@@ -53,8 +53,12 @@ class TestWrapper  extends MigrateAndSeed {
     
         public function setUp() {
             parent::setUp();
+            
+            $mockedConfig = m::mock('Illuminate\Config\Repository')->shouldReceive('get')
+                    ->with('multilang::reservedAttribute')
+                    ->andReturn('__lang_id__')->getMock();          
            
-            $this->wrapper = new Wrapper();
+            $this->wrapper = new Wrapper(array(), $mockedConfig);
             
             $this->content = new Content();
             

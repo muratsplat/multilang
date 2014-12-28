@@ -6,6 +6,7 @@ use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Validation\Factory as Larevalidator;
 
 use Muratsplat\Multilang\Picker;
+use Muratsplat\Multilang\Base;
 //use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
 use Muratsplat\Multilang\Interfaces\MainInterface;
 use Muratsplat\Multilang\Interfaces\LangInterface;
@@ -26,7 +27,7 @@ use Muratsplat\Multilang\Interfaces\LangInterface;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class Validator implements MessageProviderInterface {
+class Validator extends Base implements MessageProviderInterface {
     
    /**
     * Main Model  
@@ -60,7 +61,7 @@ class Validator implements MessageProviderInterface {
      * Laravel Config Object
      * @var Illuminate\Config\Repository
      */
-    private $config;
+    protected $config;
     
     /**
      * rules for validation
@@ -75,13 +76,6 @@ class Validator implements MessageProviderInterface {
      * @var array
      */
     private $rules;
-    
-    /**
-     * Prefix for multi languages element
-     *
-     * @var string 
-     */
-    private $prefix;
         
         /**
          * Constructer
@@ -93,9 +87,7 @@ class Validator implements MessageProviderInterface {
                       
             $this->validator = $validator;
             
-            $this->config = $config;
-            
-            $this->prefix = $this->config->get('multilang::prefix');           
+            $this->config = $config;                      
         }       
         
         /**

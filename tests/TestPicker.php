@@ -111,7 +111,10 @@ class TestPicker  extends Base {
             
             $mockedConfig = m::mock('Illuminate\Config\Repository');
             
-            $mockedConfig->shouldReceive('get', 'multilang::prefix')->times()->andReturn("@");
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            
+            
             
             $this->obj = new Picker(new \Illuminate\Support\Collection(), new Element(), $mockedConfig);
                   

@@ -6,12 +6,13 @@ use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\MessageBag;
 
 use Muratsplat\Multilang\Picker;
+use Muratsplat\Multilang\Base;
 use Muratsplat\Multilang\Interfaces\MainInterface;
 use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\Wrapper;
-use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
-use Muratsplat\Multilang\Exceptions\RelationNotCorrect;
+//use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
+//use Muratsplat\Multilang\Exceptions\RelationNotCorrect;
 use Muratsplat\Multilang\Exceptions\MultilangPostEmpty;
 //use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 //use Muratsplat\Multilang\Exceptions\PickerUnknownError;
@@ -28,7 +29,7 @@ use Muratsplat\Multilang\Exceptions\MultilangPostEmpty;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class MultiLang implements MessageProviderInterface {
+class MultiLang extends Base implements MessageProviderInterface {
     
    /**
     * Main Model  
@@ -49,7 +50,7 @@ class MultiLang implements MessageProviderInterface {
      *
      * @var Illuminate\Config\Repositor 
      */
-    private $config;
+    protected $config;
     
     /**
      * Laravel MessageBag Object
@@ -72,13 +73,6 @@ class MultiLang implements MessageProviderInterface {
      */
     private $createdMainModel;
     
-//    /**
-//     * An prefix to get model For Multi Language contents
-//     * 
-//     * @var string 
-//     */
-//    private $modelPrefix = "Lang";
-    
     /**
      * Model will be updated.
      *  
@@ -99,7 +93,7 @@ class MultiLang implements MessageProviderInterface {
      *
      * @var \Muratsplat\Multilang\Wrapper 
      */
-    private $wrapper;    
+    private $wrapper;
 
         /**
          * Consructer
@@ -262,7 +256,7 @@ class MultiLang implements MessageProviderInterface {
 
             foreach ($this->picker->getMultilangToArray() as $v) {
                 
-                $existed = $this->existedInLangs($v['__lang_id__']);
+                $existed = $this->existedInLangs($v[$this->getConfig('reservedAttribute')]);
                 
                 if(!is_null($existed)) {
                     
@@ -288,16 +282,15 @@ class MultiLang implements MessageProviderInterface {
          */
         private function existedInLangs($id) {
             
-            $callback = function($item) use ($id) {
+            $langIdKey = $this->getConfig('reservedAttribute');
+                        
+            $existed = $this->langModels()->getResults()->filter(function($item) use ($id, $langIdKey) {
                 
-                if((integer) $item->__lang_id__ === (integer) $id) {
+                if((integer) $item->getAttribute($langIdKey) === (integer) $id) {
                     
                     return true;                    
-                }               
-                return false;
-            };
-            
-            $existed = $this->langModels()->getResults()->filter($callback);
+                }
+            });
        
             return $existed->count() === 0 ? null : $existed->first();    
         }
@@ -428,7 +421,7 @@ class MultiLang implements MessageProviderInterface {
 //                       . 'In case of this it needs a model for multi language content.');
 //            }
 //             
-//            return $className;
+//            return $classNam;
 //        }
 //        
 //        /** 
@@ -495,13 +488,11 @@ class MultiLang implements MessageProviderInterface {
          * @return bool
          */
         private function deleteAllLangs() {
-           
-            $callback = function($item) {
+                
+            $this->langModels()->getResults()->each(function($item) {
               
                 $item->delete();
-            };
-            
-            $this->langModels()->getResults()->each($callback);
+            });
             
             return $this->langModels()->getResults()->count() === 0;   
         }
@@ -514,11 +505,6 @@ class MultiLang implements MessageProviderInterface {
         public function setMainModel(Model $model) {
             
             $this->mainModel = $model;
-        }
-        
-        public function wrapper() {     
-            
-            
         }
         
 }

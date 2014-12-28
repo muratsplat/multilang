@@ -195,8 +195,12 @@ class TestMultilang extends MigrateAndSeed {
         
         public function testWithMultilangPost() {
             
-            $mockedConfig = $this->getMockedConfig();            
-            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
+            $mockedConfig = $this->getMockedConfig();
+            
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -283,7 +287,9 @@ class TestMultilang extends MigrateAndSeed {
         public function testSimpleUpdateWithMultilang() {
             
             $mockedConfig = $this->getMockedConfig();            
-            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -330,7 +336,9 @@ class TestMultilang extends MigrateAndSeed {
         public function testUpdateWithNonMultilangAndMultilang() {
             
             $mockedConfig = $this->getMockedConfig();            
-            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
+            
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -356,7 +364,9 @@ class TestMultilang extends MigrateAndSeed {
         public function testUpdateWithAndMultilang1() {
             
             $mockedConfig = $this->getMockedConfig();            
-            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -384,7 +394,9 @@ class TestMultilang extends MigrateAndSeed {
         public function testDeleteWithAndMultilang() {
             
             $mockedConfig = $this->getMockedConfig();            
-            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
