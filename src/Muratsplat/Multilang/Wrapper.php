@@ -62,13 +62,6 @@ class Wrapper extends Base  {
     protected $mainModel;
     
     /**
-     * Multi Language Models releation to main model
-     *  
-     * @var \Illuminate\Database\Eloquent\Collection
-     */
-    protected $langModel;
-    
-    /**
      * Default Language id for models
      *
      * @var int 
@@ -109,19 +102,6 @@ class Wrapper extends Base  {
         public function setMainModel(Model $mainModel) {
             
             $this->mainModel = $mainModel;
-            
-            return $this;
-        }
-        
-        /**
-         * to set multi language models in Collection object
-         * 
-         * @param \Illuminate\Database\Eloquent\Collection $langModels
-         * @return \Muratsplat\Multilang\Wrapper
-         */
-        public function setLangModels(Collection $langModels) {
-            
-            $this->langModel = $langModels;
             
             return $this;
         }
@@ -179,19 +159,16 @@ class Wrapper extends Base  {
         /**
          * to create new wrapper with main model and multi language models.
          * 
-         *  
          * @param Illuminate\Database\Eloquent\Model $mainModel
-         * @param Illuminate\Database\Eloquent\Collection $langModels
          * @param Illuminate\Database\Eloquent\Model|int $wantedLang
          * @param Illuminate\Database\Eloquent\Model|int $defaultLang
          * @return \static
          */
-        public function createNew(Model $mainModel, Collection $langModels, $wantedLang=1, $defaultLang=1) {
+        public function createNew(Model $mainModel, $wantedLang=1, $defaultLang=1) {
             
             $newOne = new static(array(), $this->config);
             
             $newOne->setMainModel($mainModel)
-                    ->setLangModels($langModels)
                     ->setWantedLang($wantedLang)
                     ->setDefaultLang($defaultLang);
             
@@ -312,7 +289,7 @@ class Wrapper extends Base  {
          */
         private function getLangById($id) {
             
-            return $this->langModel->filter(function($item) use ($id) {
+            return $this->mainModel->langModels()->getResults()->filter(function($item) use ($id) {
                 
                 return (integer) $item->getAttribute($this->getConfig('reservedAttribute')) === (integer) $id;
                 

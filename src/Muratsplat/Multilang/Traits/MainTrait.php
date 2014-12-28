@@ -36,7 +36,7 @@ trait MainTrait  {
         }        
                 
         /**
-         * to make sure what correct relations between man model and lang models
+         * to make sure what correct relations between main model and lang models
          * 
          * @throws \Muratsplat\Multilang\Exceptions\RelationNotCorrect
          */

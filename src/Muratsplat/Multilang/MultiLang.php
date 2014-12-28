@@ -5,18 +5,15 @@ use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\MessageBag;
 
+
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Base;
 use Muratsplat\Multilang\Interfaces\MainInterface;
 use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\Wrapper;
-//use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
-//use Muratsplat\Multilang\Exceptions\RelationNotCorrect;
 use Muratsplat\Multilang\Exceptions\MultilangPostEmpty;
-//use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
-//use Muratsplat\Multilang\Exceptions\PickerUnknownError;
-//use Muratsplat\Multilang\Exceptions\PickerError;
+
 
 /**
  * MultiLang Class
@@ -103,7 +100,7 @@ class MultiLang extends Base implements MessageProviderInterface {
          * @param \Illuminate\Support\Contracts\MessageProviderInterface $message
          * @param \Muratsplat\Multilang\Validator $validator
          */
-        public function __construct(Picker $picker, Config $config, MessageBag $message, Validator $validator /*Wrapper $wrapper **/) {
+        public function __construct(Picker $picker, Config $config, MessageBag $message, Validator $validator, Wrapper $wrapper) {
             
             $this->picker = $picker;
                        
@@ -113,7 +110,7 @@ class MultiLang extends Base implements MessageProviderInterface {
             
             $this->validator= $validator;
             
-            //$this->wrapper = $wrapper;
+            $this->wrapper = $wrapper;
         }        
         
         /**
@@ -505,6 +502,23 @@ class MultiLang extends Base implements MessageProviderInterface {
         public function setMainModel(Model $model) {
             
             $this->mainModel = $model;
+        }
+        
+        public function read($model) {
+            
+            
+            switch (true) {
+                
+                case (is_object($model)): $this->setMainModel($model);
+                    
+                case ($model instanceof \Illuminate\Database\Eloquent\Collection): return null;
+            
+                case ($model instanceof Model):
+            }
+           
+            
+            
+            
         }
         
 }

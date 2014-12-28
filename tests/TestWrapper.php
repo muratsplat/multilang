@@ -102,10 +102,8 @@ class TestWrapper  extends MigrateAndSeed {
             $this->assertTrue($this->createContentLang(6));
             
             $content = Content::find(1);
-            
-            $langs = $content->ContentLangs()->getResults();
-                
-            $model = $this->wrapper->createNew($content, $langs, 1, 1);
+                                    
+            $model = $this->wrapper->createNew($content,1, 1);
             
             $this->assertTrue($model->isExistedOnMain('visible'));            
             
