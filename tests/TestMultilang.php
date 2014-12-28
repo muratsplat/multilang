@@ -1,13 +1,13 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
 use Illuminate\Support\Collection;
-use Illuminate\Config\Repository as Config;
+//use Illuminate\Config\Repository;
 
 use Muratsplat\Multilang\Picker;
-use Muratsplat\Multilang\Tests\Base;
+//use Muratsplat\Multilang\Tests\Base;
 use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\MultiLang;
-use Muratsplat\Multilang\Validator;
+//use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\Tests\Model\Content;
 use Muratsplat\Multilang\Tests\Model\ContentLang;
 //use Muratsplat\Multilang\Tests\Migrate\Contents as migrateContent;
@@ -16,7 +16,7 @@ use Muratsplat\Multilang\Tests\Model\ContentLang;
 use Muratsplat\Multilang\Tests\MigrateAndSeed;
 
 use \Mockery as m;
-use Illuminate\Validation\Validator as laravelValidator;
+//use Illuminate\Validation\Validator as laravelValidator;
 
 
 /**
@@ -89,7 +89,8 @@ class TestMultilang extends MigrateAndSeed {
          */
         protected function getMockedConfig() {
             
-            return m::mock('Illuminate\Config\Repository','Illuminate\Config\LoaderInterface');            
+            return m::mock('Illuminate\Config\Repository');
+                           
         }
         
         /**
@@ -112,14 +113,14 @@ class TestMultilang extends MigrateAndSeed {
 
         public function testCheckMainImplement() {
             
-            $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig = $this->getMockedConfig();
+            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@'); 
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
             $validator->shouldReceive('make')->andReturn(true);
-            
             $multiLang =  new MultiLang(
-                    new Picker(new Collection(),new Element()),
+                    new Picker(new Collection(),new Element(), $mockedConfig),
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -170,6 +171,7 @@ class TestMultilang extends MigrateAndSeed {
         public function testWithNonMultilangPost() {
             
             $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -178,7 +180,7 @@ class TestMultilang extends MigrateAndSeed {
             $validator->shouldReceive('make')->andReturn(true);
             
             $multiLang =  new MultiLang(
-                    new Picker(new Collection(),new Element()),               
+                    new Picker(new Collection(), new Element(), $mockedConfig),               
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -194,6 +196,7 @@ class TestMultilang extends MigrateAndSeed {
         public function testWithMultilangPost() {
             
             $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -202,7 +205,7 @@ class TestMultilang extends MigrateAndSeed {
             $validator->shouldReceive('make')->andReturn(true);            
             
             $multiLang =  new MultiLang(
-                    new Picker(new Collection(),new Element()),
+                    new Picker(new Collection(), new Element(), $mockedConfig),
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -217,6 +220,7 @@ class TestMultilang extends MigrateAndSeed {
         public function testCreateEmptyPostData() {
             
             $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -225,7 +229,7 @@ class TestMultilang extends MigrateAndSeed {
             $validator->shouldReceive('make')->andReturn(true);            
             
             $multiLang =  new MultiLang(
-                    new Picker(new Collection(),new Element()),
+                    new Picker(new Collection(), new Element(), $mockedConfig),
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -255,7 +259,7 @@ class TestMultilang extends MigrateAndSeed {
             $validator->shouldReceive('make')->andReturn(true);
             
              $multiLang =  new MultiLang(
-                    new Picker(new Collection(),new Element()),
+                    new Picker(new Collection(), new Element(), $mockedConfig),
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -279,6 +283,7 @@ class TestMultilang extends MigrateAndSeed {
         public function testSimpleUpdateWithMultilang() {
             
             $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -287,7 +292,7 @@ class TestMultilang extends MigrateAndSeed {
             $validator->shouldReceive('make')->andReturn(true);
             
              $multiLang =  new MultiLang(
-                    new Picker(new Collection(),new Element()),
+                    new Picker(new Collection(), new Element(), $mockedConfig),
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -325,6 +330,7 @@ class TestMultilang extends MigrateAndSeed {
         public function testUpdateWithNonMultilangAndMultilang() {
             
             $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -333,7 +339,7 @@ class TestMultilang extends MigrateAndSeed {
             $validator->shouldReceive('make')->andReturn(true);
             
              $multiLang =  new MultiLang(
-                    new Picker(new Collection(),new Element()),
+                    new Picker(new Collection(), new Element(), $mockedConfig),
                     $mockedConfig, 
                     $messageBag,
                     $validator);             
@@ -350,6 +356,7 @@ class TestMultilang extends MigrateAndSeed {
         public function testUpdateWithAndMultilang1() {
             
             $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -358,7 +365,7 @@ class TestMultilang extends MigrateAndSeed {
             $validator->shouldReceive('make')->andReturn(true);
             
              $multiLang =  new MultiLang(
-                    new Picker(new Collection(),new Element()),
+                    new Picker(new Collection(), new Element(), $mockedConfig),
                     $mockedConfig, 
                     $messageBag,
                     $validator);
@@ -377,6 +384,7 @@ class TestMultilang extends MigrateAndSeed {
         public function testDeleteWithAndMultilang() {
             
             $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -385,7 +393,7 @@ class TestMultilang extends MigrateAndSeed {
             $validator->shouldReceive('make')->andReturn(true);
             
              $multiLang =  new MultiLang(
-                    new Picker(new Collection(),new Element()),
+                    new Picker(new Collection(),new Element(), $mockedConfig),
                     $mockedConfig, 
                     $messageBag,
                     $validator);

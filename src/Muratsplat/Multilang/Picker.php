@@ -5,6 +5,7 @@ use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 use Muratsplat\Multilang\Exceptions\PickerUnknownError;
 use Muratsplat\Multilang\Exceptions\PickerError;
+use Illuminate\Config\Repository as Config;
 
 /**
  * Picker Class
@@ -53,22 +54,31 @@ class Picker {
     private $pickerResults = array();
     
     /**
-     *
+     * Element Object for elements in post data
+     * 
      * @var \Muratsplat\Multilang\Element 
      */
     private $element;
+    
+    /**
+     * Laravel Config Object 
+     * 
+     * @var /Illuminate\Config\Repository 
+     */
+    private $config;
 
         /**
          * Connstructor
          * 
          * @param Collection $collection
          */
-        public function __construct(Collection $collection, Element $element) {
+        public function __construct(Collection $collection, Element $element, Config $config) {
            
             $this->collection = $collection;
             
             $this->element = $element;
             
+            $this->config = $config;            
         }        
    
         /**
@@ -155,7 +165,7 @@ class Picker {
          */
         public function isMultilang($key) {
             
-            return strpos($key, $this->defaultPrefix);
+            return strpos($key, $this->getPrefix());
             
         }
         
@@ -591,6 +601,16 @@ class Picker {
             return 0 !== count($this->getMultilang());            
             
         }
-                
-
+        
+        /**
+         * to get prefix to pick it up
+         * 
+         * @return string 
+         */
+        protected function getPrefix() {
+            
+            $prefix = $this->config->get('multilang::prefix');
+            
+            return empty($prefix) ? $this->defaultPrefix : $prefix;
+        }
 }

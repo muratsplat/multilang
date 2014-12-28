@@ -1,16 +1,17 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
 use Muratsplat\Multilang\Picker;
-use Muratsplat\Multilang\Tests\Base;
+//use Muratsplat\Multilang\Tests\Base;
 use Muratsplat\Multilang\Element;
 //use Muratsplat\Multilang\MultiLang;
 use Muratsplat\Multilang\Validator;
 
-use Illuminate\Validation\Factory;
+//use Illuminate\Validation\Factory;
 use Illuminate\Support\Collection;
 //use Illuminate\Config\Repository as Config;
 use Muratsplat\Multilang\Tests\Model\Content;
 use \Mockery as m;
+use PHPUnit_Framework_TestCase as UnitTest;
 
 
 /**
@@ -21,7 +22,7 @@ use \Mockery as m;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class TestValidator extends Base {    
+class TestValidator extends UnitTest {    
     
     /**
      *
@@ -45,7 +46,7 @@ class TestValidator extends Base {
     /*
      * Simple Post Data
      * 
-     */
+     */ 
     private $rawPost  = array(
         
         "enable"    => 1,
@@ -89,7 +90,7 @@ class TestValidator extends Base {
             
             $laraValidator->shouldReceive('make')->andReturn($validateObj);
             
-            $this->picker = new Picker(new Collection(), new Element());
+            $this->picker = new Picker(new Collection(), new Element(), $mockedConfig);
             $this->picker->import($this->rawPost);
             
             $this->validator = new Validator($laraValidator, $mockedConfig);            

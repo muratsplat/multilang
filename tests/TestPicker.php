@@ -4,6 +4,7 @@ use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Tests\Base;
 use Muratsplat\Multilang\Element;
 
+use Mockery as m;
 
 /**
  * a test class for \Muratsplat\Multilang\Picker
@@ -88,7 +89,6 @@ class TestPicker  extends Base {
         'about@6' => 'Arapça Hakkında',            
 
        );
-            
        
     /**
      *
@@ -101,14 +101,19 @@ class TestPicker  extends Base {
          */
         public function testFirst() {
             
-            $picker = new Picker(new \Illuminate\Support\Collection(), new Element());
+            $mockedConfig = m::mock('Illuminate\Config\Repository');
             
+            new Picker(new \Illuminate\Support\Collection(), new Element(), $mockedConfig);            
         }
         
         public function setUp() {
             parent::setUp();
             
-            $this->obj = new Picker(new \Illuminate\Support\Collection(), new Element());
+            $mockedConfig = m::mock('Illuminate\Config\Repository');
+            
+            $mockedConfig->shouldReceive('get', 'multilang::prefix')->times()->andReturn("@");
+            
+            $this->obj = new Picker(new \Illuminate\Support\Collection(), new Element(), $mockedConfig);
                   
         }   
        

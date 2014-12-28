@@ -2,7 +2,7 @@
 
 use Muratsplat\Multilang\Tests\Base;
 use Muratsplat\Multilang\Element;
-
+use PHPUnit_Framework_TestCase as UnitTest;
 /**
  * a test class for \Muratsplat\Multilang\Picker
  *
@@ -11,7 +11,7 @@ use Muratsplat\Multilang\Element;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class TestElement  extends Base {
+class TestElement  extends UnitTest {
 
     /**
      *
