@@ -1,13 +1,14 @@
 <?php namespace Muratsplat\Multilang;
 
-use Illuminate\Database\Eloquent\Model;
+//use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Validation\Factory as Larevalidator;
 
 use Muratsplat\Multilang\Picker;
-use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
-
+//use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
+use Muratsplat\Multilang\Interfaces\MainInterface;
+use Muratsplat\Multilang\Interfaces\LangInterface;
 //use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 //use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 //use Muratsplat\Multilang\Exceptions\PickerUnknownError;
@@ -33,14 +34,7 @@ class Validator implements MessageProviderInterface {
     * @var Illuminate\Database\Eloquent\Model
     */
     private $mainModel;
-    
-    /**
-     * Language Model
-     * 
-     * @var Illuminate\Database\Eloquent\Model 
-     */
-    private $langModel;
-    
+
     /**
      * Picker Object
      * 
@@ -92,7 +86,6 @@ class Validator implements MessageProviderInterface {
         /**
          * Constructer
          * 
-         *
          * @param Illuminate\Validation\Factory $validator
          * @param Illuminate\Config\Repository $config
          */
@@ -123,15 +116,15 @@ class Validator implements MessageProviderInterface {
          * @param array $rules
          * @return boolean  true, if all rules are passed.
          */
-        public function make(Picker $picker, Model $model, array $rules) {
+        public function make(Picker $picker, MainInterface $model, array $rules) {
             
-            $langModel = $this->getLangModel($model);
+            //$langModel = $this->getLangModel($model);
             
             $this->mainModel = $model;
             
             $this->picker = $picker;      
             // setting rules for validations    
-            $this->mergeRules($model, $langModel, $rules);     
+            $this->mergeRules($model, $model->langModels()->getRelated(), $rules);     
             
             return $this->validate();
                                             
@@ -145,7 +138,7 @@ class Validator implements MessageProviderInterface {
          * @param array $rules Rules for validation
          * @return void
          */
-        protected function mergeRules(Model $main, Model $lang, array $rules) {
+        protected function mergeRules(MainInterface $main, LangInterface $lang, array $rules) {
             
             if(!empty($rules)) {
                 
@@ -193,26 +186,26 @@ class Validator implements MessageProviderInterface {
             }        
             
         }
-
-        /**
-         * to get multilang model by using main model 
-         * 
-         * @param Illuminate\Database\Eloquent\Model
-         * @return Illuminate\Database\Eloquent\Model
-         * @throws MultiLangModelWasNotFound
-         */
-        private function getLangModel(Model $model) {
-                        
-            $className = get_class($model) . $this->config->get('multilang::appLanguageModel');
-
-            // checking existed translation model 
-            if (!class_exists($className , $autoload = true) ) {
-
-                throw new MultiLangModelWasNotFound('Multi language post was detected!'
-                       . ' In case of this it needs a model for multi languages content.');
-            }            
-            return new $className;           
-        }
+//
+//        /**
+//         * to get multilang model by using main model 
+//         * 
+//         * @param Illuminate\Database\Eloquent\Model
+//         * @return Illuminate\Database\Eloquent\Model
+//         * @throws MultiLangModelWasNotFound
+//         */
+//        private function getLangModel(Model $model) {
+//                        
+//            $className = get_class($model) . $this->config->get('multilang::appLanguageModel');
+//
+//            // checking existed translation model 
+//            if (!class_exists($className , $autoload = true) ) {
+//
+//                throw new MultiLangModelWasNotFound('Multi language post was detected!'
+//                       . ' In case of this it needs a model for multi languages content.');
+//            }            
+//            return new $className;           
+//        }
         
         /**
          * to valitate
