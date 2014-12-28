@@ -7,9 +7,11 @@ use Muratsplat\Multilang\Picker;
 //use Muratsplat\Multilang\Tests\Base;
 use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\MultiLang;
+use Muratsplat\Multilang\Wrapper;
 //use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\Tests\Model\Content;
 use Muratsplat\Multilang\Tests\Model\ContentLang;
+
 //use Muratsplat\Multilang\Tests\Migrate\Contents as migrateContent;
 
 // for testing CRUD ORM jobs..
@@ -56,10 +58,10 @@ class TestMultilang extends MigrateAndSeed {
         
         'enable' => 1, 
         'visible' => 1, 
-        'content@1' => 'test',
+        'content@1' => 'test İki',
         'title@1' => 'Title test',
 
-        'content@2' => 'test',
+        'content@2' => 'test ĞŞÇ',
         'title@2' => 'Title test',
    
     );
@@ -432,5 +434,89 @@ class TestMultilang extends MigrateAndSeed {
             
             $this->assertNull(Content::find(1));
             $this->assertEquals(0, ContentLang::all()->count());    
+        }
+        
+        public function testMultilangAndWrapperSimple() {
+            
+            $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);
+            
+            $multiLang =  new MultiLang(
+                    new Picker(new Collection(),new Element(), $mockedConfig),
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator,
+                    new Wrapper($mockedConfig));
+            
+            $multiLang->create($this->multilangPost, new Content);
+            
+            $wrapper = $multiLang->makeWarapper(Content::find(1), 2,1);
+            
+            
+            $this->assertEquals($this->multilangPost['visible'], $wrapper->visible);
+                      
+            $this->assertEquals($this->multilangPost['title@2'], $wrapper->title);
+            
+            $this->assertEquals($this->multilangPost['content@2'], $wrapper->content);       
+        }
+        
+         public function testMultilangAndWrapperSimpleWithEloquentCollection() {
+            
+            $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);
+            
+            $multiLang =  new MultiLang(
+                    new Picker(new Collection(),new Element(), $mockedConfig),
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator,
+                    new Wrapper($mockedConfig));
+           
+            $this->createContentWithLanguages();
+            
+            $wrapperCollection = $multiLang->makeWarapper(Content::all(), 2,1);
+            
+            $this->assertInstanceOf('Illuminate\Support\Collection', $wrapperCollection);
+            
+            foreach ($wrapperCollection as $v) {
+                
+                $v->enable;
+                $v->visible;
+                $v->title;
+                $v->content;            
+            } 
+        }
+        
+        public function createContentWithLanguages() {
+            
+            for ($i = 0; $i < 5; $i++) {
+                
+                Content::create(['visible'=> 1, 'enable' =>1]);
+                
+            }
+            
+            foreach (Content::all() as $v) {
+                
+                for ($i = 0; $i < 10; $i++) {
+                    
+                    $v->langModels()->create(['content' => str_random(),'title' => str_random(), '__lang_id__' => $i]);                    
+                    
+                }                
+            }
+                       
         }
 }

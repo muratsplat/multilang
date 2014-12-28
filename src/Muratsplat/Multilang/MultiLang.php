@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\MessageBag;
+use Illuminate\Database\Eloquent\Collection;
 
 
 use Muratsplat\Multilang\Picker;
@@ -91,7 +92,7 @@ class MultiLang extends Base implements MessageProviderInterface {
      * @var \Muratsplat\Multilang\Wrapper 
      */
     private $wrapper;
-
+    
         /**
          * Consructer
          * 
@@ -99,6 +100,7 @@ class MultiLang extends Base implements MessageProviderInterface {
          * @param \Illuminate\Config\Repository $config
          * @param \Illuminate\Support\Contracts\MessageProviderInterface $message
          * @param \Muratsplat\Multilang\Validator $validator
+         * @param \Muratsplat\Multilang\Wrapper $wrapper
          */
         public function __construct(Picker $picker, Config $config, MessageBag $message, Validator $validator, Wrapper $wrapper) {
             
@@ -504,21 +506,63 @@ class MultiLang extends Base implements MessageProviderInterface {
             $this->mainModel = $model;
         }
         
-        public function read($model) {
+        /**
+         * To make a wrapper that includes main and language models.
+         * If parameter is Eloquent Collection, all of it is converted single
+         * wrapper and than new Collection is created by pussing created new wrappers.
+         * You can use returned Collection like to use Eloquent Collection.
+         * 
+         * @param Illuminate\Database\Eloquent\Collection|Illuminate\Database\Eloquent\Model $model
+         * @para Illuminate\Database\Eloquent\Model|int $wantedLang language id or specific language model
+         * @param Illuminate\Database\Eloquent\Model|int $defaultLang language id or specific language model
+         * @return \Muratsplat\Multilang\Wrapper|Illuminate\Database\Eloquent\Collection 
+         */
+        public function makeWarapper($model, $wantedLang=1, $defaultLang=1) {
             
-            
-            switch (true) {
+            if ($model instanceof Model) {
                 
-                case (is_object($model)): $this->setMainModel($model);
+                $this->setMainModel($model);
                     
-                case ($model instanceof \Illuminate\Database\Eloquent\Collection): return null;
-            
-                case ($model instanceof Model):
+                return $this->createWrapper($wantedLang, $defaultLang);               
             }
-           
             
+            if ($model instanceof Collection) {
+                
+                return $this->createWrappersInCollection($model, $wantedLang, $defaultLang);           
+            }
             
-            
+            return null;        
         }
         
+        /**
+         * To create a wrapper
+         * 
+         * @param type $wantedLang
+         * @param type $defaultLang
+         * @return \Muratsplat\Multilang\Wrapper
+         */
+        protected function createWrapper($wantedLang, $defaultLang) {
+            
+            return $this->wrapper->createNew($this->mainModel, $wantedLang, $defaultLang);
+        }
+        
+        /**
+         * to create a lot of wrapper by using models in Eloquent Collection
+         * 
+         * @param Illuminate\Database\Eloquent\Collection $collection
+         * @param Illuminate\Database\Eloquent\Model|int $wantedLang language id or specific language model
+         * @param Illuminate\Database\Eloquent\Model|int $defaultLang language id or specific language model
+         * @return Illuminate\Database\Eloquent\Collection
+         */
+        protected function createWrappersInCollection(Collection $collection, $wantedLang, $defaultLang) {
+            
+            $newCollection = $collection->make(array());
+            
+            while (!$collection->isEmpty()) {
+                
+                $newCollection->add($this->wrapper->createNew($collection->shift(), $wantedLang, $defaultLang));
+            }
+            
+            return $newCollection;      
+        }      
 }

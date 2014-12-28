@@ -58,7 +58,7 @@ class TestWrapper  extends MigrateAndSeed {
                     ->with('multilang::reservedAttribute')
                     ->andReturn('__lang_id__')->getMock();          
            
-            $this->wrapper = new Wrapper(array(), $mockedConfig);
+            $this->wrapper = new Wrapper($mockedConfig);
             
             $this->content = new Content();
             
