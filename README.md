@@ -196,6 +196,7 @@ class DatabaseLanguagesSeeder extends Seeder {
 ```
 
 ###Example Post Data
+~~~php
     $rawPost  = array(
 
             "enable"    => 1,
@@ -222,8 +223,6 @@ let's create a wrapper to access two models at one point
 
     echo $wrapper->title; // returns: "здравствуйте"
     echo $wrapper->content // returns: "Путинхороший человек. Он любит русские , я думаю, россияне любят его."
-```php
-
 
 ```
 ##Todos
