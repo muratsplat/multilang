@@ -196,28 +196,32 @@ class DatabaseLanguagesSeeder extends Seeder {
 ```
 
 ###Example Post Data
-```php
-    /*
-     * Simple Post Data
-     * 
-     */
-   $rawPost  = array(
-        
-        "enable"    => 1,
-               
-        'title@1'   => "Foo English",
-        'content@1' => "Simple example is in English",
-        
-        'title@2'   => 'Foo Türkçe',
-        'content@2' => 'Türkçe bir içerik langur lungur bir yoğurt',
-        
-        "title@3"   => 'здравствуйте',
-        "content@3" => 'Путинхороший человек. Он любит русские , я думаю, россияне любят его.'      
-    );
-```
-the array three different languages contents in same. English, Turkish and Russian
-Now let's storage it
+    $rawPost  = array(
 
+            "enable"    => 1,
+
+            'title@1'   => "Foo English",
+            'content@1' => "Simple example of content in English",
+
+            'title@2'   => 'Foo Türkçe',
+            'content@2' => 'Türkçe bir içerik langur lungur bir yoğurt',
+
+            "title@3"   => 'здравствуйте',
+            "content@3" => 'Путинхороший человек. Он любит русские , я думаю, россияне любят его.'      
+        );
+
+    if(MultiLang::create($rawPost, new Page())) {
+        // if it is in success
+    }
+```
+let's create a wrapper to access two models at one point
+```php
+    $wantedLangId = 3;            
+    $defaultLangId = 1; // if the value is null or empty, returns PageLang models by Language id
+    $wrapper = MultiLang::makeWarapper(Page::find(1), $wantedLangId,$defaultLangId);
+
+    echo $wrapper->title; // returns: "здравствуйте"
+    echo $wrapper->content // returns: "Путинхороший человек. Он любит русские , я думаю, россияне любят его."
 ```php
 
 

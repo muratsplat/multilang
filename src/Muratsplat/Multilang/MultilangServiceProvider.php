@@ -66,7 +66,7 @@ class MultilangServiceProvider extends ServiceProvider {
   
             $this->app['validator']->resolver(function($translator, $data, $rules, $messages) {
                 
-                return new NewRules($translator, $data, $rules, $messages, $config);
+                return new NewRules($translator, $data, $rules, $messages);
             });
         }
 
