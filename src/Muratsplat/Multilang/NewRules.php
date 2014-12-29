@@ -1,18 +1,18 @@
 <?php namespace  Muratsplat\Multilang;
 
 use Symfony\Component\Translation\TranslatorInterface;
-use Illuminate\Validation\Validator;
+use Illuminate\Validation\Validator as validInLaravel;
 
 /**
- * The class includes new vallidation rules for Multilang content by extending
- * laravel Validator class. 
+ * The class includes new vallidation rules for Multilang
  *
+ * @package Multilang
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class ValidatorWithNewRules  extends Validator  {   
+class NewRules  extends validInLaravel  {   
 
     /**
     * Create a new Validator instance.
@@ -32,22 +32,21 @@ class ValidatorWithNewRules  extends Validator  {
     }
     
     /**
-     * Validation
-     * 
      * It checks default language fields. If these are empty,
      * return false.
      *
-     * @param type $attribute
-     * @param type $value
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
      * @return boolean
      */
-    protected function validateRequiredForDefaultLang($attribute, $value) {
+    protected function validateRequiredForDefaultLang($attribute, $value, $parameters) {
 
-        $LagModel  = Language::where('default', '=', 1)->get();
-
-        $id = substr($attribute, strpos($attribute, '@') +1, strlen($attribute));
-
-        if ($LagModel[0]->id === $id) {
+        $this->requireParameterCount(2, $parameters, 'RequiredForDefaultLang');
+        // getting lang Id by looking the prefix such as 'title@1'
+        $id = substr($attribute, strpos($attribute, $parameters[0]) +1, strlen($attribute));
+        
+        if ((integer) $parameters[1] === (integer) $id) {
 
             return  $this->validateRequired($attribute, $value);
         }

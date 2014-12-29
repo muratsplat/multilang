@@ -1,22 +1,17 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
 use Muratsplat\Multilang\Picker;
-//use Muratsplat\Multilang\Tests\Base;
 use Muratsplat\Multilang\Element;
-//use Muratsplat\Multilang\MultiLang;
 use Muratsplat\Multilang\Validator;
-
-//use Illuminate\Validation\Factory;
 use Illuminate\Support\Collection;
-//use Illuminate\Config\Repository as Config;
 use Muratsplat\Multilang\Tests\Model\Content;
 use \Mockery as m;
 use PHPUnit_Framework_TestCase as UnitTest;
 
-
 /**
- * a test class for \Muratsplat\Multilang\MultiLang
+ * a test class for \Muratsplat\Multilang\Validator
  *
+ * @package Multilang
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
  * @link https://github.com/muratsplat/multilang Project Page
@@ -103,13 +98,6 @@ class TestValidator extends UnitTest {
             $model = new Content();
             
             $this->assertFalse($this->validator->make($this->picker, $model, array())); 
-        }
-
-    
-    
-    
-    
-    
-    
+        }  
     
 }

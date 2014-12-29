@@ -7,16 +7,16 @@ use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 use Muratsplat\Multilang\Exceptions\PickerUnknownError;
 use Muratsplat\Multilang\Exceptions\PickerError;
-use Muratsplat\Multilang\Exceptions\MultiLangConfigNotCorrect;
 use Muratsplat\Multilang\Base;
 
 /**
  * Picker Class
  * 
+ * @package Multilang
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
- * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3
- * @todo imported!! adding config object to select prefix
+ * @link https://github.com/muratsplat/multilang Project Page
+ * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
 class Picker extends Base {
  

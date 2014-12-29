@@ -2,12 +2,12 @@
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Collection;
+use Illuminate\Support\MessageBag;
 
 use Muratsplat\Multilang\Picker;
-use Illuminate\Support\MessageBag;
 use Muratsplat\Multilang\Validator;
-use Muratsplat\Multilang\ValidatorWithNewRules as newRules;
-
+use Muratsplat\Multilang\NewRules;
+use Muratsplat\Multilang\Wrapper;
 
 /* MultiLang Service Provider
  * 
@@ -49,10 +49,11 @@ class MultilangServiceProvider extends ServiceProvider {
             
                 return new MultiLang(
                         
-                        new Picker(new Collection(), new Element()),
+                        new Picker(new Collection(), new Element(),$app['config']),
                         $app['config'],
                         new MessageBag(),
-                        new Validator($app['validator'], $app['config'])
+                        new Validator($app['validator'], $app['config']),
+                        new Wrapper($app['config'])
                         );
             });
                 
@@ -62,10 +63,10 @@ class MultilangServiceProvider extends ServiceProvider {
          * to add new rules to Laravel Validator object
          */
         private function addNewRules() {
-     
+  
             $this->app['validator']->resolver(function($translator, $data, $rules, $messages) {
                 
-                return new newRules($translator, $data, $rules, $messages);
+                return new NewRules($translator, $data, $rules, $messages, $config);
             });
         }
 

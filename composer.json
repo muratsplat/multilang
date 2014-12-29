@@ -18,7 +18,8 @@
     },
     "require-dev": {
         "mockery/mockery": "0.9.*@dev",
-         "orchestra/testbench": "2.2.*"
+        "orchestra/testbench": "2.2.*",
+        "symfony/translation": "2.5.*"
     },
     "autoload": {
         "classmap": [

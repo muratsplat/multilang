@@ -1,29 +1,21 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
 use Illuminate\Support\Collection;
-//use Illuminate\Config\Repository;
-
 use Muratsplat\Multilang\Picker;
-//use Muratsplat\Multilang\Tests\Base;
 use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\MultiLang;
 use Muratsplat\Multilang\Wrapper;
-//use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\Tests\Model\Content;
 use Muratsplat\Multilang\Tests\Model\ContentLang;
-
-//use Muratsplat\Multilang\Tests\Migrate\Contents as migrateContent;
-
 // for testing CRUD ORM jobs..
 use Muratsplat\Multilang\Tests\MigrateAndSeed;
 
 use \Mockery as m;
-//use Illuminate\Validation\Validator as laravelValidator;
-
 
 /**
  * a test class for \Muratsplat\Multilang\MultiLang
- *
+ * 
+ * @package Multilang
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
  * @link https://github.com/muratsplat/multilang Project Page

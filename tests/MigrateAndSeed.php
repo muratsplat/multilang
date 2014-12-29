@@ -5,7 +5,8 @@
 use Orchestra\Testbench\TestCase;
 
 /**
- * Base Class for tests with ORM on database
+ * Base Class make to prepare database environment
+ * for ORM jobs in need.
  *
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
@@ -13,7 +14,6 @@ use Orchestra\Testbench\TestCase;
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
 class MigrateAndSeed extends TestCase {
-
     
         /**
          * When each and every test method works, first it will run

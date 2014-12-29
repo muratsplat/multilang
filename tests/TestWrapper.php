@@ -1,27 +1,15 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
-//use Illuminate\Support\Collection;0
-//use Illuminate\Config\Repository as Config;
-//
-//use Muratsplat\Multilang\Picker;
-//use Muratsplat\Multilang\Tests\Base;
-//use Muratsplat\Multilang\Element;
-//use Muratsplat\Multilang\MultiLang;
-//use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\Tests\Model\Content;
 use Muratsplat\Multilang\Wrapper;
-//use Muratsplat\Multilang\Tests\Model\ContentLang;
-//use Muratsplat\Multilang\Tests\Migrate\Contents as migrateContent;
-
 // for testing CRUD ORM jobs..
 use Muratsplat\Multilang\Tests\MigrateAndSeed;
 use \Mockery as m;
-use Illuminate\Validation\Validator as laravelValidator;
-
 
 /**
  * a test class for \Muratsplat\Multilang\Wrapper
  *
+ * @package Multilang
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
  * @link https://github.com/muratsplat/multilang Project Page
@@ -70,8 +58,7 @@ class TestWrapper  extends MigrateAndSeed {
                 
                 Content::create(['enable' => '1', 'visible' => 2])->save();                
           
-            }
-          
+            }          
             return $this->content->all()->count() === $n;    
         }
         
@@ -124,14 +111,5 @@ class TestWrapper  extends MigrateAndSeed {
             $this->assertTrue(isset($model->title));
             
             $this->assertFalse(isset($model->olmayan));            
-        }
-                
-                
-        
-        
-        
-        
-    
-    
-        
+        }        
 }

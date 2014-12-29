@@ -1,19 +1,13 @@
 <?php namespace Muratsplat\Multilang;
 
-//use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Validation\Factory as Larevalidator;
 
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Base;
-//use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
 use Muratsplat\Multilang\Interfaces\MainInterface;
 use Muratsplat\Multilang\Interfaces\LangInterface;
-//use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
-//use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
-//use Muratsplat\Multilang\Exceptions\PickerUnknownError;
-//use Muratsplat\Multilang\Exceptions\PickerError;
 
 /**
  * Validator Class
@@ -22,6 +16,7 @@ use Muratsplat\Multilang\Interfaces\LangInterface;
  * The object will get rules from Main model and Languages Model,
  * and than it will validate rules by looking the post data.
  * 
+ * @package Multilang
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
  * @link https://github.com/muratsplat/multilang Project Page

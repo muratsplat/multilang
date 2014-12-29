@@ -6,7 +6,6 @@ use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\MessageBag;
 use Illuminate\Database\Eloquent\Collection;
 
-
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Base;
 use Muratsplat\Multilang\Interfaces\MainInterface;
@@ -14,7 +13,6 @@ use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\Wrapper;
 use Muratsplat\Multilang\Exceptions\MultilangPostEmpty;
-
 
 /**
  * MultiLang Class
@@ -26,6 +24,7 @@ use Muratsplat\Multilang\Exceptions\MultilangPostEmpty;
  * @copyright (c) 2015, Murat Ödünç
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
+ * @package Multilang
  */
 class MultiLang extends Base implements MessageProviderInterface {
     
@@ -515,7 +514,7 @@ class MultiLang extends Base implements MessageProviderInterface {
          * @param Illuminate\Database\Eloquent\Collection|Illuminate\Database\Eloquent\Model $model
          * @para Illuminate\Database\Eloquent\Model|int $wantedLang language id or specific language model
          * @param Illuminate\Database\Eloquent\Model|int $defaultLang language id or specific language model
-         * @return \Muratsplat\Multilang\Wrapper|Illuminate\Database\Eloquent\Collection 
+         * @return \Muratsplat\Multilang\Wrapper|Illuminate\Database\Eloquent\Collection| null null, if it is failed.
          */
         public function makeWarapper($model, $wantedLang=1, $defaultLang=1) {
             

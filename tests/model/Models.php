@@ -122,9 +122,5 @@ class Language extends Model implements AppLanguageInterface {
         'name_native', 
         'lang_code', 
         'enable',
-        'default',);
-    
-        
+        'default',);       
 }
-
-
