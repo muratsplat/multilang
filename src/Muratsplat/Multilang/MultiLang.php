@@ -563,5 +563,16 @@ class MultiLang extends Base implements MessageProviderInterface {
             }
             
             return $newCollection;      
-        }      
+        }  
+        
+        /**
+         * To get instance of current Multilang
+         * 
+         * @return \Muratsplat\Multilang\MultiLang
+         */
+        public function getInstance() {
+            
+            return $this;
+            
+        }
 }

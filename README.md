@@ -1,4 +1,4 @@
-#MultiLang For Laravel (in development !!!)
+#MultiLang Package For Laravel 4.2 (in development !!!)
 [![Build Status](https://travis-ci.org/muratsplat/multilang.svg?branch=master)](https://travis-ci.org/muratsplat/multilang)
 
 A Laravel extension is make be easy to CRUD ORM proccess for multi languages contents..
@@ -9,7 +9,7 @@ A Laravel extension is make be easy to CRUD ORM proccess for multi languages con
 
 
 Let's imagine simple Laravel App. We want to have multi language pages.
-In this case common way is creating two models firstly.
+In this case common way is creating two models firstly. For them let's create tables via Laravel Migration.
 
 take a look at:
 
@@ -163,7 +163,6 @@ If you decide to create Language model don't forget make reference as like
  $t->foreign('__lang_id__')->references('id')->on('languages');
 
 ```
-
 You can create default data for language models by using seeder class
 
 ```php
@@ -194,6 +193,137 @@ class DatabaseLanguagesSeeder extends Seeder {
     }
 }
 ```
+Tables are ready. It is the turn of creating models.
+
+Main model will be Page model in example. Main model must be implement 'Muratsplat\Multilang\Interfaces\MainInterface' and it must be used 'Muratsplat\Multilang\Traits\MainTrait'.
+
+Page Model
+```php
+use Muratsplat\Multilang\Interfaces\MainInterface;
+use Muratsplat\Multilang\Traits\MainTrait;
+
+class Page extends \Eloquent implements MainInterface {
+
+    use MainTrait;
+    
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'pages';
+
+
+    protected $fillable = array('enable');
+    
+        /**
+         * Validation Rules
+         * 
+         * @var array
+         */
+        public $rules = array(
+
+            'enable'    => 'required',           
+        );
+
+        public function getRules() {
+
+            return $this->rules;
+        }
+
+        /**
+         * Defining inversed relation to Content
+         * 
+         * @return PageLang
+         */
+        public function PageLangs() {
+
+            return $this->hasMany('PageLang', 'page_id', 'id');
+        }    
+
+        /**
+        * to get Language Models. 
+        * use HasMany relationship to access language model
+        * 
+        * @return  \Illuminate\Database\Eloquent\Relations\HasMany
+        */   
+        public function langModels() {
+
+            return $this->PageLangs();
+        }
+    }
+``` 
+For pageLangs table we are creating PageLang Model. PageLang must be implement 'Muratsplat\Multilang\Interfaces\LangInterface' and mus be used 'Muratsplat\Multilang\Traits\LangTrait' trait in it. That's like this:
+
+```php
+use Muratsplat\Multilang\Interfaces\LangInterface;
+use Muratsplat\Multilang\Traits\LangTrait;
+
+class PageLang extends \Eloquent implements LangInterface {
+
+    use LangTrait;
+    
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'pageLangs';
+
+
+    protected $fillable = array('content_id', 'lang_id', 'title', 'content'); 
+    
+     /**
+     * Validation Rules
+     * 
+     * @var array
+     */
+    public $rules = array(
+            
+        'title'        => 'max:100|RequiredForDefaultLang:@,1,Title',
+        'content'      => 'max:15000|RequiredForDefaultLang:@,1,Content',      
+        
+    ); 
+        
+        public function getRules() {
+
+            return $this->rules;
+        }
+
+        /**
+         * Defining inversed relation to Content
+         * 
+         * @return PageLang
+         */
+        public function Page() {
+
+            return $this->belongsTo('Page', 'id', 'page_id');
+        }    
+
+        /**
+        * to get Language Models. 
+        * use HasMany relationship to access language model
+        * 
+        * @return  \Illuminate\Database\Eloquent\Relations\HasMany
+        */   
+        public function mainModel() {
+
+            return $this->Page();
+        }
+    }
+```
+Multilang gets with new rule. 'RequiredForDefaultLang' rule validates elements for default language id. If default language is Turkish, this rules make be valited Turkish element and than it is empty, returns false with valation message.
+
+RequiredForDefaultLang accepts tree parameters. First of these prefix for picking elements up and second parameter is default language id and in last parameter is replace  for error message.
+
+You can a message for the rule to '..app/lang/en/validation.php'
+
+example:
+```php
+"required_for_default_lang" => ":explain, is required for default language"'
+```
+
+Validation rules can be in models. But it is not required. You can add rules in your controller. It is recommended that rules is in models. This make keep clean on your controller.
 
 ###Example Post Data
 ~~~php
@@ -211,9 +341,17 @@ class DatabaseLanguagesSeeder extends Seeder {
             "content@3" => 'Путинхороший человек. Он любит русские , я думаю, россияне любят его.'      
         );
 
-    if(MultiLang::create($rawPost, new Page())) {
-        // if it is in success
-    }
+	$rules = ['enable'    => 'required'];
+	// Rules parameter is optional. You have been defined rules in Page model,
+	// it is not need.
+
+    if(MultiLang::create($rawPost, new Page(), $rules)) {
+        // it is in success
+    } else {
+		$instace = MultiLang::getInstance();
+
+		Redirect::route('panel.create')->withErrors($instace)->withInput();
+	}
 ```
 let's create a wrapper to access two models at one point
 ```php
