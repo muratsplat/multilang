@@ -312,11 +312,11 @@ class PageLang extends \Eloquent implements LangInterface {
         }
     }
 ```
-Multilang gets with new rule. 'RequiredForDefaultLang' rule validates elements for default language id. If default language is Turkish, this rules make be valited Turkish element and than it is empty, returns false with valation message.
+Multilang gets with new rule. 'RequiredForDefaultLang' rule validates elements for default language id. If default language is Turkish, the rule make be valited Turkish element and than if it is empty, returns false with valation message.
 
 RequiredForDefaultLang accepts tree parameters. First of these prefix for picking elements up and second parameter is default language id and in last parameter is replace  for error message.
 
-You can a message for the rule to '..app/lang/en/validation.php'
+You can add a message for the rule by editing '..app/lang/en/validation.php'.
 
 example:
 ```php
