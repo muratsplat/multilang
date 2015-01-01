@@ -99,5 +99,22 @@ class TestNewRules extends UnitTest {
             $trans = new Symfony\Component\Translation\Translator('en', new Symfony\Component\Translation\MessageSelector);
             $trans->addLoader('array', new Symfony\Component\Translation\Loader\ArrayLoader);
             return $trans;
-        }    
+        } 
+        
+        public function testErrorMessage() {
+            
+            $rules = ['title@1' => 'RequiredForDefaultLang:@,1,Title'];
+            
+            $post = ['title@1' => ''];
+            
+            $translator  = $this->getTranslator();
+            
+            $translator->shouldReceive('trans')->andReturn(':explain is required.');            
+            
+            $v = new \Muratsplat\Multilang\NewRules($translator,$post, $rules);
+            
+            $this->assertFalse($v->passes());
+            
+            $this->assertEquals('Title is required.', $v->messages()->getMessageBag()->first());
+        }
 }

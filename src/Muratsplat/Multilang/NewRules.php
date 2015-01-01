@@ -64,8 +64,8 @@ class NewRules  extends validInLaravel  {
      * @return mixed
      */
     protected function replaceRequiredForDefaultLang($message, $attribute, $rule, $parameters) {
-        
-        return str_replace(':explain', $parameters[0], $message);
+               
+        return isset($parameters[2])? str_replace(':explain', $parameters[2], $message) : $message;
     }  
 }
 
