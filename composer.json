@@ -1,6 +1,6 @@
 {
     "name": "muratsplat/multilang",
-    "description": "",
+    "description": " A Laravel package is make be easy to CRUD ORM proccess for multi languages contents.",
     "license" : "GPL-3.0+",
     "authors": [
         {
