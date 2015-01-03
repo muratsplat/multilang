@@ -193,7 +193,7 @@ class DatabaseLanguagesSeeder extends Seeder {
     }
 }
 ```
-Tables are ready. It gets turn of creating models.
+Tables are ready. It is the turn of creating models.
 
 Main model will be Page model in example. Main model must be implement 'Muratsplat\Multilang\Interfaces\MainInterface' and it must be used 'Muratsplat\Multilang\Traits\MainTrait'.
 
@@ -341,27 +341,19 @@ Validation rules can be in models. But it is not required. You can add rules in 
             "content@3" => 'Путинхороший человек. Он любит русские , я думаю, россияне любят его.'      
         );
 
-	$rules = [
-		
-		'enable'    => 'required',
-		'title'     => 'max:100|RequiredForDefaultLang:@,1,Title',
-        'content'   => 'max:15000|RequiredForDefaultLang:@,1,Content'
-	];
-	// Rules parameter is optional. If you have been defined rules in Page model,
+	$rules = ['enable'    => 'required'];
+	// Rules parameter is optional. You have been defined rules in Page model,
 	// it is not need.
 
     if(MultiLang::create($rawPost, new Page(), $rules)) {
         // it is in success
     } else {
-		$instance = MultiLang::getInstance();
+		$instace = MultiLang::getInstance();
 
-		Redirect::route('panel.create')->withErrors($instance)->withInput();
+		Redirect::route('panel.create')->withErrors($instace)->withInput();
 	}
-
 ```
-
 let's create a wrapper to access two models at one point
-
 ```php
     $wantedLangId = 3;            
     $defaultLangId = 1; // if the value is null or empty, returns PageLang models by Language id
