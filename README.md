@@ -7,7 +7,6 @@ A Laravel extension is make be easy to CRUD ORM proccess for multi languages con
 
 ##How to use in Example
 
-
 Let's imagine simple Laravel App. We want to have multi language pages.
 In this case common way is creating two models firstly. For them let's create tables via Laravel Migration.
 
