@@ -1,5 +1,7 @@
 #MultiLang Package For Laravel 4.2 (in development !!!)
-[![Build Status](https://travis-ci.org/muratsplat/multilang.svg?branch=master)](https://travis-ci.org/muratsplat/multilang)[![Latest Stable Version](https://poser.pugx.org/muratsplat/multilang/v/stable.svg)](https://packagist.org/packages/muratsplat/multilang) [![Total Downloads](https://poser.pugx.org/muratsplat/multilang/downloads.svg)](https://packagist.org/packages/muratsplat/multilang) [![Latest Unstable Version](https://poser.pugx.org/muratsplat/multilang/v/unstable.svg)](https://packagist.org/packages/muratsplat/multilang) [![License](https://poser.pugx.org/muratsplat/multilang/license.svg)](https://packagist.org/packages/muratsplat/multilang)
+
+[![Build Status](https://travis-ci.org/muratsplat/multilang.svg?branch=master)](https://travis-ci.org/muratsplat/multilang) [![Latest Stable Version](https://poser.pugx.org/muratsplat/multilang/v/stable.svg)](https://packagist.org/packages/muratsplat/multilang) [![Total Downloads](https://poser.pugx.org/muratsplat/multilang/downloads.svg)](https://packagist.org/packages/muratsplat/multilang) [![Latest Unstable Version](https://poser.pugx.org/muratsplat/multilang/v/unstable.svg)](https://packagist.org/packages/muratsplat/multilang) [![License](https://poser.pugx.org/muratsplat/multilang/license.svg)](https://packagist.org/packages/muratsplat/multilang)
+
 A Laravel extension is make be easy to CRUD ORM proccess for multi languages contents..
 
 ##Installing
