@@ -337,7 +337,7 @@ class MultiLang extends Base implements MessageProviderInterface {
          * @return bool true, it is on success
          */
         protected function checkdata(array $post, Model $model, array $rules) {
-                        
+          
             $this->checkMainImplement($model);
             // if post is empty, something must be wrong!!
             if(empty($post)) { 

@@ -33,8 +33,14 @@ class Element implements ArrayableInterface {
      * @var array 
      */
     private $data = array();
-      
-        
+    
+    /**
+     * Elements are reserved by Laravel
+     *
+     * @var array 
+     */
+    private $ignoredElements = array('_token');
+           
         /**
          * Set Method for overloading
          * 
@@ -42,20 +48,16 @@ class Element implements ArrayableInterface {
          * @param mixed $value
          * @return void
          */
-        public function __set($name, $value) {
+        public function __set($name, $value) {           
             
-            if (array_key_exists($name, $this->data)) {
-                                             
-               if ($this->isEmpty($value)) {
-                   
-                   unset($this->data[$name]);
-                   
-                   return;
-               }
+            switch (true) {
+                
+                case $this->isIgnored($name) : return;
+                
+                case $this->isEmpty($value) : unset($this->data[$name]); return;
                                 
-            }
-            
-            $this->data[$name] = $value;
+                default :  $this->data[$name] = $value;                    
+            }        
         }        
         
         /**
@@ -253,6 +255,17 @@ class Element implements ArrayableInterface {
         private function multilangArray() {
                         
             return array($this->lang_id => $this->data);
+        }
+        
+        /**
+         * to check what key is ignored..
+         * 
+         * @param string  $key element name
+         * @return bool
+         */
+        private function isIgnored($key) {
+            
+            return in_array($key, $this->ignoredElements);
         }
 
 }

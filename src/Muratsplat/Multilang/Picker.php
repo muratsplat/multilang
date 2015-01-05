@@ -52,11 +52,11 @@ class Picker extends Base {
     /**
      * Laravel Config Object 
      * 
-     * @var /Illuminate\Config\Repository 
+     * @var \Illuminate\Config\Repository 
      */
     protected $config;
 
-        /**
+    /**
          * Connstructor
          * 
          * @param Collection $collection
@@ -80,13 +80,14 @@ class Picker extends Base {
             
             if($oldDelete) {
                 // delete old items
-                $this->collection = $this->collection->filter(function($item) {
-                    
-                    return false;                    
-                });
+                $this->collection = $this->collection->make(array());
             }
             
+            //unset($post['_token']);
+           
             $this->rawPost = $post;
+            
+            
             
             return $this->startPicker();                      
         }        
@@ -590,5 +591,5 @@ class Picker extends Base {
             return 0 !== count($this->getMultilang());            
             
         }
-        
+       
 }

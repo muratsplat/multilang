@@ -47,14 +47,13 @@ class TestMultilang extends MigrateAndSeed {
      * @var array 
      */
     private $multilangPost = array(
-        
-        'enable' => 1, 
-        'visible' => 1, 
+        '_token'    =>'wqkjf9012r0f128f12f',
+        'enable'    => 1, 
+        'visible'   => 1, 
         'content@1' => 'test İki',
-        'title@1' => 'Title test',
-
+        'title@1'   => 'Title test',
         'content@2' => 'test ĞŞÇ',
-        'title@2' => 'Title test',
+        'title@2'   => 'Title test',
    
     );
     
