@@ -498,9 +498,9 @@ class MultiLang extends Base implements MessageProviderInterface {
         /**
          * to set main model
          * 
-         * @param Illuminate\Database\Eloquent\Model $model
+         * @param \Muratsplat\Multilang\Interfaces\MainInterface $model
          */
-        public function setMainModel(Model $model) {
+        public function setMainModel(MainInterface $model) {
             
             $this->mainModel = $model;
         }

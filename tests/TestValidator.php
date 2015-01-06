@@ -119,8 +119,7 @@ class TestValidator extends UnitTest {
                 'content@3' => 'max:15000',
             ];
             
-            $main = $this->getMainModel();
-            
+            $main = $this->getMainModel();            
                        
             $this->validator->make($this->picker, $main, array('title@1'   => 'max:100'));
             
