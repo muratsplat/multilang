@@ -56,7 +56,7 @@ class Picker extends Base {
      */
     protected $config;
 
-    /**
+        /**
          * Connstructor
          * 
          * @param Collection $collection
@@ -82,13 +82,9 @@ class Picker extends Base {
                 // delete old items
                 $this->collection = $this->collection->make(array());
             }
-            
-            //unset($post['_token']);
-           
+                       
             $this->rawPost = $post;
-            
-            
-            
+                      
             return $this->startPicker();                      
         }        
         

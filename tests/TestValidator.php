@@ -5,6 +5,7 @@ use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\Validator;
 use Illuminate\Support\Collection;
 use Muratsplat\Multilang\Tests\Model\Content;
+use Muratsplat\Multilang\Tests\Model\ContentLang;
 use \Mockery as m;
 use PHPUnit_Framework_TestCase as UnitTest;
 
@@ -18,20 +19,14 @@ use PHPUnit_Framework_TestCase as UnitTest;
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
 class TestValidator extends UnitTest {    
-    
-    /**
-     *
-     * @var Muratsplat\Multilang\MultiLang
-     */
-    private $multiLang;    
-    
+        
     /**
      *
      * @var Muratsplat\Multilang\Validator 
      */
     private $validator;
     
-    /**
+    /**multiLang
      * Picker Object
      *
      * @var Muratsplat\Multilang\Picker 
@@ -88,9 +83,18 @@ class TestValidator extends UnitTest {
             $this->picker = new Picker(new Collection(), new Element(), $mockedConfig);
             $this->picker->import($this->rawPost);
             
-            $this->validator = new Validator($laraValidator, $mockedConfig);            
+            $this->validator = new Validator($laraValidator, $mockedConfig);
             
-
+        }        
+        
+        private function getMainModel() {
+            
+            return  new Content();
+        }
+        
+        private function getLangModel() {
+            
+            return new ContentLang();
         }
 
         public function testSimleValidate() {
@@ -98,6 +102,30 @@ class TestValidator extends UnitTest {
             $model = new Content();
             
             $this->assertFalse($this->validator->make($this->picker, $model, array())); 
-        }  
+        }
+        
+        public function testMergingRules() {
+            
+            $rulesShoudldBe = [
+                
+                'enable'    => 'required',
+                'visible'   => 'required',
+                
+                'title@1'   => 'max:100',
+                'content@1' => 'max:15000',
+                'title@2'   => 'max:100|RequiredForDefaultLang:Page Title',
+                'content@2' => 'max:15000',
+                'title@3'   => 'max:100|RequiredForDefaultLang:Page Title',
+                'content@3' => 'max:15000',
+            ];
+            
+            $main = $this->getMainModel();
+            
+                       
+            $this->validator->make($this->picker, $main, array('title@1'   => 'max:100'));
+            
+            $this->assertEquals($rulesShoudldBe,$this->validator->getRules());
+            
+        }
     
 }

@@ -70,7 +70,7 @@ class Validator extends Base implements MessageProviderInterface {
      *  
      * @var array
      */
-    private $rules;
+    private $rules = [];
         
         /**
          * Constructer
@@ -129,12 +129,10 @@ class Validator extends Base implements MessageProviderInterface {
             
             if(!empty($rules)) {
                 
-                $this->rules = $rules;
-                
-                return;
+                $this->updateRules($rules);
             }
             
-            $this->mergedrules = array_merge($main->getRules(), $lang->getRules());
+            $this->mergeModelRules($main, $lang);
             
             $this->updateRulesForRawPost();           
         }
@@ -153,46 +151,23 @@ class Validator extends Base implements MessageProviderInterface {
                        
             foreach ($this->picker->getSource() as $key => $value) {
                 
-                if(array_key_exists($key, $this->mergedrules)) {
+                if($this->inMergedRules($key)) {
                     
-                    $this->rules[$key] = $this->mergedrules[$key];
+                    $this->addRulesIfNotExist($key, $this->mergedrules[$key]);
                     
                     continue;
                 }
-                // Has the key multilang prefix?
+                // Is it multilang ? True, return language ID,
                 $pos = $this->picker->isMultilang($key);
                 // deleting the prefix and id is right side of the prefix
                 $rmkey = $this->picker->removePrefixAndId($key, $pos);
                 
-                if(is_numeric($pos) && array_key_exists($rmkey, $this->mergedrules) ) {
+                if(is_numeric($pos) && $this->inMergedRules($rmkey) ) {
                     // re-editing rules for rawPost data..
-                    $this->rules[$key] = $this->mergedrules[$rmkey];                    
-                    
-                }
-                
-            }        
-            
+                    $this->addRulesIfNotExist($key, $this->mergedrules[$rmkey]);                   
+                }                
+            }           
         }
-//
-//        /**
-//         * to get multilang model by using main model 
-//         * 
-//         * @param Illuminate\Database\Eloquent\Model
-//         * @return Illuminate\Database\Eloquent\Model
-//         * @throws MultiLangModelWasNotFound
-//         */
-//        private function getLangModel(Model $model) {
-//                        
-//            $className = get_class($model) . $this->config->get('multilang::appLanguageModel');
-//
-//            // checking existed translation model 
-//            if (!class_exists($className , $autoload = true) ) {
-//
-//                throw new MultiLangModelWasNotFound('Multi language post was detected!'
-//                       . ' In case of this it needs a model for multi languages content.');
-//            }            
-//            return new $className;           
-//        }
         
         /**
          * to valitate
@@ -201,7 +176,7 @@ class Validator extends Base implements MessageProviderInterface {
          */
         private function validate() {            
             
-            $v = $this->validator->make($this->picker->getSource(), $this->mergedrules);
+            $v = $this->validator->make($this->picker->getSource(), $this->getRules());
             
             if($v->fails()) {
                 // to set errors messages
@@ -212,5 +187,79 @@ class Validator extends Base implements MessageProviderInterface {
             }
             // passed!
             return true;            
-        }       
+        }
+        
+        /**
+         * to get rules
+         * 
+         * @return array
+         */
+        public function getRules() {
+            
+            return $this->rules;
+        }
+        
+        /**
+         * to update rules for only raw rules.
+         *   
+         * @param array $rules
+         * @return void
+         */
+        protected function updateRules(array $rules = array()) {
+            
+            $this->rules = array_merge($this->rules, $rules);            
+        }
+        
+        /**
+         * to merged models' rules
+         * 
+         * @param \Muratsplat\Multilang\Interfaces\MainInterface $main
+         * @param \Muratsplat\Multilang\Interfaces\LangInterface $lang
+         * @return
+         */
+        private function mergeModelRules(MainInterface $main, LangInterface $lang) {
+
+            $this->mergedrules = array_merge($main->getRules(), $lang->getRules());
+        }
+        
+        /**
+         * to check rule in merged rules which are getted from models.
+         * 
+         * @param string $key
+         * @return bool
+         */
+        private function inMergedRules($key) {
+            
+            return array_key_exists($key, $this->mergedrules);
+        }   
+       
+        
+        public function addRulesIfNotExist($key, $rule) {
+    
+            if($this->inRules($key)) { return; } 
+                    
+            $this->addRules($key, $rule);      
+        }
+        
+        /**
+         * To check rule
+         * 
+         * @param string $key
+         * @return bool
+         */
+        public function inRules($key) {
+            
+            return array_key_exists($key, $this->rules);
+        }
+        
+        /**
+         * To add rule
+         * 
+         * @param string $key
+         * @param string $rule
+         */
+        protected function addRules($key, $rule) {
+            
+            $this->rules = array_add($this->rules, $key, $rule);
+        }
 }
