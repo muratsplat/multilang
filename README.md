@@ -331,7 +331,7 @@ example:
 
 Validation rules can be in models. But it is not required. You can add rules in your controller. It is recommended that rules is in models. This make keep clean on your controller.
 
-### Dinamic Form Example
+### Dynamic Form Example
 
 You can create form as down on view layer.
 
