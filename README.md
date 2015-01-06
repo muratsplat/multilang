@@ -2,7 +2,13 @@
 
 [![Build Status](https://travis-ci.org/muratsplat/multilang.svg?branch=master)](https://travis-ci.org/muratsplat/multilang) [![Latest Stable Version](https://poser.pugx.org/muratsplat/multilang/v/stable.svg)](https://packagist.org/packages/muratsplat/multilang) [![Total Downloads](https://poser.pugx.org/muratsplat/multilang/downloads.svg)](https://packagist.org/packages/muratsplat/multilang) [![Latest Unstable Version](https://poser.pugx.org/muratsplat/multilang/v/unstable.svg)](https://packagist.org/packages/muratsplat/multilang) [![License](https://poser.pugx.org/muratsplat/multilang/license.svg)](https://packagist.org/packages/muratsplat/multilang)
 
-A Laravel extension is make be easy to CRUD ORM proccess for multi languages contents..
+A Laravel extension is make be easy to CRUD ORM proccess for multi languages contents.
+
+##Requiretments
+
+- PHP 5.4+
+- HHVM lastest
+- Laravel 4.2.x
 
 ##Installing
 
@@ -314,7 +320,7 @@ class PageLang extends \Eloquent implements LangInterface {
 ```
 Multilang gets with new rule. 'RequiredForDefaultLang' rule validates elements for default language id. If default language is Turkish, the rule make be valited Turkish element and than if it is empty, returns false with valation message.
 
-RequiredForDefaultLang accepts tree parameters. First of these prefix for picking elements up and second parameter is default language id and in last parameter is replace  for error message.
+RequiredForDefaultLang accepts tree parameters. First of these prefix for picking elements up and second parameter is default language id and also last parameter is replacer in error message.
 
 You can add a message for the rule by editing '..app/lang/en/validation.php'.
 
@@ -325,8 +331,31 @@ example:
 
 Validation rules can be in models. But it is not required. You can add rules in your controller. It is recommended that rules is in models. This make keep clean on your controller.
 
-###Example Post Data
-~~~php
+### Dinamic Form Example
+
+You can create form as down on view layer.
+
+```php
+  //..page.blade.php
+    
+    {{Form::open(['action'=>['PageController@store']])}}
+
+        {{Form::text('enable', 'Aktif')}}
+    
+        @foreach($langs as $v)
+        
+            {{Form::text("title@$v->id", 'Bir başlık giriniz..')}}
+            {{Form::textarea("content@$v->id")}}
+            
+       @endforeach 
+       
+    {{Form::close()}}
+```
+
+This form sends post data to a controller...
+
+```php
+    
     $rawPost  = array(
 
             "enable"    => 1,
@@ -341,9 +370,18 @@ Validation rules can be in models. But it is not required. You can add rules in 
             "content@3" => 'Путинхороший человек. Он любит русские , я думаю, россияне любят его.'      
         );
 
-	$rules = ['enable'    => 'required'];
-	// Rules parameter is optional. You have been defined rules in Page model,
-	// it is not need.
+ ```
+
+You can use MultiLang on your controller..
+ 
+```php
+
+	$rules = ['enable'    => 'required']; 
+    // if the rule is in models, it is overwrote on same rule in models. 
+    // So one of in model is updated by overwriting
+	
+    // Rules parameter is optional. 
+    // If you have been defined rules in Page model, rules parameter is not need.
 
     if(MultiLang::create($rawPost, new Page(), $rules)) {
         // it is in success
