@@ -232,11 +232,6 @@ class Page extends \Eloquent implements MainInterface {
             'enable'    => 'required',           
         );
 
-        public function getRules() {
-
-            return $this->rules;
-        }
-
         /**
          * Defining inversed relation to Content
          * 
@@ -259,7 +254,7 @@ class Page extends \Eloquent implements MainInterface {
         }
     }
 ``` 
-For pageLangs table we are creating PageLang Model. PageLang must be implement 'Muratsplat\Multilang\Interfaces\LangInterface' and mus be used 'Muratsplat\Multilang\Traits\LangTrait' trait in it. That's like this:
+For pageLangs table we are creating PageLang Model. PageLang must be implement 'Muratsplat\Multilang\Interfaces\LangInterface' and must be used 'Muratsplat\Multilang\Traits\LangTrait' trait in it. That's like this:
 
 ```php
 use Muratsplat\Multilang\Interfaces\LangInterface;
@@ -290,12 +285,7 @@ class PageLang extends \Eloquent implements LangInterface {
         'content'      => 'max:15000|RequiredForDefaultLang:@,1,Content',      
         
     ); 
-        
-        public function getRules() {
-
-            return $this->rules;
-        }
-
+      
         /**
          * Defining inversed relation to Content
          * 

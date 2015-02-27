@@ -32,7 +32,10 @@ class MultilangServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('muratsplat/multilang');
+        $this->package('muratsplat/multilang');
+
+        // adding new rules for our extention
+        $this->addNewRules();
 	}
 
 	/**
@@ -42,9 +45,6 @@ class MultilangServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-            // adding new rules for our extention
-            $this->addNewRules();
-
             $this->app->singleton('multilang', function($app) {               
             
                 return new MultiLang(
