@@ -2,7 +2,6 @@
 
 use RuntimeException as ex;
 
-
 /**
  * Exceptios for Picker class
  *

@@ -2,7 +2,6 @@
 
 use ErrorException as ex;
 
-
 /**
  * Exceptios for Picker class
  *

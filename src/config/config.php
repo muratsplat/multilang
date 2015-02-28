@@ -29,4 +29,12 @@ return array(
          * The key only must be used by Multilang Packages..
          */    
         'reservedAttribute' => '__lang_id__',
+        
+        /**
+         * System Language Model
+         * 
+         * This model will be used for detecting default language
+         */
+        'languageModel'     => 'Language',
+    
     );

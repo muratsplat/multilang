@@ -6,6 +6,7 @@ use Muratsplat\Multilang\Interfaces\LangInterface;
 use Muratsplat\Multilang\Interfaces\AppLanguageInterface;
 use Muratsplat\Multilang\Traits\LangTrait;
 use Muratsplat\Multilang\Traits\MainTrait;
+use Muratsplat\Multilang\Traits\LanguageTrait;
 /**
  *  Simple Models For tests
  * 
@@ -74,7 +75,7 @@ class ContentLang extends Model implements LangInterface {
     
     protected $table = "contentlangs";
     
-    protected $fillable = array('content_id', 'lang_id', 'title', 'content');
+    protected $fillable = array('content_id', '__lang_id__', 'title', 'content');
 
     
     /**
@@ -105,7 +106,7 @@ class ContentLang extends Model implements LangInterface {
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function mainModel() {
-        
+             
         return $this->content();
     }
 }
@@ -115,6 +116,8 @@ class ContentLang extends Model implements LangInterface {
  */
 class Language extends Model implements AppLanguageInterface {
     
+    use LanguageTrait;
+    
     protected $table = "languages";
     
     protected $fillable = array(
@@ -122,5 +125,7 @@ class Language extends Model implements AppLanguageInterface {
         'name_native', 
         'lang_code', 
         'enable',
-        'default',);       
+        'default',);
+    
+    
 }

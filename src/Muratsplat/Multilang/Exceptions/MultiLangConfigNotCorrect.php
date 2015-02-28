@@ -1,6 +1,6 @@
 <?php namespace Muratsplat\Multilang\Exceptions;
 
-use LogicException as ex;
+use ErrorException as ex;
 
 /**
  * Exceptions for general use
