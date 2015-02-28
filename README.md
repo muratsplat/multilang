@@ -6,11 +6,49 @@ A Laravel extension is make be easy to CRUD ORM proccess for multi languages con
 
 ##Requiretments
 
-- PHP 5.4+
-- HHVM lastest
+- PHP 5.4+ or HHVM lastest
+- Composer
 - Laravel 4.2.x
 
-##Installing
+
+##Installing 
+
+Add `muratsplat/multilang` as a requirement to composer.json
+```javascript
+    "require" : {
+        "muratsplat\multilang": "dev-master"
+    },
+
+```
+Update your packages with `composer update` or install with `composer install`.
+
+You can also add the package using `composer require muratsplat/multilang` on your terminal.
+
+This package only supports Composer to instaling.
+
+###Configuration
+
+Firstly you should add the package's service provider to your laravel app
+```php
+      'Muratsplat\Multilang\MultilangServiceProvider',
+```
+
+Also you can add the package's alias 
+
+```php
+ 'MultiLang' =>'Muratsplat\Multilang\Facades\MultiLang',
+
+```
+Finally install to the package's configuration via artisan like this
+
+in your project's main folder:
+```bash
+
+php artisan config:publish muratsplat/multilang
+
+```
+Now you can change the package's configuration by editing `..app/config/packages/muratsplat/multilang/config.php` 
+
 
 ##How to use in Example
 
