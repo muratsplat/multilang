@@ -30,7 +30,7 @@ This package only supports Composer to instaling.
 
 Firstly you should add the package's service provider to your laravel app
 ```php
-      'Muratsplat\Multilang\MultilangServiceProvider',
+ 'Muratsplat\Multilang\MultilangServiceProvider',
 ```
 
 Also you can add the package's alias 
@@ -44,7 +44,7 @@ Finally install to the package's configuration via artisan like this
 in your project's main folder:
 ```bash
 
-php artisan config:publish muratsplat/multilang
+ php artisan config:publish muratsplat/multilang
 
 ```
 Now you can change the package's configuration by editing `..app/config/packages/muratsplat/multilang/config.php` 
@@ -346,7 +346,7 @@ class PageLang extends \Eloquent implements LangInterface {
         }
     }
 ```
-Multilang gets with new rule. 'RequiredForDefaultLang' rule validates elements for default language id. If default language is Turkish, the rule make be valited Turkish element and than if it is empty, returns false with valation message.
+Multilang gets with new rule. 'RequiredForDefaultLang' rule validates elements for default language id. If default language is Turkish, and if Turkish element is empty, validation is failed.
 
 RequiredForDefaultLang accepts tree parameters. First of these prefix for picking elements up and second parameter is default language id and also last parameter is replacer in error message.
 
@@ -354,7 +354,7 @@ You can add a message for the rule by editing '..app/lang/en/validation.php'.
 
 example:
 ```php
-"required_for_default_lang" => ":explain, is required for default language"'
+"required_for_default_lang" => ":explain, is required for default language."
 ```
 
 Validation rules can be in models. But it is not required. You can add rules in your controller. It is recommended that rules is in models. This make keep clean on your controller.
