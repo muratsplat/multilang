@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Base;
 use Muratsplat\Multilang\Interfaces\MainInterface;
-use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\Wrapper;
 use Muratsplat\Multilang\Exceptions\MultilangPostEmpty;
-
+use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
+use Muratsplat\Multilang\Exceptions\MultilangParameterInvalid;
 /**
  * MultiLang Class
  * 
@@ -400,60 +400,7 @@ class MultiLang extends Base implements MessageProviderInterface {
                         
             return $this->message;                        
         }
-        
-//        /**
-//         * To get the name of main model's multi language model
-//         * 
-//         * @return string
-//         * @throws Exception
-//         */
-//        public function getLangModelName() {
-//
-//            // To create a name of translation model
-//            $className = get_class($this->mainModel) . $this->getModelPrefix();
-//
-//            // checking existed translation model 
-//            if (!class_exists($className , $autoload = true) ) {
-//
-//               throw new MultiLangModelWasNotFound('Multilanguage post was detected! '
-//                       . 'In case of this it needs a model for multi language content.');
-//            }
-//             
-//            return $classNam;
-//        }
-//        
-//        /** 
-//         * to get relation name to connect hasMany relalation
-//         * between main model and lang model
-//         * 
-//         * @return string 
-//         */
-//        public function getRelationName() {
-//            // for namespace
-//            $isNameSpace = explode("\\", $this->getLangModelName());
-//            
-//            $num = count($isNameSpace);
-//            
-//            if($num > 1) {
-//                
-//                return $isNameSpace[$num-1] . 's';
-//            }
-//
-//            return $isNameSpace[0] . 's';
-//        }
-//        
-//        /**
-//         * to get model prefix for Multilang contents
-//         * 
-//         * @return string
-//         */
-//        private function getModelPrefix(){
-//            
-//            $prefix = $this->config->get('multilang::modelPrefix');
-//            
-//            return is_null($prefix) || (strlen(trim($prefix)) === 0) ? $this->modelPrefix : $prefix; 
-//        }
-        
+                
         /**
          * to delete model with multi language models..
          * 
@@ -512,9 +459,9 @@ class MultiLang extends Base implements MessageProviderInterface {
          * You can use returned Collection like to use Eloquent Collection.
          * 
          * @param Illuminate\Database\Eloquent\Collection|Illuminate\Database\Eloquent\Model $model
-         * @para Illuminate\Database\Eloquent\Model|int $wantedLang language id or specific language model
+         * @param Illuminate\Database\Eloquent\Model|int $wantedLang language id or specific language model
          * @param Illuminate\Database\Eloquent\Model|int $defaultLang language id or specific language model
-         * @return \Muratsplat\Multilang\Wrapper|Illuminate\Database\Eloquent\Collection| null null, if it is failed.
+         * @return \Muratsplat\Multilang\Wrapper|Illuminate\Database\Eloquent\Collection
          */
         public function makeWarapper($model, $wantedLang=1, $defaultLang=1) {
             
@@ -530,7 +477,7 @@ class MultiLang extends Base implements MessageProviderInterface {
                 return $this->createWrappersInCollection($model, $wantedLang, $defaultLang);           
             }
             
-            return null;        
+            throw new MultilangParameterInvalid('First parameter only can be Model or Collection');
         }
         
         /**
