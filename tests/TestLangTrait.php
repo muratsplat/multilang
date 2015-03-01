@@ -34,7 +34,7 @@ class TestLangTrait  extends MigrateAndSeed {
                      
             $this->config = m::mock('Illuminate\Config\Repository');
             
-            $this->config->shouldReceive('get')->with('mutilang::languageModel')->andReturn('Muratsplat\Multilang\Tests\Model\Language');
+            $this->config->shouldReceive('get')->with('multilang::languageModel')->andReturn('Muratsplat\Multilang\Tests\Model\Language');
             
             $this->config->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
             
