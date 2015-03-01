@@ -47,7 +47,7 @@ trait LangTrait  {
          */
         protected function getLanguage() {
             
-            $modelName = \Config::get('mutilang.languageModel');
+            $modelName = \Config::get('mutilang::languageModel');
             
             if (!class_exists($modelName, true)) {
                                 
@@ -73,7 +73,7 @@ trait LangTrait  {
          */
         protected function getLangIDColumnName() {
             
-            $name  = \Config::get('multilang.reservedAttribute');
+            $name  = \Config::get('multilang::reservedAttribute');
                         
             if ($this->offsetExists($name)) {
                 
