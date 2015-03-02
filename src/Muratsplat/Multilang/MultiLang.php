@@ -14,6 +14,7 @@ use Muratsplat\Multilang\Wrapper;
 use Muratsplat\Multilang\Exceptions\MultilangPostEmpty;
 use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 use Muratsplat\Multilang\Exceptions\MultilangParameterInvalid;
+
 /**
  * MultiLang Class
  * 
@@ -82,7 +83,7 @@ class MultiLang extends Base implements MessageProviderInterface {
      * 
      * @var array 
      */
-    private $deletedManinModel;
+    private $deletedMainModel;
     
     /**
      * Wrapper to access to main model and mutli language model 
@@ -163,45 +164,31 @@ class MultiLang extends Base implements MessageProviderInterface {
              
             $posts = $this->picker->getMultilangToArray();
             
-            $this->LangModels()->createMany($posts);     
-    
-            return true;
+            return !empty($this->getLangModels()->createMany($posts));    
         }
-        
-//        /**
-//         * Created new main model's multi language model
-//         * 
-//         * @throws \Muratsplat\Multilang\Exceptions\RelationNotCorrect
-//         */
-//        private function checkRelation() {
-//            
-//            // we have to sure everything is ok!!
-//              
-//            $nameLang = $this->getLangModelName();
-//            
-//            if (!$this->mainModel->langModels()->getRelated() instanceof $nameLang) {
-//                
-//                throw new RelationNotCorrect("It looks the relation is not correct "
-//                        . "between main model and multi-language models");                
-//            }          
-//        }
-//        
+
         /**
-         * to connect multi-language model
-         * Simple switcher is on created or updated
+         * Simple switcher is as for on created or updated or deleted action
          * 
+         * @param bool  $mainModel If it wants to langModels, passes false
          * @return \Illuminate\Database\Eloquent\Relations\HasMany
          */
-        protected function langModels() {
+        protected function switcher($mainModel=true) {
            
             // we can say simple hub to access lang models for this.
             switch (true) {
                 
-                case !is_null($this->updatedMainModel) : return $this->updatedMainModel->langModels();
+                case !is_null($this->updatedMainModel) : 
                     
-                case !is_null($this->createdMainModel) : return $this->createdMainModel->langModels();
+                    return $mainModel ? $this->updatedMainModel : $this->updatedMainModel->langModels();
                     
-                case !is_null($this->deletedManinModel) : return $this->deletedManinModel->langModels();                
+                case !is_null($this->createdMainModel) : 
+                    
+                    return $mainModel ? $this->createdMainModel : $this->createdMainModel->langModels();
+                    
+                case !is_null($this->deletedMainModel) : 
+                    
+                    return $mainModel ? $this->deletedMainModel : $this->deletedMainModel->langModels();                
             }        
         }        
         
@@ -263,7 +250,7 @@ class MultiLang extends Base implements MessageProviderInterface {
                     continue;
                 }
                 
-                $this->langModels()->create($v);            
+                $this->getLangModels()->create($v);            
             }
             
             // deleteing all model is not existed in the post data!
@@ -281,14 +268,8 @@ class MultiLang extends Base implements MessageProviderInterface {
         private function existedInLangs($id) {
             
             $langIdKey = $this->getConfig('reservedAttribute');
-                        
-            $existed = $this->langModels()->getResults()->filter(function($item) use ($id, $langIdKey) {
-                
-                if((integer) $item->getAttribute($langIdKey) === (integer) $id) {
-                    
-                    return true;                    
-                }
-            });
+            
+            $existed = $this->getLangModels()->getRelated()->query()->where($langIdKey, $id)->get();
        
             return $existed->count() === 0 ? null : $existed->first();    
         }
@@ -308,7 +289,7 @@ class MultiLang extends Base implements MessageProviderInterface {
                 }               
             };
             
-            $this->langModels()->getResults()->each($callback);           
+            $this->getLangModels()->getResults()->each($callback);           
         }
 
         /*
@@ -324,7 +305,7 @@ class MultiLang extends Base implements MessageProviderInterface {
             // the nummber of multi language elements in post must be equal to ones in
             // the number of langauge model collections. So It can be sure everything
             // is ok by the result
-            return $this->picker->getMultilang()->count() === $this->langModels()->getResults()->count();
+            return $this->picker->getMultilang()->count() === $this->getLangModels()->getResults()->count();
         }        
         
         /**
@@ -418,13 +399,13 @@ class MultiLang extends Base implements MessageProviderInterface {
             
             $this->checkMainImplement($model);
             // we have to save model the property of object for each methods
-            $this->deletedManinModel = $model;
+            $this->deletedMainModel = $model;
             
-            if ($this->deletedManinModel->isMultilang()) {
+            if ($this->deletedMainModel->isMultilang()) {
                 
-                return $this->deleteAllLangs() && $this->deletedManinModel->delete();               
+                return $this->deleteAllLangs() && $this->deletedMainModel->delete();               
             }            
-            return $this->deletedManinModel->delete();          
+            return $this->deletedMainModel->delete();          
         }
         
         /**
@@ -434,12 +415,12 @@ class MultiLang extends Base implements MessageProviderInterface {
          */
         private function deleteAllLangs() {
                 
-            $this->langModels()->getResults()->each(function($item) {
+            $this->getLangModels()->getResults()->each(function($item) {
               
                 $item->delete();
             });
             
-            return $this->langModels()->getResults()->count() === 0;   
+            return $this->getLangModels()->getResults()->count() === 0;   
         }
         
         /**
@@ -519,7 +500,26 @@ class MultiLang extends Base implements MessageProviderInterface {
          */
         public function getInstance() {
             
-            return $this;
-            
+            return $this;            
+        }
+        
+        /**
+         * to get lang models
+         * 
+         * @return \Illuminate\Database\Eloquent\Relations\HasMany
+         */
+        public function getLangModels() {
+           
+           return $this->switcher(false);
+        }
+        
+        /**
+         * to get main model
+         * 
+         * @return Illuminate\Database\Eloquent\Model
+         */
+        public function getMainModel() {
+           
+           return $this->switcher();
         }
 }

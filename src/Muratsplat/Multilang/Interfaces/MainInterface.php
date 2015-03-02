@@ -26,7 +26,7 @@ interface MainInterface {
     public function isMultilang();
     
     /**
-    * to get Language Models.
+    * to get translation models of main model
     * 
     * use HasMany relationship to access langugae model
     * @return  \Illuminate\Database\Eloquent\Relations\HasMany

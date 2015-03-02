@@ -219,7 +219,9 @@ class TestMultilang extends MigrateAndSeed {
             
             $this->assertEquals(1, Content::all()->count());            
             
-            $this->assertEquals(2, count(Content::find(1)->ContentLangs));           
+            $this->assertEquals(2, count(Content::find(1)->ContentLangs));
+            
+            $this->assertInstanceOf('Illuminate\Database\Eloquent\Model', $multiLang->getMainModel());
         }
         
         public function testCreateEmptyPostData() {
