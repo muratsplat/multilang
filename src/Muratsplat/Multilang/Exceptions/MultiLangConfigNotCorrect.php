@@ -3,7 +3,7 @@
 use ErrorException as ex;
 
 /**
- * Exceptions for general use
+ * Exception for general use
  *
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç

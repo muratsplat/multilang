@@ -3,7 +3,7 @@
 use RuntimeException as ex;
 
 /**
- * Exceptios for MultiLang Class
+ * Exception for MultiLang Class
  *
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç

@@ -3,7 +3,7 @@
 use LogicException as ex;
 
 /**
- * Exceptios about Language Model
+ * Exception about Language Model
  *
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç

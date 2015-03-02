@@ -3,7 +3,7 @@
 use ErrorException as  ex;
 
 /**
- * Exceptios for Picker class
+ * Exception for Picker class
  *
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
