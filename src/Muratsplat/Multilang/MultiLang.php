@@ -165,7 +165,7 @@ class MultiLang extends Base implements MessageProviderInterface {
              
             $posts = $this->picker->getMultilangToArray();
             
-            return !empty($this->getLangModels()->createMany($posts));    
+            return !empty( (array) $this->getLangModels()->createMany($posts));    
         }
 
         /**
