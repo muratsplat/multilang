@@ -14,6 +14,7 @@ use Muratsplat\Multilang\Wrapper;
 use Muratsplat\Multilang\Exceptions\MultilangPostEmpty;
 use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 use Muratsplat\Multilang\Exceptions\MultilangParameterInvalid;
+use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
 
 /**
  * MultiLang Class
@@ -188,8 +189,10 @@ class MultiLang extends Base implements MessageProviderInterface {
                     
                 case !is_null($this->deletedMainModel) : 
                     
-                    return $mainModel ? $this->deletedMainModel : $this->deletedMainModel->langModels();                
-            }        
+                    return $mainModel ? $this->deletedMainModel : $this->deletedMainModel->langModels();
+            }
+            
+            throw new MultiLangModelWasNotFound('the model/models could not found on any actions!');
         }        
         
         /**
