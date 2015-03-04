@@ -276,10 +276,9 @@ class Wrapper extends Base  {
          */
         private function getLangById($id) {
             
-            return $this->mainModel->langModels()->getResults()->filter(function($item) use ($id) {
-                
-                return (integer) $item->getAttribute($this->getConfig('reservedAttribute')) === (integer) $id;
-                
-            })->first();            
+            $reservedKey = $this->getConfig('reservedAttribute');
+            
+            return $this->mainModel->langModels()->getRelated()->query()->where($reservedKey, $id)->first();
+            
         }        
 }
