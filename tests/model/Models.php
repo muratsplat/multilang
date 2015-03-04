@@ -64,6 +64,16 @@ class Content extends Model implements MainInterface {
          
          return $this->ContentLangs();
      }
+     
+    /**
+     * Simle Relation Model for testing
+     * 
+     * @return  \Illuminate\Database\Eloquent\Relations\HasMany
+     */   
+     public function Images() {
+         
+         return $this->hasMany('Muratsplat\Multilang\Tests\Model\Image', 'content_id', 'id');
+     }
 }
 
 /**
@@ -126,6 +136,21 @@ class Language extends Model implements AppLanguageInterface {
         'lang_code', 
         'enable',
         'default',);
+}
+
+class Image extends Model {
     
+    protected $table = "images";    
     
+        /**
+         * defining relation to content for tests
+         * 
+         * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+         */
+        public function Content() {
+
+            return $this->belongsTo('Muratsplat\Multilang\Tests\Model\Content', 'content_id', 'id');
+        }
+    
+        
 }

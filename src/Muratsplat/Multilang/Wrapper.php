@@ -219,8 +219,9 @@ class Wrapper extends Base  {
          * @return bool
          */
         public function isExistedOnMain($name) {
+                        
+            return isset($this->mainModel->$name);
             
-            return array_key_exists($name, $this->mainModel->getAttributes());
         }
         
         /**

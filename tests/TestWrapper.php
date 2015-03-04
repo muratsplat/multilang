@@ -1,6 +1,7 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
 use Muratsplat\Multilang\Tests\Model\Content;
+use Muratsplat\Multilang\Tests\Model\Image;
 use Muratsplat\Multilang\Wrapper;
 // for testing CRUD ORM jobs..
 use Muratsplat\Multilang\Tests\MigrateAndSeed;
@@ -26,6 +27,11 @@ class TestWrapper  extends MigrateAndSeed {
     private $content;
     
     /**
+     * @var Muratsplat\Multilang\Tests\Model\Image
+     */
+    private $image;
+    
+    /**
      * Object which will be tested!
      *  
      * @var Muratsplat\Multilang\Wrapper 
@@ -49,6 +55,8 @@ class TestWrapper  extends MigrateAndSeed {
             $this->wrapper = new Wrapper($mockedConfig);
             
             $this->content = new Content();
+            
+            $this->image   = new Image();
             
         }
        
@@ -111,5 +119,41 @@ class TestWrapper  extends MigrateAndSeed {
             $this->assertTrue(isset($model->title));
             
             $this->assertFalse(isset($model->olmayan));            
-        }        
+        }
+        
+        
+        public function createImages() {
+            
+            $content = new Content(['enable' => 1, 'visible' => 1]);
+            
+            $content->save();
+            
+            for($i = 0;$i < 5; $i++) {
+            
+                 $content->Images()->create(['file_name' => str_random()])->save();               
+            }
+            
+            return $content->Images;
+        }
+        
+        public function testWarapperWithRelations() {
+            
+            $this->assertCount(5, $this->createImages());
+            
+            $content = $this->content->all()->last();
+            
+            $this->assertInstanceOf('Muratsplat\Multilang\Tests\Model\Content', $content);
+            
+            $wrapper = $this->wrapper->createNew($content);
+            
+            $this->assertEquals(1, $wrapper->enable);
+            
+            $this->assertEquals(1, $wrapper->visible);
+            
+            $this->assertEquals($content->Images, $wrapper->Images);
+            
+            $this->assertCount(5, $content->Images);
+            
+            $this->assertCount(5, $wrapper->Images);           
+        }
 }
