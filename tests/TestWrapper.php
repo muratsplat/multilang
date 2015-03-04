@@ -140,7 +140,7 @@ class TestWrapper  extends MigrateAndSeed {
             
             $this->assertCount(5, $this->createImages());
             
-            $content = $this->content->all()->last();
+            $content = $this->content->all()->last();            
             
             $this->assertInstanceOf('Muratsplat\Multilang\Tests\Model\Content', $content);
             
@@ -155,5 +155,16 @@ class TestWrapper  extends MigrateAndSeed {
             $this->assertCount(5, $content->Images);
             
             $this->assertCount(5, $wrapper->Images);           
+        }
+        
+        public function testWarapperWithRelationsIssueUndefinedProperty() {
+            
+            $content = new Content(['enable' => 1, 'visible' => 1]);
+            
+            $content->save();
+                        
+            $wrapper = $this->wrapper->createNew($content,1,1);
+           
+            $this->assertCount(0, $wrapper->Images);    
         }
 }

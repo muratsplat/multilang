@@ -195,7 +195,7 @@ class Wrapper extends Base  {
          * @return bool
          */
         public function __isset($name) {
-            
+                        
             switch (true) {
                 
                 case $this->isExistedOnMain($name): 
@@ -219,9 +219,8 @@ class Wrapper extends Base  {
          * @return bool
          */
         public function isExistedOnMain($name) {
-                        
-            return isset($this->mainModel->$name);
-            
+                      
+            return isset($this->mainModel->$name) || method_exists($this->mainModel, $name);
         }
         
         /**
@@ -278,7 +277,6 @@ class Wrapper extends Base  {
             
             $reservedKey = $this->getConfig('reservedAttribute');
             
-            return $this->mainModel->langModels()->getRelated()->query()->where($reservedKey, $id)->first();
-            
+            return $this->mainModel->langModels()->getRelated()->query()->where($reservedKey, $id)->first();            
         }        
 }
