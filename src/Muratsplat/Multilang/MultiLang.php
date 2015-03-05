@@ -198,7 +198,8 @@ class MultiLang extends Base implements MessageProviderInterface {
         }        
         
         /**
-         * 
+         * to update main model and multi-languages models by using multilang post
+         *  
          * @param array $post post data
          * @param Illuminate\Database\Eloquent\Model $model
          * @param array $rules optional, you may want to add new rules
@@ -206,11 +207,13 @@ class MultiLang extends Base implements MessageProviderInterface {
          */
         public function update(array $post, Model $model, array $rules=array()) {
             
-            if (!$this->checkdata($post, $model, $rules) || !$model->exists) {
+            if (!$this->checkdata($post, $model, $rules)) { return false;}
+            
+            if (!$model->exists) {
                 
                 $this->message->add('logicError', 'Model is not existed, therefore it can not updated!');
                 
-                return false;   
+                return false;                
             }
             
             $this->setMainModel($model);
