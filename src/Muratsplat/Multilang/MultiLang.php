@@ -213,7 +213,7 @@ class MultiLang extends Base implements MessageProviderInterface {
                 
                 $this->message->add('logicError', 'Model is not existed, therefore it can not updated!');
                 
-                return false;                
+                return false;   
             }
             
             $this->setMainModel($model);
