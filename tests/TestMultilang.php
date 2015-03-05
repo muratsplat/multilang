@@ -392,8 +392,9 @@ class TestMultilang extends MigrateAndSeed {
                     $validator,
                     $wrapper);
              
-            $created = new Content();                     
-            $created->save();            
+            $created = new Content($this->nonMultilangPost);                     
+            
+            $this->assertTrue($created->save());            
             $this->nonMultilangPost['content@1'] = 'test Content';             
             $this->assertTrue($multiLang->update($this->nonMultilangPost, $created));            
             $this->assertEquals(1, count(Content::find(1)->ContentLangs));
@@ -513,5 +514,63 @@ class TestMultilang extends MigrateAndSeed {
                 }                
             }
                        
+        }
+        
+          public function testUpdateWithAndMultilangEmptyElements() {
+            
+            $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            $wrapper = $this->getWrapper();
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);
+            
+             
+            $multiLang =  new MultiLang(
+                    new Picker(new Collection(), new Element(), $mockedConfig),
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator,
+                    $wrapper);
+             
+            $created = new Content([ 'visible'   => '1']);
+          
+            $this->assertTrue($created->save());
+            
+            $this->assertTrue($created->ContentLangs()->create(['title' => 'Foo', '__lang_id__' => 1])->save());
+            
+            $updated = Content::find($created->id);
+            $post = [
+                'title@1'   => 'Foo Update',
+                'visible'   => '',
+                'enable'    => '',
+               
+            ];
+              
+            $this->assertTrue($multiLang->update($post, $updated)); 
+              
+               
+            $post2 = [
+                'title@1'   => 'Foo Update Sonra',
+                'visible'   => '',
+                'enable'    => '',
+                ];
+            
+             $multiLang2 =  new MultiLang(
+                    new Picker(new Collection(), new Element(), $mockedConfig),
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator,
+                    $wrapper);            
+               
+            $updated2 = Content::find($updated->id);
+            $this->assertTrue($multiLang2->update($post2, $updated2));   
+            $this->assertEquals(1, count(Content::find(1)->ContentLangs));
+            $this->assertTrue($multiLang->update($this->multilangPost, $created));            
+            $this->assertEquals(2, count(Content::find(1)->ContentLangs));           
         }
 }
