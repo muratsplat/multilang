@@ -551,6 +551,8 @@ class TestMultilang extends MigrateAndSeed {
             ];
               
             $this->assertTrue($multiLang->update($post, $updated));            
+            $updatedLang = ContentLang::query()->where('content_id', 4)->where('__lang_id__', 1)->get()->first();            
+            $this->assertEquals($post['title@1'], $updatedLang->title);            
             
             $post2 = [
                 'title@1'   => 'Foo Update İki',
@@ -560,5 +562,8 @@ class TestMultilang extends MigrateAndSeed {
             ];
             
             $this->assertTrue($multiLang->update($post2, $updated));
-        }
+            $updatedLang1 = ContentLang::query()->where('content_id', 4)->where('__lang_id__', 1)->get()->first();            
+            $this->assertEquals($post2['title@1'], $updatedLang1->title);            
+            $this->assertEquals($post2['content@1'], $updatedLang1->content);                     
+          }
 }
