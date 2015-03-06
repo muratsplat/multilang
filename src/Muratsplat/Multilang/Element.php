@@ -135,7 +135,7 @@ class Element implements ArrayableInterface {
         }
         
         /**
-         * getter  for id property
+         * getter for id property
          * 
          * @return int
          */

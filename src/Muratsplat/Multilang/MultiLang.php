@@ -206,6 +206,7 @@ class MultiLang extends Base implements MessageProviderInterface {
          * @return boolean
          */
         public function update(array $post, Model $model, array $rules=array()) {
+
             
             if (!$this->checkdata($post, $model, $rules)) { return false;}
             
@@ -249,7 +250,7 @@ class MultiLang extends Base implements MessageProviderInterface {
 
             foreach ($this->picker->getMultilangToArray() as $v) {
                 
-                $existed = $this->existedInLangs($v[$this->getConfig('reservedAttribute')]);
+                $existed = $this->existedInLangs($v[$this->getLangIdKey()]);
                 
                 if(!is_null($existed)) {
                     
@@ -271,15 +272,19 @@ class MultiLang extends Base implements MessageProviderInterface {
          * to get lang model if it is existed by looking id
          * 
          * @param int $id
-         * @return null|Illuminate\Database\Eloquent\Model null, if model is not existed
+         * @return \Illuminate\Database\Eloquent\Model|null null, if model is not existed
          */
         private function existedInLangs($id) {
-            
-            $langIdKey = $this->getConfig('reservedAttribute');
-            
-            $existed = $this->getLangModels()->getRelated()->query()->where($langIdKey, $id)->get();
+                       
+            $existed = $this->getLangModels()->getResults()->filter(function($item) use($id) {
+                
+                if ($id === (integer) $item->{$this->getLangIdKey()}) {
+                    
+                    return true;
+                }                
+            });
        
-            return $existed->count() === 0 ? null : $existed->first();    
+            return $existed->count() === 0 ? null : $existed->first();
         }
         
         /**
@@ -291,13 +296,13 @@ class MultiLang extends Base implements MessageProviderInterface {
          
             $callback = function($item) {
                 
-                if(is_null($this->picker->getById($item->id))) {
-                 
+                if(is_null($this->picker->getById($item->{$this->getLangIdKey()}))) {
+                                      
                     $item->delete();               
                 }               
             };
             
-            $this->getLangModels()->getResults()->each($callback);           
+            $this->getLangModels()->getResults()->each($callback);    
         }
 
         /*
@@ -313,6 +318,7 @@ class MultiLang extends Base implements MessageProviderInterface {
             // the nummber of multi language elements in post must be equal to ones in
             // the number of langauge model collections. So It can be sure everything
             // is ok by the result
+            
             return $this->picker->getMultilang()->count() === $this->getLangModels()->getResults()->count();
         }        
         
@@ -529,5 +535,15 @@ class MultiLang extends Base implements MessageProviderInterface {
         public function getMainModel() {
            
            return $this->switcher();
+        }
+        
+        /**
+         * to get  Language Id Key as attribute name on model
+         * 
+         * @return string
+         */
+        private function getLangIdKey() {
+            
+            return $this->getConfig('reservedAttribute');
         }
 }

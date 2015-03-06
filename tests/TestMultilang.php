@@ -499,7 +499,7 @@ class TestMultilang extends MigrateAndSeed {
         
         public function createContentWithLanguages() {
             
-            for ($i = 0; $i < 5; $i++) {
+            for ($i = 1; $i < 6; $i++) {
                 
                 Content::create(['visible'=> 1, 'enable' =>1]);
                 
@@ -507,7 +507,7 @@ class TestMultilang extends MigrateAndSeed {
             
             foreach (Content::all() as $v) {
                 
-                for ($i = 0; $i < 10; $i++) {
+                for ($i = 1; $i < 11; $i++) {
                     
                     $v->langModels()->create(['content' => str_random(),'title' => str_random(), '__lang_id__' => $i]);                    
                     
@@ -537,40 +537,28 @@ class TestMultilang extends MigrateAndSeed {
                     $validator,
                     $wrapper);
              
-            $created = new Content([ 'visible'   => '1']);
+            $this->createContentWithLanguages();
           
-            $this->assertTrue($created->save());
+            $this->assertCount(5, Content::all());
             
-            $this->assertTrue($created->ContentLangs()->create(['title' => 'Foo', '__lang_id__' => 1])->save());
-            
-            $updated = Content::find($created->id);
+            $this->assertCount(50, ContentLang::all());
+         
+            $updated = Content::find(4);
             $post = [
                 'title@1'   => 'Foo Update',
                 'visible'   => '',
-                'enable'    => '',
-               
+                'enable'    => '',               
             ];
               
-            $this->assertTrue($multiLang->update($post, $updated)); 
-              
-               
-            $post2 = [
-                'title@1'   => 'Foo Update Sonra',
-                'visible'   => '',
-                'enable'    => '',
-                ];
+            $this->assertTrue($multiLang->update($post, $updated));            
             
-             $multiLang2 =  new MultiLang(
-                    new Picker(new Collection(), new Element(), $mockedConfig),
-                    $mockedConfig, 
-                    $messageBag,
-                    $validator,
-                    $wrapper);            
-               
-            $updated2 = Content::find($updated->id);
-            $this->assertTrue($multiLang2->update($post2, $updated2));   
-            $this->assertEquals(1, count(Content::find(1)->ContentLangs));
-            $this->assertTrue($multiLang->update($this->multilangPost, $created));            
-            $this->assertEquals(2, count(Content::find(1)->ContentLangs));           
+            $post2 = [
+                'title@1'   => 'Foo Update İki',
+                'content@1' => 'Content Bla bla',
+                'visible'   => '',
+                'enable'    => '',               
+            ];
+            
+            $this->assertTrue($multiLang->update($post2, $updated));
         }
 }
