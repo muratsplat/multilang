@@ -530,7 +530,7 @@ class MultiLang extends Base implements MessageProviderInterface {
         /**
          * to get main model
          * 
-         * @return Illuminate\Database\Eloquent\Model
+         * @return \Illuminate\Database\Eloquent\Model
          */
         public function getMainModel() {
            
