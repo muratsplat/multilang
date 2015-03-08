@@ -174,7 +174,7 @@ class MultiLang extends Base implements MessageProviderInterface {
          * Simple switcher is as for on created or updated or deleted action
          * 
          * @param bool  $mainModel If it wants to langModels, passes false
-         * @return \Illuminate\Database\Eloquent\Relations\HasMany
+         * @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Model
          */
         protected function switcher($mainModel=true) {
            
