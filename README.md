@@ -6,7 +6,7 @@ A Laravel extension is make be easy to CRUD ORM proccess for multi languages con
 
 ##Requiretments
 
-- PHP 5.4+ or HHVM lastest
+- PHP >=5.4 or HHVM lastest
 - Composer
 - Laravel 4.2.x
 
