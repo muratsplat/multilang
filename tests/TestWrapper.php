@@ -167,4 +167,17 @@ class TestWrapper  extends MigrateAndSeed {
            
             $this->assertCount(0, $wrapper->Images);    
         }
+        
+        public function testOverLoadingMethod() {
+            
+            $this->assertTrue($this->createContent(1));
+            
+            $this->assertTrue($this->createContentLang(6));
+            
+            $content = Content::find(1);
+                                    
+            $wrapper = $this->wrapper->createNew($content,1, 1);
+            
+            $this->assertEquals("Hi, I'am method on this model!", $wrapper->someMethod());                        
+        }       
 }

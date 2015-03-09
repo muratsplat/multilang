@@ -1,5 +1,8 @@
 <?php namespace Muratsplat\Multilang;
 
+use LogicException;
+use RuntimeException;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
 
@@ -10,7 +13,7 @@ use Muratsplat\Multilang\Base;
  * Wrapper Class
  * 
  * The class make be easy to access main model and multi language models.
- * It can imagened what is such one single model as at one point accsessing to main model and
+ * It can imagened what is such one single model as at one point accessing to main model and
  * multi language models.
  * 
  * We have Page model and PageLang model. In normally it can access to child language models
@@ -172,7 +175,7 @@ class Wrapper extends Base  {
             
             switch (true) {
                 
-                case $this->isExistedOnMain($name): return $this->mainModel->getAttribute($name);
+                case $this->isExistedOnMain($name): return $this->getMainModel()->getAttribute($name);
                 
                 case $this->isExistedOnLangModel($name): return $this->getWantedLangModel()->getAttribute($name);
                                               
@@ -200,7 +203,7 @@ class Wrapper extends Base  {
                 
                 case $this->isExistedOnMain($name): 
                     
-                    return array_key_exists($name, $this->mainModel->getAttributes());
+                    return array_key_exists($name, $this->getMainModel()->getAttributes());
                 
                 case $this->isExistedOnLangModel($name): 
                     
@@ -220,7 +223,7 @@ class Wrapper extends Base  {
          */
         public function isExistedOnMain($name) {
                       
-            return isset($this->mainModel->$name) || method_exists($this->mainModel, $name);
+            return isset($this->getMainModel()->{$name}) || method_exists($this->getMainModel(), $name);
         }
         
         /**
@@ -232,10 +235,7 @@ class Wrapper extends Base  {
             
             $lang = $this->getWantedLangModel();
             
-            if(is_null($lang)) {
-                
-                return false;
-            }
+            if (is_null($lang)) {return false;}
             
             return array_key_exists($name, $lang->getAttributes());   
         }
@@ -277,6 +277,42 @@ class Wrapper extends Base  {
             
             $reservedKey = $this->getConfig('reservedAttribute');
             
-            return $this->mainModel->langModels()->getRelated()->query()->where($reservedKey, $id)->first();            
-        }        
+            return $this->getMainModel()->langModels()->getRelated()
+                    ->query()->where($reservedKey, $id)->first();            
+        }
+        
+        /**
+         *  Handle dynamic method calls into main model
+         * 
+         * @param string $name
+         * @param array $args
+         * @return mixed
+         * @throws LogicException
+         */
+        public function __call($name, array $args = array()) {
+            
+            if (method_exists($this->mainModel, $name)) {
+                
+                return call_user_func_array(array($this->getMainModel(), $name), $args);
+            }
+            
+            throw new LogicException("$name method is not found on main model!");           
+        }
+        
+        /**
+         * getter mainModel property
+         * 
+         * @return \Illuminate\Database\Eloquent\Model
+         * @throws RuntimeException
+         */
+        public function getMainModel() {
+            
+            if (is_null($this->mainModel)) {                
+                                
+                throw new RuntimeException('Main Model is not existed!');                
+            }
+            
+            return $this->mainModel;
+        }
+        
 }

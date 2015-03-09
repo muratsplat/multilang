@@ -1,12 +1,14 @@
 <?php namespace Muratsplat\Multilang\Tests\Model;
 
 use Illuminate\Database\Eloquent\Model;
+
 use Muratsplat\Multilang\Interfaces\MainInterface;
 use Muratsplat\Multilang\Interfaces\LangInterface;
 use Muratsplat\Multilang\Interfaces\AppLanguageInterface;
 use Muratsplat\Multilang\Traits\LangTrait;
 use Muratsplat\Multilang\Traits\MainTrait;
 use Muratsplat\Multilang\Traits\LanguageTrait;
+
 /**
  *  Simple Models For tests
  * 
@@ -42,6 +44,16 @@ class Content extends Model implements MainInterface {
     public function getRules() {
         
         return $this->rules;
+    }
+    
+    /**
+     * Simple method for testing magic call at wrapper objects
+     * 
+     * @return string
+     */
+    public function someMethod() {
+        
+        return "Hi, I'am method on this model!";
     }
     
     /**
