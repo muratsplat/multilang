@@ -106,7 +106,11 @@ class TestMultilang extends MigrateAndSeed {
         
         protected function getWrapper() {
             
-            return m::mock('Muratsplat\Multilang\Wrapper');
+            $mocked = m::mock('Muratsplat\Multilang\Wrapper');
+            
+            $mocked->shouldReceive('__call')->andReturn(null);
+            
+            return $mocked;
         }
 
         public function testCheckMainImplement() {
