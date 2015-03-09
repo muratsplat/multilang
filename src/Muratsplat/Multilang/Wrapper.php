@@ -289,7 +289,7 @@ class Wrapper extends Base  {
          * @return mixed
          * @throws LogicException
          */
-        public function __call($name, array $args = array()) {
+        public function __call($name, $args) {
             
             if (method_exists($this->mainModel, $name)) {
                 
