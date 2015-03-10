@@ -126,5 +126,33 @@ class TestValidator extends UnitTest {
             $this->assertEquals($rulesShoudldBe,$this->validator->getRules());
             
         }
+        
+        public function testIssueLastRulesStillExistWheItMakesNewValidation() {
+            
+            
+            $rulesShoudldBe = [
+
+                'enable'    => 'required',
+                'visible'   => 'required',
+
+                'title@1'   => 'max:100',
+                'content@1' => 'max:15000',
+                'title@2'   => 'max:100|RequiredForDefaultLang:Page Title',
+                'content@2' => 'max:15000',
+                'title@3'   => 'max:100|RequiredForDefaultLang:Page Title',
+                'content@3' => 'max:15000',
+            ];
+            
+            $main = $this->getMainModel();
+            
+            $this->validator->make($this->picker, $main, array('oldRulesFromOldJobs'   => 'BlaAndBla'));
+                       
+            $this->validator->make($this->picker, $main, array('title@1'   => 'max:100'));            
+            
+            $this->assertEquals($rulesShoudldBe,$this->validator->getRules());
+            
+            
+            
+        }
     
 }

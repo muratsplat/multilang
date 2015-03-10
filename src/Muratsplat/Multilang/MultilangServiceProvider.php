@@ -30,12 +30,12 @@ class MultilangServiceProvider extends ServiceProvider {
 	 *
 	 * @return void
 	 */
-	public function boot()
-	{
-        $this->package('muratsplat/multilang');
+	public function boot()	{
+            
+            $this->package('muratsplat/multilang');
 
-        // adding new rules for our extention
-        $this->addNewRules();
+            // adding new rules for our extention
+            $this->addNewRules();
 	}
 
 	/**
@@ -45,15 +45,14 @@ class MultilangServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-            $this->app->singleton('multilang', function($app) {               
+            $this->app->bind('multilang', function($app) {               
             
                 return new MultiLang(
-                        
-                        new Picker(new Collection(), new Element(),$app['config']),
-                        $app['config'],
-                        new MessageBag(),
-                        new Validator($app['validator'], $app['config']),
-                        new Wrapper($app['config'])
+                            new Picker(new Collection(), new Element(),$app['config']),
+                            $app['config'],
+                            new MessageBag(),
+                            new Validator($app['validator'], $app['config']),
+                            new Wrapper($app['config'])
                         );
             });
                 

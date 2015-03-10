@@ -516,7 +516,7 @@ class TestMultilang extends MigrateAndSeed {
                        
         }
         
-          public function testUpdateWithAndMultilangEmptyElements() {
+        public function testUpdateWithAndMultilangEmptyElements() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -566,4 +566,5 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertEquals($post2['title@1'], $updatedLang1->title);            
             $this->assertEquals($post2['content@1'], $updatedLang1->content);                     
           }
+        
 }

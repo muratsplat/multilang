@@ -105,7 +105,8 @@ class Validator extends Base implements MessageProviderInterface {
          */
         public function make(Picker $picker, MainInterface $model, array $rules) {
             
-            //$langModel = $this->getLangModel($model);
+            // We have to sure no record last validation job!
+            $this->reset();     
             
             $this->mainModel = $model;
             
@@ -261,5 +262,17 @@ class Validator extends Base implements MessageProviderInterface {
         protected function addRules($key, $rule) {
             
             $this->rules = array_add($this->rules, $key, $rule);
+        }
+        
+        /**
+         * To flush old rules which are saved previous
+         * 
+         * @return void
+         */
+        private function reset() {
+            
+            $this->rules = [];
+            
+            $this->mergedrules = [];
         }
 }
