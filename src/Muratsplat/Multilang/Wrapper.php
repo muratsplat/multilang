@@ -277,8 +277,8 @@ class Wrapper extends Base  {
             
             $reservedKey = $this->getConfig('reservedAttribute');
             
-            return $this->getMainModel()->langModels()->getRelated()
-                    ->query()->where($reservedKey, $id)->first();            
+            return $this->getMainModel()->langModels()->getQuery()
+                    ->where($reservedKey, $id)->first();            
         }
         
         /**

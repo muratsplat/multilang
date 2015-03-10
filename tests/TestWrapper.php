@@ -194,8 +194,10 @@ class TestWrapper  extends MigrateAndSeed {
             $contentLast = Content::find(3);
             
             $postLast = ['__lang_id__' => 1, 'title' => 'Last Title', 'content' => 'Last Content'];
-            
+           
             $contentLast->ContentLangs()->create($postLast);
+            
+            //var_dump($contentLast->ContentLangs()->getQuery()->where('__lang_id__', 1)->get()->count());
             
             $wrapperFirst = $this->wrapper->createNew($contentFirst);
             
