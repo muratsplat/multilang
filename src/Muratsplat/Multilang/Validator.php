@@ -70,7 +70,7 @@ class Validator extends Base implements MessageProviderInterface {
      *  
      * @var array
      */
-    private $rules = [];
+    private $rules;
         
         /**
          * Constructer

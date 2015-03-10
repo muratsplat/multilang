@@ -149,10 +149,7 @@ class TestValidator extends UnitTest {
                        
             $this->validator->make($this->picker, $main, array('title@1'   => 'max:100'));            
             
-            $this->assertEquals($rulesShoudldBe,$this->validator->getRules());
-            
-            
-            
+            $this->assertEquals($rulesShoudldBe,$this->validator->getRules());           
         }
     
 }
