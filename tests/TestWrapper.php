@@ -179,5 +179,32 @@ class TestWrapper  extends MigrateAndSeed {
             $wrapper = $this->wrapper->createNew($content,1, 1);
             
             $this->assertEquals("Hi, I'am method on this model!", $wrapper->someMethod());                        
-        }       
+        }
+        
+        public function testIssueOfGettingWrongLangModel() {
+            
+            $this->assertTrue($this->createContent(3));
+            
+            $contentFirst = Content::find(1);
+            
+            $postFirst = ['__lang_id__' => 1, 'title' => 'First Title', 'content' => 'First Content'];
+            
+            $contentFirst->ContentLangs()->create($postFirst);
+            
+            $contentLast = Content::find(3);
+            
+            $postLast = ['__lang_id__' => 1, 'title' => 'Last Title', 'content' => 'Last Content'];
+            
+            $contentLast->ContentLangs()->create($postLast);
+            
+            $wrapperFirst = $this->wrapper->createNew($contentFirst);
+            
+            $this->assertEquals($postFirst['title'], $wrapperFirst->title);
+            
+            $wrapperLast = $this->wrapper->createNew($contentLast);
+            
+            $this->assertEquals($postLast['title'], $wrapperLast->title);
+        }
+        
+       
 }
