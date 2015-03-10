@@ -53,7 +53,7 @@ class Content extends Model implements MainInterface {
      */
     public function someMethod() {
         
-        return "Hi, I'am method on this model!";
+        return "Hi, I'am method on main model!";
     }
     
     /**

@@ -178,7 +178,7 @@ class TestWrapper  extends MigrateAndSeed {
                                     
             $wrapper = $this->wrapper->createNew($content,1, 1);
             
-            $this->assertEquals("Hi, I'am method on this model!", $wrapper->someMethod());                        
+            $this->assertEquals("Hi, I'am method on main model!", $wrapper->someMethod());                        
         }
         
         public function testIssueOfGettingWrongLangModel() {
