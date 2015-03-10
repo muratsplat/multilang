@@ -127,8 +127,7 @@ class TestValidator extends UnitTest {
             
         }
         
-        public function testIssueLastRulesStillExistWheItMakesNewValidation() {
-            
+        public function testIssueLastRulesStillExistWheItMakesNewValidation() {            
             
             $rulesShoudldBe = [
 
