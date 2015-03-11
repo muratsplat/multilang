@@ -25,16 +25,14 @@ class TestLanguageTrait  extends MigrateAndSeed {
         public function setUp() {
             parent::setUp();
                      
-            $this->language = new Language();
-            
+            $this->language = new Language();            
         }
         
         public function testIsDefaultLanguage() {
             
             $def = $this->language->getDefaultLanguage();            
             
-            $this->assertEquals($def, $this->language->query()->where('default', 1)->first());
-            
+            $this->assertEquals($def, $this->language->query()->where('default', 1)->first());            
         }
         
 }

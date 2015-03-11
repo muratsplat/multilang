@@ -1,7 +1,7 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
 use Muratsplat\Multilang\Picker;
-use Muratsplat\Multilang\Tests\Base;
+use PHPUnit_Framework_TestCase as UnitTest;
 use Muratsplat\Multilang\Element;
 
 use Mockery as m;
@@ -14,7 +14,7 @@ use Mockery as m;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class TestPicker  extends Base {
+class TestPicker  extends UnitTest {
     
     /*
      * Simple Post Data

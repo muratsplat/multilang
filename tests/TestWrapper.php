@@ -6,6 +6,7 @@ use Muratsplat\Multilang\Wrapper;
 // for testing CRUD ORM jobs..
 use Muratsplat\Multilang\Tests\MigrateAndSeed;
 use \Mockery as m;
+use Muratsplat\Multilang\Tests\CreateContentAndLangTraitForTest;
 
 /**
  * a test class for \Muratsplat\Multilang\Wrapper
@@ -16,9 +17,9 @@ use \Mockery as m;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class TestWrapper  extends MigrateAndSeed {
-    
-    
+class TestWrapper  extends MigrateAndSeed {    
+   
+    use CreateContentAndLangTraitForTest;
     /**
      * Main Model for test
      *
@@ -58,37 +59,8 @@ class TestWrapper  extends MigrateAndSeed {
             
             $this->image   = new Image();
             
-        }
-       
-        public function createContent($n) {
-            
-            for ($i=0; $i< $n ; $i++) {
-                
-                Content::create(['enable' => '1', 'visible' => 2])->save();                
-          
-            }          
-            return $this->content->all()->count() === $n;    
-        }
+        }       
         
-        public function createContentLang($n) {
-            
-            $callback = function($item) use ($n) {
-              
-                for ($i=0; $i< $n ; $i++) {
-                
-                    $item->ContentLangs()->create([
-                    
-                    '__lang_id__' => $i, 
-                    'title' => str_random(5),
-                    'content' => str_random(10)
-                    ])->save();                
-                }               
-            };
-            
-            Content::all()->each($callback);
-            
-            return Content::find(1)->ContentLangs()->getResults()->count() === $n;
-        }      
         
         public function testSimpleFirst() {
             
@@ -206,8 +178,7 @@ class TestWrapper  extends MigrateAndSeed {
             $wrapperLast = $this->wrapper->createNew($contentLast);
             
             $this->assertEquals($postLast['title'], $wrapperLast->title);
-        }
-        
+        }        
     
         
         public function testWantedMethodOnRuntime() {
@@ -234,5 +205,5 @@ class TestWrapper  extends MigrateAndSeed {
             $this->assertEquals($wrapper->wanted(2)->title, $postSecond['title']);
            
             $this->assertEquals($wrapper->wanted(3)->title, $postThird['title']);            
-        }
+        }       
 }

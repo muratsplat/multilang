@@ -15,6 +15,7 @@ use Muratsplat\Multilang\Exceptions\MultilangPostEmpty;
 use Muratsplat\Multilang\Exceptions\MultilangRequiredImplement;
 use Muratsplat\Multilang\Exceptions\MultilangParameterInvalid;
 use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
+use Muratsplat\Multilang\Tests\CreateContentAndLangTraitForTest;
 
 /**
  * MultiLang Class
@@ -29,6 +30,8 @@ use Muratsplat\Multilang\Exceptions\MultiLangModelWasNotFound;
  * @package Multilang
  */
 class MultiLang extends Base implements MessageProviderInterface {
+    
+    use CreateContentAndLangTraitForTest;
     
    /**
     * Main Model  

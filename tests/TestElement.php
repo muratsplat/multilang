@@ -1,6 +1,5 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
-use Muratsplat\Multilang\Tests\Base;
 use Muratsplat\Multilang\Element;
 use PHPUnit_Framework_TestCase as UnitTest;
 /**
