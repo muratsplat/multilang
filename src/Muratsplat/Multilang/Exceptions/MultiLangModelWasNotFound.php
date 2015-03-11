@@ -3,7 +3,7 @@
 use LogicException as ex;
 
 /**
- * Exception for general use
+ * An exception for all logic errors
  *
  * @author Murat Ödünç <murat.asya@gmail.com>
  * @copyright (c) 2015, Murat Ödünç
