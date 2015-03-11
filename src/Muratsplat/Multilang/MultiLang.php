@@ -206,15 +206,12 @@ class MultiLang extends Base implements MessageProviderInterface {
          * @return boolean
          */
         public function update(array $post, Model $model, array $rules=array()) {
-
             
             if (!$this->checkdata($post, $model, $rules)) { return false;}
             
             if (!$model->exists) {
                 
-                $this->message->add('logicError', 'Model is not existed, therefore it can not updated!');
-                
-                return false;   
+                throw new MultiLangModelWasNotFound('Model is not existed, therefore it can not updated!');
             }
             
             $this->setMainModel($model);
@@ -406,9 +403,7 @@ class MultiLang extends Base implements MessageProviderInterface {
              
             if (!$model->exists) {
                 
-                $this->message->add('logicError', 'Model is not existed, therefore it can not deleted!');
-                
-                return false;   
+                throw new MultiLangModelWasNotFound('Model is not existed, therefore it can not deleted!!');
             }
             
             $this->checkMainImplement($model);
