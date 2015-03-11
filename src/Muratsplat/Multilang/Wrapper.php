@@ -247,7 +247,7 @@ class Wrapper extends Base  {
          */
         public function getWantedLangModel() {
             
-            return $this->getLangById($this->wantedLang);  
+            return $this->getLangById($this->getWantedLang());  
         }        
         
         /**
@@ -313,6 +313,21 @@ class Wrapper extends Base  {
             }
             
             return $this->mainModel;
+        }
+        
+        /**
+         * to change wanted language. 
+         * Parameter can be id as int or eloquent model which is
+         * managed laguages on your app.
+         * 
+         * If you want to change wanted language on the wrapper,
+         * also you can do that on runtime. 
+         * 
+         * @param \Illuminate\Database\Eloquent\Model|int $lang
+         */
+        public function changeWanted($lang) {
+            
+            $this->setWantedLang($lang);           
         }
         
 }
