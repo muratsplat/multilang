@@ -208,7 +208,9 @@ class TestWrapper  extends MigrateAndSeed {
             $this->assertEquals($postLast['title'], $wrapperLast->title);
         }
         
-        public function testChangeLangModelOnRuntime() {
+    
+        
+        public function testWantedMethodOnRuntime() {
             
             $this->assertTrue($this->createContent(3));
                       
@@ -229,11 +231,8 @@ class TestWrapper  extends MigrateAndSeed {
             
             $this->assertEquals($wrapper->title, $postFirst['title']);           
           
-            $wrapper->changeWanted(2);            
-            $this->assertEquals($wrapper->title, $postSecond['title']);
-            
-            $wrapper->changeWanted(3);            
-            $this->assertEquals($wrapper->title, $postThird['title']);
-            
-        }      
+            $this->assertEquals($wrapper->wanted(2)->title, $postSecond['title']);
+           
+            $this->assertEquals($wrapper->wanted(3)->title, $postThird['title']);            
+        }
 }

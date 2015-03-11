@@ -101,7 +101,7 @@ class Wrapper extends Base  {
          * @param  Illuminate\Database\Eloquent\Model|int $wantedLang
          * @return \Muratsplat\Multilang\Wrapper
          */
-        public function setWantedLang($wantedLang) {
+        protected function setWantedLang($wantedLang) {
             
             $this->wantedLang = is_object($wantedLang) ? $wantedLang->id :(integer) $wantedLang;
             
@@ -118,7 +118,7 @@ class Wrapper extends Base  {
          * @param  Illuminate\Database\Eloquent\Model|int $defaultLang
          * @return \Muratsplat\Multilang\Wrapper
          */
-        private function setDefaultLang($defaultLang) {
+        protected function setDefaultLang($defaultLang) {
             
             $this->defaultLang = is_object($defaultLang) ? $defaultLang->id :(integer) $defaultLang;
             
@@ -316,18 +316,15 @@ class Wrapper extends Base  {
         }
         
         /**
-         * to change wanted language. 
-         * Parameter can be id as int or eloquent model which is
-         * managed laguages on your app.
-         * 
-         * If you want to change wanted language on the wrapper,
-         * also you can do that on runtime. 
+         * to changed wanted language and to access wrapper
          * 
          * @param \Illuminate\Database\Eloquent\Model|int $lang
+         * @return \Muratsplat\Multilang\Wrapper
          */
-        public function changeWanted($lang) {
+        public function wanted($lang) {
             
-            $this->setWantedLang($lang);           
-        }
-        
+            $this->setWantedLang($lang);
+            
+            return $this;
+        }       
 }
