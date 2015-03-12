@@ -19,9 +19,9 @@ class Contents extends Migration {
             
             $t->increments('id');
                        
-            $t->boolean('enable')->default(0);
-            
+            $t->boolean('enable')->default(0);            
             $t->boolean('visible')->default(0);
+            $t->string('alias', 80)->nullable();
             
             $t->timestamp('created_at')->nullable();
             $t->timestamp('updated_at')->nullable();

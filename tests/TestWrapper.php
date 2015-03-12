@@ -205,5 +205,25 @@ class TestWrapper  extends MigrateAndSeed {
             $this->assertEquals($wrapper->wanted(2)->title, $postSecond['title']);
            
             $this->assertEquals($wrapper->wanted(3)->title, $postThird['title']);            
-        }       
+        }
+        
+        public function testFoundedBugOnNullAttributes() {
+            
+            $content = new Content(['enable' => 1, 'visible' => 1,  'alias' => null]);
+            
+            $post = ['__lang_id__' => 1, 'title' => null, 'content' => null];
+            
+            $this->assertTrue($content->save());
+            
+            $content->ContentLangs()->create($post);
+            
+            $wrapper = $this->wrapper->createNew($content);
+            
+            $this->assertEquals(null, $wrapper->title);
+            
+            $this->assertEquals(null, $wrapper->title);
+            
+            $this->assertEquals(null, $wrapper->alias);
+            
+        } 
 }
