@@ -216,14 +216,26 @@ class Wrapper extends Base  {
         }
         
         /**
-         * to check given attribute name on main model
+         * to check given attribute is existed on main model
          * 
-         * @param string $name
+         * @param string $name attribute nane
          * @return bool
          */
         public function isExistedOnMain($name) {
-                      
-            return isset($this->getMainModel()->{$name}) || method_exists($this->getMainModel(), $name);
+            
+            switch (true) {
+                
+                case isset($this->getMainModel()->{$name}):
+                    
+                case array_key_exists($name, $this->getMainModel()->getAttributes()):
+                    
+                case method_exists($this->getMainModel(), $name):
+                    
+                    return true;
+                    
+            }
+            
+            return false;
         }
         
         /**
