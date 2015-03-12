@@ -454,7 +454,7 @@ class MultiLang extends Base implements MessageProviderInterface {
          * @param Illuminate\Database\Eloquent\Model|int $defaultLang language id or specific language model
          * @return \Muratsplat\Multilang\Wrapper|Illuminate\Database\Eloquent\Collection
          */
-        public function makeWarapper($model, $wantedLang=1, $defaultLang=1) {
+        public function makeWrapper($model, $wantedLang=1, $defaultLang=1) {
             
             if ($model instanceof Model) {
                 

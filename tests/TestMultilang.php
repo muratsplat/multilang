@@ -456,7 +456,7 @@ class TestMultilang extends MigrateAndSeed {
             
             $multiLang->create($this->multilangPost, new Content);
             
-            $wrapper = $multiLang->makeWarapper(Content::find(1), 2,1);
+            $wrapper = $multiLang->makeWrapper(Content::find(1), 2,1);
             
             
             $this->assertEquals($this->multilangPost['visible'], $wrapper->visible);
@@ -487,7 +487,7 @@ class TestMultilang extends MigrateAndSeed {
            
             $this->createContentWithLanguages();
             
-            $wrapperCollection = $multiLang->makeWarapper(Content::all(), 2,1);
+            $wrapperCollection = $multiLang->makeWrapper(Content::all(), 2,1);
             
             $this->assertInstanceOf('Illuminate\Support\Collection', $wrapperCollection);
             
@@ -628,7 +628,7 @@ class TestMultilang extends MigrateAndSeed {
             $postThird = ['__lang_id__' => 1, 'title' => 'Third Title', 'content' => 'Third Content'];
             Content::find(3)->ContentLangs()->create($postThird);
             
-            $wrap = $multiLang->makeWarapper(Content::all(),1,1);
+            $wrap = $multiLang->makeWrapper(Content::all(),1,1);
             
             $this->assertCount(3, $wrap);
             
