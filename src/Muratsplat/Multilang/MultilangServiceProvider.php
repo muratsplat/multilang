@@ -37,7 +37,7 @@ class MultilangServiceProvider extends ServiceProvider {
 
             // adding new rules for our extention
             $this->addNewRules();
-	}
+        }
 
 	/**
 	 * Register the service provider.
@@ -57,23 +57,9 @@ class MultilangServiceProvider extends ServiceProvider {
                             $app['events']
                         );
             });
-            
-            $events = $this->app->make('events');
-            
-            $this->addEventForMultilang($events);                         
+          
 	}
-        
-        /**
-         * To add Wanted Lang Event For MultiLang 
-         * 
-         * @param \Illuminate\Events\Dispatcher $event
-         * @return void
-         */
-        private function addEventForMultilang(Dispatcher $event) {
             
-            $event->listen('multilang.wantedlang', 'Muratsplat\Multilang\Events\WantedLangEvent');            
-        }
-        
         /**
          * to add new rules to Laravel Validator object
          */

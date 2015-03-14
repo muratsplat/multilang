@@ -94,8 +94,15 @@ class MultiLang extends Base implements MessageProviderInterface {
      * @var \Muratsplat\Multilang\Wrapper 
      */
     private $wrapper;
-        
-        /**
+    
+    /**
+     * The event dispatcher instance.
+     *
+     * @var \Illuminate\Events\Dispatcher
+     */
+    protected static $distpatcher;
+
+    /**
          * Constructer
          * 
          * @param \Muratsplat\Multilang\Picker $picker
@@ -552,6 +559,17 @@ class MultiLang extends Base implements MessageProviderInterface {
         public function getWrapperInstance() {
             
             return $this->wrapper;
-        }   
+        }
+                
+	/**
+	 * Set the event dispatcher instance.
+	 *
+	 * @param  \Illuminate\Events\Dispatcher  $dispatcher
+	 * @return void
+	 */
+	public static function setEventDispatcher(Dispatcher $dispatcher) {
+            
+		static::$dispatcher = $dispatcher;
+	}
         
 }
