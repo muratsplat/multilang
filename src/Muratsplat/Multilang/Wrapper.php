@@ -56,14 +56,14 @@ class Wrapper extends Base  {
      *
      * @var int 
      */
-    private $defaultLang;
+    private $defaultLang = 1;
     
     /**
      * Wanted Language id
      * 
      * @var int 
      */
-    private $wantedLang;    
+    private $wantedLang = 1;  
     
     /**
      * Collction Object
@@ -101,9 +101,14 @@ class Wrapper extends Base  {
          * @param  Illuminate\Database\Eloquent\Model|int $wantedLang
          * @return \Muratsplat\Multilang\Wrapper
          */
-        protected function setWantedLang($wantedLang) {
+        public function setWantedLang($wantedLang) {
+           
+            $wanted = is_object($wantedLang) ? (integer) $wantedLang->id :(integer) $wantedLang;
             
-            $this->wantedLang = is_object($wantedLang) ? $wantedLang->id :(integer) $wantedLang;
+            /*
+             * Wanted Lang can not be zero(0)!
+             */
+            $this->wantedLang = $wanted > 0 ? $wanted : 1;
             
             return $this;
         }
@@ -118,9 +123,13 @@ class Wrapper extends Base  {
          * @param  Illuminate\Database\Eloquent\Model|int $defaultLang
          * @return \Muratsplat\Multilang\Wrapper
          */
-        protected function setDefaultLang($defaultLang) {
-            
-            $this->defaultLang = is_object($defaultLang) ? $defaultLang->id :(integer) $defaultLang;
+        public function setDefaultLang($defaultLang) {
+                        
+            $default = is_object($defaultLang) ? (integer) $defaultLang->id :(integer) $defaultLang;
+            /*
+             * Default Lang can not be zero(0)!
+             */
+            $this->defaultLang = $default > 0 ? $default : 1;
             
             return $this;
         }
@@ -141,7 +150,7 @@ class Wrapper extends Base  {
          * @return int Language ID
          */
         public function getWantedLang() {
-            
+                       
             return (integer) $this->wantedLang;
         }
         
@@ -153,13 +162,16 @@ class Wrapper extends Base  {
          * @param Illuminate\Database\Eloquent\Model|int $defaultLang
          * @return \static
          */
-        public function createNew(Model $mainModel, $wantedLang=1, $defaultLang=1) {
+        public function createNew(Model $mainModel, $wantedLang= null, $defaultLang = null) {
             
-            $newOne = new static($this->config);
+            $wanted  = is_null($wantedLang) ? $this->getWantedLang() : $wantedLang;
+            $default = is_null($defaultLang) ? $this->getDefaultLang() : $defaultLang;
+            
+            $newOne  = new static($this->config);
             
             $newOne->setMainModel($mainModel)
-                    ->setWantedLang($wantedLang)
-                    ->setDefaultLang($defaultLang);
+                    ->setWantedLang($wanted)
+                    ->setDefaultLang($default);
             
             return $newOne;          
         }

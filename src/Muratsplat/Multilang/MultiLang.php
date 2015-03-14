@@ -94,9 +94,9 @@ class MultiLang extends Base implements MessageProviderInterface {
      * @var \Muratsplat\Multilang\Wrapper 
      */
     private $wrapper;
-    
+        
         /**
-         * Consructer
+         * Constructer
          * 
          * @param \Muratsplat\Multilang\Picker $picker
          * @param \Illuminate\Config\Repository $config
@@ -104,17 +104,18 @@ class MultiLang extends Base implements MessageProviderInterface {
          * @param \Muratsplat\Multilang\Validator $validator
          * @param \Muratsplat\Multilang\Wrapper $wrapper
          */
-        public function __construct(Picker $picker, Config $config, MessageBag $message, Validator $validator, Wrapper $wrapper) {
+        public function __construct(
+                Picker      $picker, 
+                Config      $config, 
+                MessageBag  $message, 
+                Validator   $validator, 
+                Wrapper     $wrapper) {
             
-            $this->picker = $picker;
-                       
-            $this->config = $config;
-            
-            $this->message = $message;
-            
-            $this->validator= $validator;
-            
-            $this->wrapper = $wrapper;
+            $this->picker   = $picker;                       
+            $this->config   = $config;            
+            $this->message  = $message;            
+            $this->validator= $validator;            
+            $this->wrapper  = $wrapper;
         }        
         
         /**
@@ -454,13 +455,13 @@ class MultiLang extends Base implements MessageProviderInterface {
          * @param Illuminate\Database\Eloquent\Model|int $defaultLang language id or specific language model
          * @return \Muratsplat\Multilang\Wrapper|Illuminate\Database\Eloquent\Collection
          */
-        public function makeWrapper($model, $wantedLang=1, $defaultLang=1) {
+        public function makeWrapper($model, $wantedLang=null, $defaultLang=null) {
             
             if ($model instanceof Model) {
                 
                 $this->setMainModel($model);
                     
-                return $this->createWrapper($wantedLang, $defaultLang);               
+                return $this->createWrapper($wantedLang, $defaultLang);      
             }
             
             if ($model instanceof Collection) {
@@ -542,4 +543,15 @@ class MultiLang extends Base implements MessageProviderInterface {
             
             return $this->getConfig('reservedAttribute');
         }
+        
+        /**
+         * to get wrapper object
+         * 
+         * @return \Muratsplat\Multilang\Wrapper
+         */
+        public function getWrapperInstance() {
+            
+            return $this->wrapper;
+        }   
+        
 }

@@ -17,7 +17,7 @@ use Muratsplat\Multilang\Tests\CreateContentAndLangTraitForTest;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class TestWrapper  extends MigrateAndSeed {    
+class TestWrapper extends MigrateAndSeed {    
    
     use CreateContentAndLangTraitForTest;
     /**

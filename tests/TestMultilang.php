@@ -1,6 +1,7 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
 use Illuminate\Support\Collection;
+use Illuminate\Events\Dispatcher;
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\MultiLang;
@@ -53,10 +54,10 @@ class TestMultilang extends MigrateAndSeed {
         '_token'    =>'wqkjf9012r0f128f12f',
         'enable'    => 1, 
         'visible'   => 1, 
-        'content@1' => 'test İki',
-        'title@1'   => 'Title test',
-        'content@2' => 'test ĞŞÇ',
-        'title@2'   => 'Title test',
+        'content@1' => 'Content İki',
+        'title@1'   => 'Title Bir',
+        'content@2' => 'Content İki',
+        'title@2'   => 'Title İki',
    
     );
     
@@ -107,9 +108,22 @@ class TestMultilang extends MigrateAndSeed {
             return m::mock('Muratsplat\Multilang\Validator');
         }
         
+        /**
+         * 
+         * @return \Mockery\MockInterface
+         */
         protected function getWrapper() {
             
             return m::mock('Muratsplat\Multilang\Wrapper');
+        }
+        
+        /**
+         * 
+         * @return \Illuminate\Events\Dispatcher
+         */
+        protected function getEvents() {
+            
+            return $this->app->make('events');
         }
 
         public function testCheckMainImplement() {
@@ -117,10 +131,9 @@ class TestMultilang extends MigrateAndSeed {
             $mockedConfig = $this->getMockedConfig();
             $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@'); 
             $messageBag = $this->getMockedMessageBag();            
-            $validator = $this->getMockedValid();
-            $wrapper = $this->getWrapper();
-            
-            
+            $validator  = $this->getMockedValid();
+            $wrapper    = $this->getWrapper();
+                      
             $validator->shouldReceive('make')->andReturn(true);
             $multiLang =  new MultiLang(
                     new Picker(new Collection(),new Element(), $mockedConfig),
@@ -456,13 +469,10 @@ class TestMultilang extends MigrateAndSeed {
             
             $multiLang->create($this->multilangPost, new Content);
             
-            $wrapper = $multiLang->makeWrapper(Content::find(1), 2,1);
+            $wrapper = $multiLang->makeWrapper(Content::find(1), 2,1);            
             
-            
-            $this->assertEquals($this->multilangPost['visible'], $wrapper->visible);
-                      
-            $this->assertEquals($this->multilangPost['title@2'], $wrapper->title);
-            
+            $this->assertEquals($this->multilangPost['visible'], $wrapper->visible);                      
+            $this->assertEquals($this->multilangPost['title@2'], $wrapper->title);            
             $this->assertEquals($this->multilangPost['content@2'], $wrapper->content);       
         }
         
@@ -569,28 +579,8 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertEquals($post2['title@1'], $updatedLang1->title);            
             $this->assertEquals($post2['content@1'], $updatedLang1->content);                     
           }
-          
-          
-          public function createContentLang($n) {
-            
-            $callback = function($item) use ($n) {
-
-                for ($i=0; $i< $n ; $i++) {
-
-                    $item->ContentLangs()->create([
-
-                    '__lang_id__' => $i, 
-                    'title' => str_random(5),
-                    'content' => str_random(10)
-                    ])->save();                
-                }               
-            };
-
-            Content::all()->each($callback);
-
-            return Content::find(1)->ContentLangs()->getResults()->count() === $n;
-        }
-          
+        
+       
           
           public function testCollectionsAsParameter() {
               
@@ -640,4 +630,63 @@ class TestMultilang extends MigrateAndSeed {
             }       
         }
         
+        public function testEventControlOnMultilang() {
+              
+            $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            $wrapper = new Wrapper($mockedConfig);
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);            
+             
+            $this->app->singleton('multilang', function($app) use ($mockedConfig, $messageBag, $validator, $wrapper) {
+                
+                return new MultiLang(
+            
+                    new Picker(new Collection(), new Element(), $mockedConfig),
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator,
+                    $wrapper
+                    );
+            });
+           
+                        
+            $this->app['events']->listen('multilang.wantedlang', 'Muratsplat\Multilang\Events\WantedLangEvent');
+            $this->app['events']->fire('multilang.wantedlang', 3 );
+                        
+            $this->assertTrue($this->createContent(1));
+
+            $content = Content::find(1);
+            /* first */
+            $postFirst = ['__lang_id__' => 1, 'title' => 'First Title', 'content' => 'First Content'];
+            $content->ContentLangs()->create($postFirst);
+
+            /* second */
+            $postSecond = ['__lang_id__' => 2, 'title' => 'Second Title', 'content' => 'Second Content'];            
+            $content->ContentLangs()->create($postSecond);
+
+            /* third */            
+            $postThird = ['__lang_id__' => 3, 'title' => 'Third Title', 'content' => 'Third Content'];
+            $content->ContentLangs()->create($postThird);
+            
+            /* setting wanted lang id by firing event */
+            $this->app['events']->fire('multilang.wantedlang', 1 );            
+            $wrapper1 = $this->app['multilang']->makeWrapper($content);            
+            $this->assertEquals($postFirst['title'], $wrapper1->title );
+            
+            /* setting wanted lang id by firing event */
+            $this->app['events']->fire('multilang.wantedlang', 2 );            
+            $wrapper2 = $this->app['multilang']->makeWrapper($content);            
+            $this->assertEquals($postSecond['title'], $wrapper2->title );
+            
+            /* setting wanted lang id by firing event */
+            $this->app['events']->fire('multilang.wantedlang', 3 );
+            $wrapper3 = $this->app['multilang']->makeWrapper($content);            
+            $this->assertEquals($postThird['title'], $wrapper3->title );           
+        }        
 }

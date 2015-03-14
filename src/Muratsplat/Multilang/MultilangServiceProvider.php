@@ -3,6 +3,7 @@
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
+use Illuminate\Events\Dispatcher;
 
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Validator;
@@ -45,18 +46,33 @@ class MultilangServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-            $this->app->bind('multilang', function($app) {               
+            $this->app->singleton('multilang', function($app) {               
             
                 return new MultiLang(
                             new Picker(new Collection(), new Element(),$app['config']),
                             $app['config'],
                             new MessageBag(),
                             new Validator($app['validator'], $app['config']),
-                            new Wrapper($app['config'])
+                            new Wrapper($app['config']),
+                            $app['events']
                         );
             });
-                
+            
+            $events = $this->app->make('events');
+            
+            $this->addEventForMultilang($events);                         
 	}
+        
+        /**
+         * To add Wanted Lang Event For MultiLang 
+         * 
+         * @param \Illuminate\Events\Dispatcher $event
+         * @return void
+         */
+        private function addEventForMultilang(Dispatcher $event) {
+            
+            $event->listen('multilang.wantedlang', 'Muratsplat\Multilang\Events\WantedLangEvent');            
+        }
         
         /**
          * to add new rules to Laravel Validator object
