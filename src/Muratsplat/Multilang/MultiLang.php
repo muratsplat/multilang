@@ -5,6 +5,7 @@ use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\MessageBag;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Events\Dispatcher;
 
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Base;
@@ -463,6 +464,8 @@ class MultiLang extends Base implements MessageProviderInterface {
          * @return \Muratsplat\Multilang\Wrapper|Illuminate\Database\Eloquent\Collection
          */
         public function makeWrapper($model, $wantedLang=null, $defaultLang=null) {
+            // firing creating wrapper event!
+            $this->fireWrapper('creating');
             
             if ($model instanceof Model) {
                 
@@ -563,13 +566,30 @@ class MultiLang extends Base implements MessageProviderInterface {
                 
 	/**
 	 * Set the event dispatcher instance.
+         * 
+         * Note: This method was copied from Laravel Eloquent's Model class!!!
 	 *
 	 * @param  \Illuminate\Events\Dispatcher  $dispatcher
 	 * @return void
 	 */
 	public static function setEventDispatcher(Dispatcher $dispatcher) {
             
-		static::$dispatcher = $dispatcher;
+		static::$distpatcher = $dispatcher;
 	}
+        
+        /**
+         * to fire the given event
+         * 
+         * @param string $event
+         * @return mixed
+         */
+        protected function fireWrapper($event) {
+            
+            if (!isset(static::$distpatcher)) {return;}
+            
+            $fullEventName = 'multilang.wrapper.' . $event;            
+            
+            return static::$distpatcher->fire($fullEventName, $this);           
+        }
         
 }

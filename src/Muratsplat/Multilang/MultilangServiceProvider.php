@@ -37,6 +37,9 @@ class MultilangServiceProvider extends ServiceProvider {
 
             // adding new rules for our extention
             $this->addNewRules();
+            
+            // setting laravel events object
+            MultiLang::setEventDispatcher($this->app['events']);
         }
 
 	/**

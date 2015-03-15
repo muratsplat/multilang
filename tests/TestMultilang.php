@@ -629,5 +629,75 @@ class TestMultilang extends MigrateAndSeed {
                 $v->content;
             }       
         }
+        
+        public function testEventControlOnMultilang() {
+              
+            $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            $wrapper = new Wrapper($mockedConfig);
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);            
+             
+             // setting laravel events object
+            MultiLang::setEventDispatcher($this->app['events']);
+            
+            $this->app['multilang'] =  new MultiLang(
+            
+                    new Picker(new Collection(), new Element(), $mockedConfig),
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator,
+                    $wrapper
+                    );
+                       
+                         
+            $this->assertTrue($this->createContent(1));
+
+            $content = Content::find(1);
+            /* first */
+            $postFirst = ['__lang_id__' => 1, 'title' => 'First Title', 'content' => 'First Content'];
+            $content->ContentLangs()->create($postFirst);
+
+            /* second */
+            $postSecond = ['__lang_id__' => 2, 'title' => 'Second Title', 'content' => 'Second Content'];            
+            $content->ContentLangs()->create($postSecond);
+
+            /* third */            
+            $postThird = ['__lang_id__' => 3, 'title' => 'Third Title', 'content' => 'Third Content'];
+            $content->ContentLangs()->create($postThird);
+            
+            /* setting wanted lang by using event */    
+            $this->app['events']->listen('multilang.wrapper.creating',function(MultiLang $event) {
+                
+                $event->getWrapperInstance()->setWantedLang(1);                
+            }); 
+            /* first */
+            $wrapper1 = $this->app['multilang']->makeWrapper($content);            
+            $this->assertEquals($postFirst['title'], $wrapper1->title );
+            
+            
+            /* setting wanted lang by using event */    
+            $this->app['events']->listen('multilang.wrapper.creating',function(MultiLang $event) {
+                
+                $event->getWrapperInstance()->setWantedLang(2);                
+            });
+            /* second */
+            $wrapper2 = $this->app['multilang']->makeWrapper($content);            
+            $this->assertEquals($postSecond['title'], $wrapper2->title );
+            
+            /* setting wanted lang by using event */    
+            $this->app['events']->listen('multilang.wrapper.creating',function(MultiLang $event) {
+                
+                $event->getWrapperInstance()->setWantedLang(3);                
+            });
+            /* third */
+            $wrapper3 = $this->app['multilang']->makeWrapper($content);            
+            $this->assertEquals($postThird['title'], $wrapper3->title );           
+        } 
            
 }
