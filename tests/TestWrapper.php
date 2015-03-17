@@ -260,10 +260,10 @@ class TestWrapper extends MigrateAndSeed {
                 if ((integer)$item->__lang_id__ === 3) {
                     
                     $item->delete();
-                }
-                
-             
+                }            
             });
+            
+            var_dump(md5($content->getTable()));
                         
             $wrapper = $this->wrapper->createNew($content,3,1);            
            

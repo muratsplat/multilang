@@ -8,6 +8,7 @@ use Illuminate\Config\Repository as Config;
 
 use Muratsplat\Multilang\Base;
 use Muratsplat\Multilang\Exceptions\MultiLangConfigNotCorrect;
+use Carbon\Carbon;
 
 /**
  * The class checks what exist of Eloquent model's attributes
@@ -48,7 +49,7 @@ class CheckerAttribute extends Base {
      * 
      * @var int
      */
-    private $rememberTime   = 43200; // One Month
+    private $rememberTime   = 1440; // 1 days
     
         /**
          * Constructer makes to inject Laravel's Cache and SchemaBuilder instances
@@ -67,11 +68,11 @@ class CheckerAttribute extends Base {
         }
         
         /**
-         * To select model to check columns
+         * To select model and check columns
          * 
          * @param \Illuminate\Database\Eloquent\Model $model
          * @name   string
-         * @return \Muratsplat\Multilang\CheckerAttribute
+         * @return bool
          */
         public function check(Model $model, $name) {
                        
@@ -92,13 +93,14 @@ class CheckerAttribute extends Base {
          */
         protected function putColumns(Model $model) {
             
-            $fullKey = $this->getFullName($model);
+            $fullKey    = $this->getFullName($model);
             
-            $columns = $this->builder->getColumnListing($model->getTable());
+            $columns    = $this->builder->getColumnListing($model->getTable());
+            
+            $time       = Carbon::now()->addMinutes($this->rememberTime);
             
             // storing all columns of given model using cache driver
-            $this->cache->put($fullKey, $columns, $this->rememberTime); 
-           
+            $this->cache->put($fullKey, $columns, $time);           
         }
         
         /**
@@ -109,7 +111,7 @@ class CheckerAttribute extends Base {
          */
         private function getFullName(Model $model) {
             
-            $hashed     = spl_object_hash($model);
+            $hashed     = md5($model->getTable());
             
             $rootName   = $this->getConfig('cachePrefix');
             
@@ -128,15 +130,5 @@ class CheckerAttribute extends Base {
         private function search($array, $column) {
             
             return in_array($column, $array);                    
-        }
-        
-       
-        
-       
-        
-       
-        
-        
-        
-        
+        }      
 }
