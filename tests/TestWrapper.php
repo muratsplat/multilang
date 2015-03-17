@@ -263,7 +263,6 @@ class TestWrapper extends MigrateAndSeed {
                 }            
             });
             
-            var_dump(md5($content->getTable()));
                         
             $wrapper = $this->wrapper->createNew($content,3,1);            
            
