@@ -37,8 +37,7 @@ class Content extends Model implements MainInterface {
     public $rules = array(
             
         'enable'    => 'required',
-        'visible'   => 'required',
-        
+        'visible'   => 'required',        
     );
     
     public function getRules() {
@@ -98,7 +97,6 @@ class ContentLang extends Model implements LangInterface {
     protected $table = "contentlangs";
     
     protected $fillable = array('content_id', '__lang_id__', 'title', 'content');
-
     
     /**
      * Validation Rules
@@ -132,6 +130,132 @@ class ContentLang extends Model implements LangInterface {
         return $this->content();
     }
 }
+
+
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
+/**
+ * Simple Main Model
+ */
+class ContentSoftDelete extends Model implements MainInterface {
+    
+    use MainTrait;
+    
+    protected $table = "contents";
+
+    use SoftDeletingTrait;
+    
+    protected $dates = ['deleted_at'];    
+    
+    
+    protected $fillable = array('enable', 'visible');
+    
+    /**
+     * Validation Rules
+     * 
+     * @var array
+     */
+    public $rules = array(
+            
+        'enable'    => 'required',
+        'visible'   => 'required',
+        
+    );
+    
+    public function getRules() {
+        
+        return $this->rules;
+    }
+    
+    /**
+     * Simple method for testing magic call at wrapper objects
+     * 
+     * @return string
+     */
+    public function someMethod() {
+        
+        return "Hi, I'am method on main model!";
+    }
+    
+    /**
+     * Defining inversed relation to Content
+     * 
+     * @return Muratsplat\Multilang\Tests\Model\ContentLang
+     */
+    public function ContentLangs() {
+        
+        return $this->hasMany('Muratsplat\Multilang\Tests\Model\ContentLangSoftDelete', 'content_id', 'id');
+    }    
+            
+    /**
+     * to get Language Models. 
+     * use HasMany relationship to access language model
+     * 
+     * @return  \Illuminate\Database\Eloquent\Relations\HasMany
+     */   
+     public function langModels() {
+         
+         return $this->ContentLangs();
+     }
+     
+    /**
+     * Simle Relation Model for testing
+     * 
+     * @return  \Illuminate\Database\Eloquent\Relations\HasMany
+     */   
+     public function Images() {
+         
+         return $this->hasMany('Muratsplat\Multilang\Tests\Model\Image', 'content_id', 'id');
+     }
+}
+
+/**
+ * ContentLang  will be Content's multi language model.
+ */
+class ContentLangSoftDelete extends Model implements LangInterface {
+    
+    use LangTrait;
+    
+    use SoftDeletingTrait;    
+    protected $dates = ['deleted_at'];
+    
+    protected $table = "contentlangs";
+    
+    protected $fillable = array('content_id', '__lang_id__', 'title', 'content');
+
+    
+    /**
+     * Validation Rules
+     * 
+     * @var array
+     */
+    public $rules = array(
+            
+        'title'        => 'max:100|RequiredForDefaultLang:Page Title',
+        'content'       => 'max:15000',      
+        
+    ); 
+    
+    /**
+     * Defining inversed relation to Content
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function content() {
+        
+        return $this->belongsTo('Muratsplat\Multilang\Tests\Model\ContentSoftDelete', 'id','content_id');
+    }    
+
+    /**
+     * reference to main model
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function mainModel() {
+             
+        return $this->content();
+    }
+}
+
 
 /**
  * App Language Model

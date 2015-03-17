@@ -36,5 +36,12 @@ return array(
          * This model will be used for detecting default language
          */
         'languageModel'     => 'Language',
+         
+        /**
+         * To set a prefix for storing cache driver on your app.
+         * 
+         * The prefix will be root for this extension.
+         */
+        'cachePrefix'       => 'multilang'
     
     );

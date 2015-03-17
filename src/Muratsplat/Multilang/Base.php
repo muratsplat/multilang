@@ -15,7 +15,7 @@ abstract class Base {
     /**
      * Laravel Config Object 
      * 
-     * @var /Illuminate\Config\Repository 
+     * @var \Illuminate\Config\Repository 
      */
     protected $config;
     
@@ -32,7 +32,8 @@ abstract class Base {
 
             if(empty($name)) {
 
-                throw new MultiLangConfigNotCorrect('It looks Multilang configuration is not correct!');
+                throw new MultiLangConfigNotCorrect("It looks Multilang configuration is not correct! "
+                        . "[$key] key is not found MultiLang's configuration.");
             }
 
             return $name;   

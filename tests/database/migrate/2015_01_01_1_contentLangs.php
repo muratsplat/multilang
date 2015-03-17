@@ -23,6 +23,7 @@ class ContentLangs extends Migration {
             $t->string('title', 100)->nullable();			
             $t->string('content', 15000)->nullable();
             $t->timestamps();
+            $t->softDeletes();
             
             $t->foreign('content_id')->references('id')->on('contens');
             $t->foreign('__lang_id__')->references('id')->on('languages');

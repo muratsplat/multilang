@@ -3,12 +3,12 @@
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
-use Illuminate\Events\Dispatcher;
 
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Validator;
 use Muratsplat\Multilang\NewRules;
 use Muratsplat\Multilang\Wrapper;
+use Muratsplat\Multilang\CheckerAttribute;
 
 /* MultiLang Service Provider
  * 
@@ -24,7 +24,7 @@ class MultilangServiceProvider extends ServiceProvider {
 	 *
 	 * @var bool
 	 */
-	protected $defer = true;
+	protected $defer = false;
 
 	/**
 	 * Bootstrap the application events.
@@ -56,8 +56,15 @@ class MultilangServiceProvider extends ServiceProvider {
                             $app['config'],
                             new MessageBag(),
                             new Validator($app['validator'], $app['config']),
-                            new Wrapper($app['config']),
-                            $app['events']
+                            new Wrapper(
+                                    $app['config'], 
+                                    new CheckerAttribute(
+                                            $app['db']->connection()->getSchemaBuilder(), 
+                                            $app['cache'], 
+                                            $app['config']
+                                            )
+                                    ),
+                            $app['events']                           
                         );
             });
           

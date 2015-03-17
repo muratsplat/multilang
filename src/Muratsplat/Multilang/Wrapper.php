@@ -8,6 +8,7 @@ use Illuminate\Config\Repository as Config;
 
 use Muratsplat\Multilang\Exceptions\WrapperUndefinedProperty;
 use Muratsplat\Multilang\Base;
+use Muratsplat\Multilang\CheckerAttribute;
 
 /**
  * Wrapper Class
@@ -71,15 +72,29 @@ class Wrapper extends Base  {
      * @var Illuminate\Database\Eloquent\Collection
      */
     protected $collection;
+    
+    /**
+     * @var \Muratsplat\Multilang\CheckerAttribute;
+     */
+    private $checkerAttribute;
+    
+    /**
+     * Force mode is forced to get just wanted lang attribute. 
+     *
+     * @var bool
+     */
+    private $force = false;
 
         /**
          * Constructer
          * 
          * @param Config $config
          */
-        public function __construct(Config $config) {
+        public function __construct(Config $config, CheckerAttribute $checker) {
             
             $this->config = $config;
+            
+            $this->checkerAttribute = $checker;
         }
    
         /**
@@ -167,7 +182,7 @@ class Wrapper extends Base  {
             $wanted  = is_null($wantedLang) ? $this->getWantedLang() : $wantedLang;
             $default = is_null($defaultLang) ? $this->getDefaultLang() : $defaultLang;
             
-            $newOne  = new static($this->config);
+            $newOne  = new static($this->config, $this->checkerAttribute);
             
             $newOne->setMainModel($mainModel)
                     ->setWantedLang($wanted)
@@ -187,20 +202,22 @@ class Wrapper extends Base  {
             
             switch (true) {
                 
-                case $this->isExistedOnMain($name): return $this->getMainModel()->getAttribute($name);
+                case $this->isExistedOnMain($name): 
+                    
+                    return $this->getMainModel()->getAttribute($name);
                 
-                case $this->isExistedOnLangModel($name): return $this->getWantedLangModel()->getAttribute($name);
+                case $this->isExistedOnLangModel($name) && $this->force:                    
+                    
+                    return  $this->getAttributeOnLang($name, true);
                                               
                 default :
-                    
-                    if(!array_key_exists($name, $this->getDefaultLangModel()->getAttributes())) {
-
-                        throw new WrapperUndefinedProperty("[$name] is undefined property! Called property was not found on "
-                                . 'main model or lang models'); 
-                    }
-
-                    return $this->getDefaultLangModel()->getAttribute($name);            
+                                        
+                    return $this->getAttributeOnLang($name);         
             }
+            
+              
+            throw new WrapperUndefinedProperty("[$name] is undefined property! "
+                    . "Called property was not found on 'main model or lang models"); 
         }
         
         /**
@@ -209,22 +226,9 @@ class Wrapper extends Base  {
          * @param string $name
          * @return bool
          */
-        public function __isset($name) {
-                        
-            switch (true) {
-                
-                case $this->isExistedOnMain($name): 
-                    
-                    return array_key_exists($name, $this->getMainModel()->getAttributes());
-                
-                case $this->isExistedOnLangModel($name): 
-                    
-                    return array_key_exists($name, $this->getWantedLangModel()->getAttributes()) 
-                        
-                        ? true 
-                        
-                        : array_key_exists($name, $this->getDefaultLangModel()->getAttributes());            
-            }
+        public function __isset($name) {            
+            
+            return $this->isExistedOnMain($name) || $this->isExistedOnLangModel($name);
         }
         
         /**
@@ -236,15 +240,12 @@ class Wrapper extends Base  {
         public function isExistedOnMain($name) {
             
             switch (true) {
-                
-                case isset($this->getMainModel()->{$name}):
-                    
-                case array_key_exists($name, $this->getMainModel()->getAttributes()):
+                                            
+                case $this->checkerAttribute->check($this->getMainModel(), $name);                        
                     
                 case method_exists($this->getMainModel(), $name):
                     
-                    return true;
-                    
+                    return true;                    
             }
             
             return false;
@@ -257,11 +258,9 @@ class Wrapper extends Base  {
          */
         public function isExistedOnLangModel($name) {
             
-            $lang = $this->getWantedLangModel();
+            $langModel = $this->getMainModel()->langModels()->getRelated();
             
-            if (is_null($lang)) {return false;}
-            
-            return array_key_exists($name, $lang->getAttributes());   
+            return $this->checkerAttribute->check($langModel, $name);   
         }
         
         /**
@@ -300,7 +299,7 @@ class Wrapper extends Base  {
         private function getLangById($id) {
             
             $reservedKey = $this->getConfig('reservedAttribute');
-            
+           
             return $this->getMainModel()->langModels()->getQuery()
                     ->where($reservedKey, $id)->first();            
         }
@@ -343,12 +342,51 @@ class Wrapper extends Base  {
          * to changed wanted language and to access wrapper
          * 
          * @param \Illuminate\Database\Eloquent\Model|int $lang
+         * @param bool $force wanted only attribute
          * @return \Muratsplat\Multilang\Wrapper
          */
         public function wanted($lang) {
             
             $this->setWantedLang($lang);
             
+            $this->force = false;
+            
             return $this;
-        }       
+        }
+        
+        /**
+         * to enable force mode to only wanted it
+         * 
+         * @return \Muratsplat\Multilang\Wrapper
+         */
+        public function force() {
+            
+            $this->force = true;
+            
+            return $this;
+        }
+        
+        /**
+         * To get attribute on lang models.
+         * 
+         * If $force parameter ise true and if 
+         * wanted attribute is founded return the value 
+         * or not return only null  
+         * 
+         * @param string $name
+         * @param bool $force  it is true, only returns wanted attribute,  
+         * @return mixes
+         */
+        private function getAttributeOnLang($name, $force = false) {
+            
+            $wanted = $this->getWantedLangModel();          
+            
+            if (!is_null($wanted)) {                
+                
+                return $wanted->getAttribute($name);
+                       
+            }
+                        
+            return $force ? null : $this->getDefaultLangModel()->getAttribute($name);         
+        }
 }

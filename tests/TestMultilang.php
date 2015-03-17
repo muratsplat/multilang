@@ -1,11 +1,12 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
 use Illuminate\Support\Collection;
-use Illuminate\Events\Dispatcher;
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Element;
 use Muratsplat\Multilang\MultiLang;
 use Muratsplat\Multilang\Wrapper;
+use Muratsplat\Multilang\CheckerAttribute;
+// for only test
 use Muratsplat\Multilang\Tests\Model\Content;
 use Muratsplat\Multilang\Tests\Model\ContentLang;
 // for testing CRUD ORM jobs..
@@ -79,43 +80,7 @@ class TestMultilang extends MigrateAndSeed {
             
             return array();
         }
-        
-        /**
-         * 
-         * @return \Mockery\MockInterface
-         */
-        protected function getMockedConfig() {
-            
-            return m::mock('Illuminate\Config\Repository');
-                           
-        }
-        
-        /**
-         * 
-         * @return \Mockery\MockInterface
-         */
-        protected function getMockedMessageBag() {
-            
-            return m::mock('Illuminate\Support\MessageBag');
-        }
-        
-        /**
-         * 
-         * @return \Mockery\MockInterface
-         */
-        protected function getMockedValid() {
-            
-            return m::mock('Muratsplat\Multilang\Validator');
-        }
-        
-        /**
-         * 
-         * @return \Mockery\MockInterface
-         */
-        protected function getWrapper() {
-            
-            return m::mock('Muratsplat\Multilang\Wrapper');
-        }
+
         
         /**
          * 
@@ -465,7 +430,7 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    new Wrapper($mockedConfig));
+                    new Wrapper($mockedConfig, $this->getCheckerAttribute()));
             
             $multiLang->create($this->multilangPost, new Content);
             
@@ -493,7 +458,7 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    new Wrapper($mockedConfig));
+                    new Wrapper($mockedConfig,$this->getCheckerAttribute()));
            
             $this->createContentWithLanguages();
             
@@ -587,7 +552,7 @@ class TestMultilang extends MigrateAndSeed {
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
             $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
-            $wrapper = new Wrapper($mockedConfig);
+            $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute());
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -635,7 +600,7 @@ class TestMultilang extends MigrateAndSeed {
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
             $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
-            $wrapper = new Wrapper($mockedConfig);
+            $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute());
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -699,5 +664,25 @@ class TestMultilang extends MigrateAndSeed {
             $wrapper3 = $this->app['multilang']->makeWrapper($content);            
             $this->assertEquals($postThird['title'], $wrapper3->title );           
         } 
+        
+        /**
+         * To get CherkerAttribute Object
+         * 
+         * @return CheckerAttribute
+         */
+        private function getCheckerAttribute() {
+            
+            $config = $this->getMockedConfig();
+            
+            $config->shouldReceive('get', 'multilang::cachePrefix')->andReturn('/test/multilang');
+            
+            return new CheckerAttribute(
+                    
+                    $this->app['db']->connection()->getSchemaBuilder(), 
+                    
+                    $this->app['cache'],                    
+                    $config                    
+                    );
+        }
            
 }

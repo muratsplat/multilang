@@ -1,8 +1,10 @@
 <?php namespace Muratsplat\Multilang\Tests;
 
 use Muratsplat\Multilang\Tests\Model\Content;
+use Muratsplat\Multilang\Tests\Model\ContentSoftDelete;
 use Muratsplat\Multilang\Tests\Model\Image;
 use Muratsplat\Multilang\Wrapper;
+use Muratsplat\Multilang\CheckerAttribute;
 // for testing CRUD ORM jobs..
 use Muratsplat\Multilang\Tests\MigrateAndSeed;
 use \Mockery as m;
@@ -49,11 +51,20 @@ class TestWrapper extends MigrateAndSeed {
         public function setUp() {
             parent::setUp();
             
+            $configForChecker = $this->getMockedConfig();
+            
+            $configForChecker->shouldReceive('get', 'multilang::cachePrefix')->andReturn('/test/multilang');
+            
             $mockedConfig = m::mock('Illuminate\Config\Repository')->shouldReceive('get')
                     ->with('multilang::reservedAttribute')
-                    ->andReturn('__lang_id__')->getMock();          
-           
-            $this->wrapper = new Wrapper($mockedConfig);
+                    ->andReturn('__lang_id__')->getMock();                       
+            $this->wrapper = new Wrapper(
+                    $mockedConfig, 
+                    new CheckerAttribute(
+                            $this->app['db']->connection()->getSchemaBuilder(), 
+                            $this->app['cache'],
+                            $configForChecker)
+                    );
             
             $this->content = new Content();
             
@@ -223,7 +234,48 @@ class TestWrapper extends MigrateAndSeed {
             
             $this->assertEquals(null, $wrapper->title);
             
-            $this->assertEquals(null, $wrapper->alias);
-            
+            $this->assertEquals(null, $wrapper->alias);            
         } 
+        
+        public function testOnSoftDeleteEnebledModels() {
+            
+            $this->assertTrue($this->createContentSoftDelete(3));
+                      
+            /* first */
+            $content = ContentSoftDelete::find(1);
+            $postFirst = ['__lang_id__' => 1, 'title' => 'First Title', 'content' => 'First Content'];
+            $content->ContentLangs()->create($postFirst);
+            
+            /* second */
+            $postSecond = ['__lang_id__' => 2, 'title' => 'Second Title', 'content' => 'Second Content'];            
+            $content->ContentLangs()->create($postSecond);
+            
+            /* third */            
+            $postThird = ['__lang_id__' => 3, 'title' => 'Third Title', 'content' => 'Third Content'];
+            
+            $content->ContentLangs()->create($postThird);
+           
+            Model\ContentLangSoftDelete::all()->each(function($item){
+                
+                if ((integer)$item->__lang_id__ === 3) {
+                    
+                    $item->delete();
+                }
+                
+             
+            });
+                        
+            $wrapper = $this->wrapper->createNew($content,3,1);            
+           
+            $this->assertEquals($wrapper->wanted(1)->title, $postFirst['title']);           
+          
+            $this->assertEquals($wrapper->wanted(2)->title, $postSecond['title']);
+            // var_dump(\DB::getQueryLog());
+            $this->assertEquals($wrapper->wanted(3)->force()->title, null);
+            
+            $this->assertEquals($wrapper->wanted(3)->title, $postFirst['title']);
+            
+            $this->assertEquals($wrapper->title, $postFirst['title']); 
+           
+        }
 }
