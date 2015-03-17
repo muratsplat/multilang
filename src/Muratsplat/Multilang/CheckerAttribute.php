@@ -1,13 +1,11 @@
 <?php namespace Muratsplat\Multilang;
 
-
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
 
 use Muratsplat\Multilang\Base;
-use Muratsplat\Multilang\Exceptions\MultiLangConfigNotCorrect;
 use Carbon\Carbon;
 
 /**
@@ -77,7 +75,11 @@ class CheckerAttribute extends Base {
         public function check(Model $model, $name) {
                        
             $fullKey    = $this->getFullName($model); 
-                        
+            /**
+             * In normal scenario tables and  columns often is not changed. 
+             * Therefore every time it is not need to access the database for knowing 
+             * columns name. We don't want make the database to preoccupy. 
+             */
             if (!$this->cache->has($fullKey)) {
                 
                 $this->putColumns($model);
