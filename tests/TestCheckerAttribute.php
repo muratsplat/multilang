@@ -6,6 +6,7 @@ use Muratsplat\Multilang\CheckerAttribute;
 // for testing CRUD ORM jobs..
 use Muratsplat\Multilang\Tests\MigrateAndSeed;
 use Muratsplat\Multilang\Tests\CreateContentAndLangTraitForTest;
+use Mockery as m;
 
 /**
  * a test class for \Muratsplat\Multilang\Wrapper
@@ -29,15 +30,18 @@ class TestCheckerAttribute extends MigrateAndSeed {
     /**
      * @var \Muratsplat\Multilang\CheckerAttribute;
      */
-    private $checkerAttribute;
+    private $checkerAttribute;  
     
     
         public function setUp() {
             parent::setUp();
+           
             
             $config        =  $this->getMockedConfig();
             
-            $config->shouldReceive('get', 'multilang::cachePrefix')->andReturn('test');
+            $config->shouldReceive('get')->with('multilang::cachePrefix')->andReturn('test');
+            
+            $config->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);
             
             $this->content = new Content();
             
@@ -61,6 +65,24 @@ class TestCheckerAttribute extends MigrateAndSeed {
             $this->assertfalse($this->checkerAttribute->check($model, 'notexist'));
             $this->assertTrue($this->checkerAttribute->check($model, 'visible'));
             $this->assertTrue($this->checkerAttribute->check($model, 'created_at'));            
-        }        
-    
+        }
+        
+        public function tearDown() {
+        
+            parent::tearDown();        
+            
+            m::close();
+        }
+        
+                  
+        /**
+         * 
+         * @return \Mockery\MockInterface
+         */
+        protected function getMockedConfig() {
+            
+            return m::mock('Illuminate\Config\Repository');
+                           
+        }
+        
 }

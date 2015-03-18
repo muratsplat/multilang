@@ -445,4 +445,13 @@ class TestPicker  extends UnitTest {
             $this->assertEquals(2, count($this->obj->getCollection()->all()));   
                       
         }
+        
+        
+        public function tearDown() {
+        
+            parent::tearDown();        
+            
+            m::close();
+        }
+        
 }

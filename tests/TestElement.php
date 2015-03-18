@@ -34,8 +34,13 @@ class TestElement  extends UnitTest {
             
             $this->obj = new Element();
         }
-                
         
+        
+        public function tearDown() {
+        
+            parent::tearDown();        
+        }
+               
         public function testOverloading() {
             
             $picker = $this->obj;

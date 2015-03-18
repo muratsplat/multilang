@@ -42,6 +42,14 @@ return array(
          * 
          * The prefix will be root for this extension.
          */
-        'cachePrefix'       => 'multilang'
+        'cachePrefix'       => 'multilang',
+        
+        /**
+         * Remember time for caching
+         * 
+         * The value must be integer and positive number.
+         * Time duration is minute.
+         */
+        'rememberTime'      => 120,
     
     );

@@ -47,13 +47,15 @@ class TestWrapper extends MigrateAndSeed {
      */
     private $items;
     
-    
+        
         public function setUp() {
             parent::setUp();
             
             $configForChecker = $this->getMockedConfig();
             
-            $configForChecker->shouldReceive('get', 'multilang::cachePrefix')->andReturn('/test/multilang');
+            $configForChecker->shouldReceive('get')->with('multilang::cachePrefix')->andReturn('/test/multilang');
+            
+            $configForChecker->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);
             
             $mockedConfig = m::mock('Illuminate\Config\Repository')->shouldReceive('get')
                     ->with('multilang::reservedAttribute')
@@ -70,8 +72,15 @@ class TestWrapper extends MigrateAndSeed {
             
             $this->image   = new Image();
             
-        }       
+        }
         
+        
+        public function tearDown() {
+        
+            parent::tearDown();        
+            
+            m::close();
+        }       
         
         public function testSimpleFirst() {
             
@@ -261,8 +270,7 @@ class TestWrapper extends MigrateAndSeed {
                     
                     $item->delete();
                 }            
-            });
-            
+            });            
                         
             $wrapper = $this->wrapper->createNew($content,3,1);            
            

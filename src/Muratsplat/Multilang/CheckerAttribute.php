@@ -47,14 +47,14 @@ class CheckerAttribute extends Base {
      * 
      * @var int
      */
-    private $rememberTime   = 1440; // 1 days
+    private $rememberTime;
     
         /**
          * Constructer makes to inject Laravel's Cache and SchemaBuilder instances
-         * into object
+         * into this object
          * 
-         * @param Builder $builder
-         * @param CacheManager $cache
+         * @param \Illuminate\Database\Schema\Builder $builder
+         * @param \Illuminate\Cache\Repository $cache
          */
         public function __construct(Builder $builder, CacheManager $cache, Config $config) {
             
@@ -62,7 +62,10 @@ class CheckerAttribute extends Base {
             
             $this->cache    = $cache;
             
-            $this->config   = $config;           
+            $this->config   = $config;
+          
+            // getting remember time from the configuration..
+            $this->setRememberTime($this->getConfig('rememberTime'));            
         }
         
         /**
@@ -99,7 +102,7 @@ class CheckerAttribute extends Base {
             
             $columns    = $this->builder->getColumnListing($model->getTable());
             
-            $time       = Carbon::now()->addMinutes($this->rememberTime);
+            $time       = Carbon::now()->addMinutes($this->getRememberTime());
             
             // storing all columns of given model using cache driver
             $this->cache->put($fullKey, $columns, $time);           
@@ -132,5 +135,26 @@ class CheckerAttribute extends Base {
         private function search($array, $column) {
             
             return in_array($column, $array);                    
-        }      
+        }
+        
+        /**
+         * To set remember time 
+         * 
+         * @param integer $time  duration is minute
+         */
+        private function setRememberTime($time) {
+            
+            $this->rememberTime = is_int($time) && $time > 0 ? $time : 1;
+        }
+        
+        /**
+         * TO get remember time
+         * 
+         * @return int
+         */
+        private function getRememberTime() {
+            
+            return (integer) $this->rememberTime;
+        }
+        
 }

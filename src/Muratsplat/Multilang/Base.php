@@ -30,7 +30,7 @@ abstract class Base {
 
             $name = $this->config->get('multilang::' . $key);
 
-            if(empty($name)) {
+            if(empty($name) || is_null($name)) {
 
                 throw new MultiLangConfigNotCorrect("It looks Multilang configuration is not correct! "
                         . "[$key] key is not found MultiLang's configuration.");

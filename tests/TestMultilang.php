@@ -29,12 +29,6 @@ class TestMultilang extends MigrateAndSeed {
     use CreateContentAndLangTraitForTest;
     
     /**
-     *
-     * @var Muratsplat\Multilang\MultiLang
-     */
-    private $multiLang;
-    
-    /**
      * an example data for tests
      *
      * @var array 
@@ -68,7 +62,8 @@ class TestMultilang extends MigrateAndSeed {
             
             m::close();
         }
-
+        
+ 
         /**
         * Get Multilang package providers.
         *
@@ -93,8 +88,8 @@ class TestMultilang extends MigrateAndSeed {
 
         public function testCheckMainImplement() {
             
-            $mockedConfig = $this->getMockedConfig();
-            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@'); 
+            $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
             $messageBag = $this->getMockedMessageBag();            
             $validator  = $this->getMockedValid();
             $wrapper    = $this->getWrapper();
