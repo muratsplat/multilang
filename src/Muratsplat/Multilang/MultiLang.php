@@ -268,10 +268,7 @@ class MultiLang extends Base implements MessageProviderInterface {
                 
                 $this->getLangModels()->create($v);            
             }
-            
-            // deleteing all model is not existed in the post data!
-            $this->cleanModelsNotInPost();
-            
+                     
             return $this->elementsEqualsToLangModel();          
         }
         
@@ -304,12 +301,13 @@ class MultiLang extends Base implements MessageProviderInterface {
             $callback = function($item) {
                 
                 if(is_null($this->picker->getById($item->{$this->getLangIdKey()}))) {
-                                      
+                    
+                   // var_dump($item->title . ' dil ID: '. $item->__lang_id__);
                     $item->delete();               
                 }               
             };
             
-            $this->getLangModels()->getResults()->each($callback);    
+            $this->getLangModels()->getQuery()->get()->each($callback);    
         }
 
         /*
@@ -325,7 +323,6 @@ class MultiLang extends Base implements MessageProviderInterface {
             // the nummber of multi language elements in post must be equal to ones in
             // the number of langauge model collections. So It can be sure everything
             // is ok by the result
-            
             return $this->picker->getMultilang()->count() === $this->getLangModels()->getResults()->count();
         }        
         

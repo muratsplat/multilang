@@ -40,6 +40,17 @@ class Element implements ArrayableInterface {
      * @var array 
      */
     private $ignoredElements = array('_token');
+    
+    
+        /**
+         * Simple Constructer
+         * 
+         * @param array $attibutes
+         */
+        public function __construct(array $attibutes = array()) {
+            
+            $this->data = $attibutes;
+        }
            
         /**
          * Set Method for overloading
@@ -131,7 +142,6 @@ class Element implements ArrayableInterface {
             
             unset($this->data[$name]);
             
-            return;
         }
         
         /**
@@ -165,7 +175,9 @@ class Element implements ArrayableInterface {
         }
         
         /**
-         * setter for multilang property
+         * To set for multilang property
+         * 
+         * You can type element which is multilang or non-multilang
          * 
          * @param  $isMultilang
          */
@@ -197,9 +209,9 @@ class Element implements ArrayableInterface {
          * 
          * @return boolean
          */
-        public function allkeyNull() {
+        public function allkeyNull() {            
             
-            $callback = function($property){
+            return  0 === count(array_filter($this->data, function($property){                
                 
                 if (!$this->isMultiLang()) {
                     
@@ -213,9 +225,7 @@ class Element implements ArrayableInterface {
                 
                 return !is_null($property);
                 
-            };
-            
-            return  0 === count(array_filter($this->data, $callback));           
+            }));           
         }
         
         /**
@@ -223,11 +233,9 @@ class Element implements ArrayableInterface {
          * 
          * @return \Muratsplat\Multilang\Element
          */
-        public function newElement() {
-            
-            $className = get_class($this);
+        public function newElement(array $attribute = array()) {
              
-            return new $className(); 
+            return new static($attribute);
         }
         
         /**
@@ -242,8 +250,7 @@ class Element implements ArrayableInterface {
                 return $this->data;
             }
             
-            return $this->multilangArray();            
-            
+            return $this->multilangArray();           
         }
         
         /**

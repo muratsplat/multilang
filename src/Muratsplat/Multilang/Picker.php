@@ -4,7 +4,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Config\Repository as Config;
 
 use Muratsplat\Multilang\Element;
-use Muratsplat\Multilang\Exceptions\ElementUndefinedProperty;
 use Muratsplat\Multilang\Exceptions\PickerUnknownError;
 use Muratsplat\Multilang\Exceptions\PickerError;
 use Muratsplat\Multilang\Base;
@@ -21,7 +20,7 @@ use Muratsplat\Multilang\Base;
 class Picker extends Base {
  
     /**
-     * Collection Class 
+     * Collection Object 
      * 
      * @var \Illuminate\Support\Collection
      */
@@ -54,8 +53,22 @@ class Picker extends Base {
      * 
      * @var \Illuminate\Config\Repository 
      */
-    protected $config;
-
+    protected $config;    
+    
+    /**
+     * Prefix to detect lang id
+     *
+     * @var string
+     */
+    private $prefix;
+    
+    /**
+     * Reserved Column Name
+     *
+     * @var string
+     */
+    private $reservedColumnName;
+    
         /**
          * Connstructor
          * 
@@ -63,96 +76,129 @@ class Picker extends Base {
          */
         public function __construct(Collection $collection, Element $element, Config $config) {
            
-            $this->collection = $collection;
+            $this->collection   = $collection;
             
-            $this->element = $element;
+            $this->element      = $element;
             
-            $this->config = $config;            
+            $this->config       = $config; 
+            
+            $this->prefix       = $this->getConfig('prefix');
+            
+            $this->reservedColumnName = $this->getConfig('reservedAttribute');
         }        
    
         /**
          * To import raw post data
-         *  
+         * 
          * @param array $post
-         * @return boolean
+         * @return \Muratsplat\Multilang\Picker
          */
-        public function import(array $post=array(), $oldDelete = true) {
+        public function import(array $post=array()) {    
             
-            if($oldDelete) {
-                // delete old items
-                $this->collection = $this->collection->make(array());
-            }
-                       
-            $this->rawPost = $post;
-                      
-            return $this->startPicker();                      
+            $this->setRawPost($post);
+            
+            $this->reset();                     
+                
+            $this->scan();
+                 
+            $this->mergedSameElements();
+                 
+            $this->checkErrors();
+            
+            return $this;
         }        
         
         /**
-         * To start to pick $post data up!
+         * to scan raw post data and convert Element Objects
          * 
-         * @return boolean
-         * @throws Muratsplat\Multilang\Exceptions\PickerError
+         * @return \Illuminate\Support\Collection
          */
-        protected function startPicker() {
+        protected function scan() {
             
-            try {
+            $post       = $this->getRawPost();               
+             
+            $callback   = function($key, $val) {
                 
-                $this->pickerMultiLangElemets($this->rawPost);
+                if ($this->isEmpty($val)) { return; }            
                 
-                $this->anyfails();
-                
-                $this->collection = $this->cleanCollection();
-                
-                return true;
-                                
-            } catch (ElementUndefinedProperty $e) {
-                
-                throw new PickerError($e->getMessage());
-                
-            } catch (PickerUnknownError $e) {
-                
-                throw new PickerError('Probably you have founded a bug..!');                           
-            }       
-        }
-                        
-        /*
-         * Simple picker multi language elements
-         * 
-         */
-        private function pickerMultiLangElemets(array $array=array()) {
-                        
-            foreach ($array as $k => $v) {   
-
-                $pos = $this->isMultilang($k); 
-
-                if(!is_bool($pos)) {
-                                        
-                    // deleting the prefix
-                    $key = $this->removePrefixAndId($k, $pos);
-                    
-                    $id = $this->getLangId($k, $pos); //substr($k, $pos+1, strlen($k));
-                    
-                    $this->addResult($this->createOrUpdate($id, $key, $v, $multilang = true));
-                    
-                    continue;
-                }
-                // creating new non-multilang element
-                $this->addResult($this->createOrUpdate($id=null,$k, $v, $multilang=false));
-            }            
+                return $this->convertToElement($key, $val);           
+            };
+            
+            $elements   = array_map($callback, array_keys($post), array_values($post));
+            
+            var_dump($elements);
+                     
+            $this->addItemToCollection($elements);            
         }
         
         /**
-         * to check that element is multilang 
-         * or not by looking the prefix
+         * To convert post item to Element Object
+         * 
+         * @param type $key
+         * @param type $val
+         * @return type
+         */
+        protected function convertToElement($key, $val) {
+            
+             if ($this->isMultilang($key)) {
+                 
+                 return $this->contertToMultilangElement($key, $val);                 
+             }
+             
+             if (!$this->isMultilang($key)) {
+                 
+                 return $this->contertToNonMultilangElement($key, $val);                
+             }                         
+            
+        }        
+        
+        /**
+         * To convert non-multilang post item to  Element Object 
          * 
          * @param string $key
-         * @return boolean|int false, if it is non-multilang.
+         * @param mixed $val
+         * @return \Muratsplat\Multilang\Element 
          */
-        public function isMultilang($key) {
+        private function contertToNonMultilangElement($key, $val) {
             
-            return strpos($key, $this->getConfig('prefix'));
+            $element = $this->element->newElement();
             
+            $element->{$key} =  $val;
+            
+            $element->setMultilang(false);
+            
+            return $element;
+        }
+        
+        /**
+         * To convert multilang post item to Element Object
+         * 
+         * @param string $key
+         * @param mixed $val
+         * @return \Muratsplat\Multilang\Element
+         * @throws PickerError
+         */ 
+        private function contertToMultilangElement($key, $val) {
+            
+            $lang_ID = $this->parserLangId($key);
+            
+            if (is_null($lang_ID)) {
+                
+                throw new PickerError('Language ID was not taken. Therefore '
+                        . 'can not created multilang element without the ID!');
+            }
+            
+            $element = $this->element->newElement();
+            
+            $cleanKey = $this->removePrefixAndId($key);
+            
+            $element->{$cleanKey} = $val;
+            
+            $element->setMultilang(true);           
+            
+            $element->setId($lang_ID);
+            
+            return $element;                                               
         }
         
         /**
@@ -164,146 +210,62 @@ class Picker extends Base {
          * @return int|null lang id number in key. null, if lang id doesn't
          * existed.
          */
-        private function getLangId($key, $pos) {            
+        private function parserLangId($key) {
             
-            $lang_id = substr($key, $pos+1, strlen($key));
+            $prefixPosition = strpos($key, $this->prefix);
             
-            return is_string($lang_id) && !strlen(trim($lang_id)) ? null : (integer) $lang_id ;            
+            $lang_id = substr($key, $prefixPosition +1, strlen($key));
             
+            return is_string($lang_id) && !strlen(trim($lang_id)) 
+                    
+                    ? null 
+                    
+                    : (integer) $lang_id;          
         }
+             
+        /**
+         * to check that element is multilang 
+         * or not by looking the prefix
+         * 
+         * @param string $key
+         * @return bool.
+         */
+        protected function isMultilang($key) {
+            
+            $result = $this->findPrefixPosition($key);            
+           
+            return is_int($result) && !is_bool($result) ? true : false;
+        }        
         
+        /**
+         * To get lannguage prefix at given key
+         * 
+         * @param string $key
+         * @return int
+         */
+        private function findPrefixPosition($key) {
+                             
+            return strpos($key, $this->getConfig('prefix'));           
+        }
+              
         /**
          * To remove lang prefix and id 
          * and return key
          * 
          * @param string $name
-         * @param integer $pos position of the number of prefix is will be deleted
          * @return string
          */
-        public function removePrefixAndId($name, $pos) {
-
-            return substr($name, 0, $pos);
-        }        
-        
-        /**
-         *  Create or update method
-         * 
-         * If element is already created, it will be updated,
-         * or not creating new one
-         * 
-         * @param type $id
-         * @param type $key
-         * @param type $value
-         * @param type $multilang
-         * @return boolean
-         */
-        protected function createOrUpdate($id, $key, $value, $multilang=false) {
+        public function removePrefixAndId($name) {
             
-            foreach ($this->collection->all() as $v) {           
-                
-                 // trying to updating non-miltilang element..                
-                $resultNon = $this->updateNonMultilang($v, $key, $value);
-                
-                if (!is_null($resultNon)) {                   
-                    
-                    $v = $resultNon;
-                    
-                    return true;
-                }
-                
-                // Updating existed multilang element..
-                $result = $this->updateMultilang($id, $v, $key, $value, $multilang);
-                
-                if (!is_null($result)) {                   
-                                    
-                    $v = $result;
-                    
-                    return true;
-                }                
-            }            
+            $pos = $this->findPrefixPosition($name);
             
-            return $this->create($id, $key, $value, $multilang);           
-        }
+             if (is_bool($pos)) {
                 
-        /**
-         * to create new multi-language content
-         * 
-         * @param int $id
-         * @param string $key
-         * @param mixed $value
-         * @param boolean $multilang
-         * @return boolean
-         */
-        protected function create($id,$key, $value, $multilang = false) {
+                throw new PickerError('Multilang prefix can not found!');
+            }    
             
-            $item = $this->element->newElement();
-            // for non-multilang elements it is not need to set null,
-            $item->$key = $this->valueSelecter($value, $multilang);                    
-            
-            $item->setId($id);
-            
-            $item->setMultilang($multilang);            
-            
-            $this->collection->push($item);
-            
-            return $this->collection->last() === $item;
-        }
-        
-        /**
-         * to update element
-         * 
-         * @param Element $item
-         * @param type $key
-         * @param type $value
-         * @param type $multilang
-         * @return Muratsplat\Multilang\Element
-         */
-        protected function update(Element $item, $key, $value, $multilang = null) {
-                       
-            if (is_null($multilang) || $multilang === false) {               
-                
-                $item->$key=$value;
-                
-                return $item;               
-            }
-            
-            $item->setMultilang($multilang);
-            
-            $item->$key = $this->valueSelecter($value, $multilang);
-            
-            return $item;                       
-        }
-        
-        /**
-         * to check the property of the element.
-         * it is supported to non-multilang and multilang
-         * elements 
-         * 
-         * @param Muratsplat\Multilang\Element $v
-         * @param string $key
-         * @return boolean
-         */
-        private function isKeyExist($v, $key) {            
-            
-            try {
-                
-                if($v->getId() === 0 && !$v->isMultilang()) {
-                
-                    $v->$key;
-                
-                    return true;
-                }                
-                
-                $v->$key;
-                
-                return true;
-                
-            } catch (ElementUndefinedProperty $ex) {
-                
-                return false;
-
-            }   
-        }
+            return substr($name, 0, $pos);            
+        }       
         
         /**
          * to check that inputed value is 
@@ -314,12 +276,12 @@ class Picker extends Base {
          */
         public function isEmpty($value) {
             
-            if(is_string($value) && !strlen(trim($value))) {
+            if (is_string($value) && !strlen(trim($value))) {
                 
                 return true;
             }
             
-            if(is_array($value) && !count($value)) {
+            if (is_array($value) && !count($value)) {
                 
                 return true;
             }
@@ -332,19 +294,20 @@ class Picker extends Base {
          * it only return multilang element 
          * 
          * @param int $lang_id
-         * @return null\Muratsplat\Multilang\Element;
+         * @param bool
+         * @return \Illuminate\Support\Collection|\Muratsplat\Multilang\Element;
          */
-        public function getById($lang_id) {
+        public function getById($lang_id, $first = true) {
             
-            foreach ($this->collection->all() as $v ) {
+            $filtered = $this->collection->filter(function(Element $item) use ($lang_id){
                 
-                if ($v->getId() === (integer) $lang_id) {
-                   
-                    return $v;                    
-                }                
-            }
+                if($item->getId() === $lang_id) {
+                    
+                    return true;
+                }     
+            });
             
-            return null;           
+            return $first ? $filtered->first(): $filtered;       
         }
         
         /**
@@ -353,14 +316,12 @@ class Picker extends Base {
          * @return Illuminate\Support\Collection 
          */
         public function getNonMultilang() {
-            
-            $callback = function(Element $item) {
+                        
+            return $this->collection->filter( function(Element $item) {
                 
                 return !$item->isMultilang();
                 
-            };
-            
-            return $this->collection->filter($callback);            
+            });            
         }
         
         /**
@@ -369,14 +330,11 @@ class Picker extends Base {
          * @return Illuminate\Support\Collection 
          */
         public function getMultilang() {
-            
-            $callback = function(Element $item) {
+                        
+            return $this->collection->filter(function(Element $item) {
                 
-                return $item->isMultilang();
-                
-            };
-            
-            return $this->collection->filter($callback);            
+                return $item->isMultilang();                
+            });            
         }
         
         /**
@@ -397,128 +355,7 @@ class Picker extends Base {
         public function getCollection() {
             
             return $this->collection;
-        }
-        
-        /**
-         * Only return items are which one has 
-         * all overloaded property(key) not be null   
-         *
-         * @return Illuminate\Support\Collection
-         */
-        protected function cleanCollection() {
-            
-            $callback = function(Element $item) {                
-                
-                return !$item->allkeyNull();
-                            
-            };
-            
-            return $this->collection->filter($callback);      
-        }
-        
-        /**
-         * An helper for setting value.
-         * while multilang element's property is setting,
-         * if the value is empty, this method will mark by return null.
-         * 
-         * for non-multilang element it doesn't metter 
-         *  
-         * @param mixed $value
-         * @param boolean $multilang
-         * @return mixed
-         */
-        private function valueSelecter($value, $multilang=false) {
-            
-            
-            return $multilang && $this->isEmpty($value) ? null: $value;                    
-        }
-        
-        /**
-         * Updater for non-multilang elements
-         * 
-         * @param Element $item
-         * @param string $key
-         * @param mixed $value
-         * @return null|Muratsplat\Multilang\Element  null, if it is not succesed
-         */
-        protected function updateNonMultilang(Element $item, $key, $value) {
-            
-             // updating non-miltilang element..
-            if (!$item->isMultiLang() && $this->isKeyExist($item, $key)) {                   
-
-                return $this->update($item, $key, $value, false);
-            }
-            
-            return null;
-        }
-        
-        /**
-         * Updater for multilang elements
-         * 
-         * @param int $id
-         * @param ElemMuratsplat\Multilang\Elementent $Createditem
-         * @param string $key
-         * @param mixed $value
-         * @param boolean $multilang
-         * @return null|Muratsplat\Multilang\Element  null, if it is not succesed
-         */
-        protected function updateMultilang($id, Element $Createditem, $key,$value, $multilang=true) {
-            
-            $item =$this->getById($id);
-            
-            if (is_null($item)) {
-                
-                return null;
-            }
-            
-            if ($Createditem->isMultiLang() && $Createditem->isKeyExisted($key) && $this->isEmpty($value)) {               
-                
-                return $this->update($Createditem, $key, null, true);              
-            }
-            
-            // Updating existed element..
-            if ($Createditem->isMultilang() && $Createditem->getId() === (integer) $id) {
-
-                return $this->update($Createditem, $key, $value, $multilang);
-            }
-            
-            return null;            
-        }
-        
-        /**
-         * Same method resaults is may serious data 
-         * to fix issues. If there is false returned, probably
-         * a bug is in somewhere.
-         * 
-         * @param array $result
-         */
-        private function addResult($result) {
-            
-            array_push($this->pickerResults, $result);            
-        }
-        
-        /**
-         * Let's make sure everything is ok!
-         * 
-         * @return boolean true, if some process is failed!
-         */
-        protected function anyfails() {
-            
-            $callback = function($item) {
-              
-                if ($item === false) {
-                    
-                    return true;
-                }
-                
-                return false;
-            };            
-            
-            if (count(array_filter($this->pickerResults, $callback))) {
-                
-                throw new PickerUnknownError("Post data is not imported in succes!");
-            }
-        }
+        }       
         
         /**
          * to get raw post which is imported in the object.
@@ -542,7 +379,6 @@ class Picker extends Base {
             foreach ($this->getNonMultilang()->toArray() as $v) {
 
                $tmpArray = array_merge($tmpArray, $v);
-
             }
            
             return $tmpArray;   
@@ -565,7 +401,7 @@ class Picker extends Base {
             
             $tmpArray=array();
             
-            $reservedName = $this->getConfig('reservedAttribute');
+            $reservedName = $this->reservedColumnName;
                        
             foreach ($this->getMultilang() as $v) {                
                 
@@ -576,16 +412,205 @@ class Picker extends Base {
         }
         
         /**
-         * to check that post data is multilang.
-         * If post data includes multi language elements,
-         * returns true
+         * To set raw post data
          * 
-         * @return boolean
+         * @param array $post
          */
-        public function isPostMultiLang() {
+        protected function setRawPost(array $post = array()) {
             
-            return 0 !== count($this->getMultilang());            
+            $this->rawPost = $post;
+        }        
+            
+        /**
+         * To get raw post data
+         * 
+         * @return array
+         */
+        protected function getRawPost() {
+            
+            return $this->rawPost;
+        }
+        
+        /**
+         * To add item or items(in array) to object's collection
+         * 
+         * @param mixed $items
+         * @return void
+         */
+        private function addItemToCollection($items) {
+            
+            if (!is_array($items)) {
+                
+                $this->collection->push($items);
+                               
+                return;
+            }
+            
+            foreach ($items as $v) {
+                
+                $this->collection->push($v);                    
+            }              
+        }
+        
+        
+        /**
+         * To merged all same elements
+         * 
+         * This methods will merged all same elements and store in 
+         * this object's collection
+         *  
+         * @return void
+         */
+        public function mergedSameElements() {
+        
+            $collection = $this->collection->make(array());
+            /*
+             * Creating multilang elements with merged attributes
+             */
+            foreach ($this->getMergedMultilangElementsToArray() as $lang_id => $attributes) {
+                
+                $newElem= $this->element->newElement($attributes);
+                
+                $newElem->setId($lang_id);
+                
+                $newElem->setMultilang(true);
+                
+                $collection->push($newElem);          
+            }
+            
+            /**
+             * Creating non-multilang element
+             */
+            $newElem= $this->element->newElement($this->getNonMultilangToArray());
+
+            $newElem->setMultilang(false);
+
+            $collection->push($newElem);           
+            
+            $this->collection = $collection;          
+        }
+        
+        
+        /**
+         * to get merged attributes of multilang elements
+         * 
+         * @return array
+         */
+        private function getMergedMultilangElementsToArray() {            
+            
+             $elements      = $this->getMultilangToArray();
+             
+             $elementsById  = [];
+             
+             $lang_id_key   = $this->reservedColumnName;           
+             
+             foreach ($elements as $v) {                
+               
+                /*             [language id   =>      [   key      =>      value]] */                      
+                $elementsById[$v[$lang_id_key]][array_keys($v)[0]] = $v[array_keys($v)[0]];
+             }
+             
+             return $elementsById;
+        }
+        
+        /**
+         * To reset object's collection
+         * 
+         * @return void
+         */
+        protected function reset() {
+            
+            $this->collection = $this->collection->make(array());
+        }
+        
+        /**
+         * to get possible the number of elements by checking
+         * raw post data.
+         * 
+         * This method can help to find bugs 
+         * 
+         * @return int
+         */
+        private function getPossibleNumberOfElements() {
+            
+            $multilang = 0;
+            
+            $non_mulltilang = 0;
+            
+            foreach ($this->rawPost as $key => $value) {
+            
+                if($this->isMultilang($key)) {
+                    
+                    $multilang++;
+                    
+                    return;
+                }
+                
+                $non_mulltilang++;
+                
+            }
+            
+            return $multilang + $non_mulltilang;
+        }
+        
+        /**
+         * to get number of element objects
+         * 
+         * @return int
+         */
+        protected function getNumberOfElements() {
+            
+            return $this->collection->count();
+        }
+        
+        /**
+         * to check errors 
+         * 
+         * @throws \Muratsplat\Multilang\Exceptions\PickerUnknownError
+         */
+        protected function checkErrors() {
+            
+            $same = $this->getPossibleNumberOfElements() === $this->getNumberOfElements();
+            
+            if($same) {
+                
+                throw new PickerUnknownError('The number of created elements is not '
+                        . 'equals to the number of possible elements!');
+            }
             
         }
+        
+        /**
+         * To get only multilang elements
+         * 
+         * @return \Illuminate\Support\Collection
+         */
+        public function getMultilangElements() {
+            
+            return $this->collection->filter(function(Element $item){
+                
+                if ($item->isMultiLang()) {
+                    
+                    return true;
+                }
+            });
+        }
+        
+        /**
+         * To get only non-multilang elements
+         * 
+         * @return \Illuminate\Support\Collection
+         */
+        public function getNonMultilangElements() {
+            
+            return $this->collection->filter(function(Element $item){
+                
+                if (!$item->isMultiLang()) {
+                    
+                    return true;
+                }
+            });
+        }
+        
        
 }

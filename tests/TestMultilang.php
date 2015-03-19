@@ -679,5 +679,54 @@ class TestMultilang extends MigrateAndSeed {
                     $config                    
                     );
         }
+        
+        
+         public function testDetectsBugWhenUpdate() {
+            
+            $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            $wrapper = $this->getWrapper();
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);            
+            
+            $multiLang =  new MultiLang(
+                    new Picker(new Collection(), new Element(), $mockedConfig),
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator,
+                    $wrapper);
+
+            $this->assertTrue($multiLang->create($this->multilangPost, new Content()));            
+            
+//                    '_token'    =>'wqkjf9012r0f128f12f',
+//                    'enable'    => 1, 
+//                    'visible'   => 1, 
+//                    'content@1' => 'Content İki',
+//                    'title@1'   => 'Title Bir',
+//                    'content@2' => 'Content İki',
+//                    'title@2'   => 'Title İki',
+            
+            $created = Content::find(1);
+            
+            $lang1Before = $created->ContentLangs()->getQuery()->where('__lang_id__', 1)->get();
+            
+            $this->assertCount(1, $lang1Before);
+            
+            $post = $this->multilangPost;
+            
+            $post['content@1']  = '';
+            $post['title@2']    = '';
+            \DB::flushQueryLog();
+            $this->assertTrue($multiLang->update($post, $created));
+            
+            $lang2 = $created->ContentLangs()->getQuery()->where('__lang_id__', 1)->first();
+            
+           // $this->assertEquals($lang2->title, $post['title@1']);
+            
+         }
            
 }
