@@ -32,15 +32,7 @@ class Picker extends Base {
      * @var array 
      */
     private $rawPost = array();
-        
-    /**
-     * Picker element result will be 
-     * recorded into this property
-     *
-     * @var array 
-     */
-    private $pickerResults = array();
-    
+  
     /**
      * Element Object for elements in post data
      * 
@@ -68,7 +60,7 @@ class Picker extends Base {
      * @var string
      */
     private $reservedColumnName;
-    
+       
         /**
          * Connstructor
          * 
@@ -125,7 +117,7 @@ class Picker extends Base {
             };
             
             $elements   = array_map($callback, array_keys($post), array_values($post));
-                             
+             
             $this->addItemToCollection($elements);            
         }
         
@@ -164,7 +156,7 @@ class Picker extends Base {
             $element->{$key} =  $val;
             
             $element->setMultilang(false);
-            
+          
             return $element;
         }
         
@@ -313,8 +305,8 @@ class Picker extends Base {
          * 
          * @return Illuminate\Support\Collection 
          */
-        public function getNonMultilang() {
-                        
+        public function getNonMultilang() {                        
+            
             return $this->collection->filter( function(Element $item) {
                 
                 return !$item->isMultilang();
@@ -328,7 +320,7 @@ class Picker extends Base {
          * @return Illuminate\Support\Collection 
          */
         public function getMultilang() {
-                        
+                    
             return $this->collection->filter(function(Element $item) {
                 
                 return $item->isMultilang();                
@@ -435,12 +427,9 @@ class Picker extends Base {
          * @param mixed $items
          * @return void
          */
-        private function addItemToCollection($items) {
+        private function addItemToCollection($items) {          
             
-            /**
-             * array_map can create null items
-             */
-            if (is_null($items)) { return; }
+            if ( is_null($items)) { return; }
             
             if (!is_array($items)) {
                 
@@ -450,6 +439,8 @@ class Picker extends Base {
             }
             
             foreach ($items as $v) {
+                
+                if ( is_null($v)) { continue; }
                 
                 $this->collection->push($v);                    
             }              
@@ -481,18 +472,35 @@ class Picker extends Base {
                 $collection->push($newElem);          
             }
             
+            $nonMultilang = $this->mergedNonMultilangElement();
+            
+            if (!is_null($nonMultilang)) {
+                
+                 $collection->push($nonMultilang);                
+            }           
+            
+            $this->collection = $collection;              
+        }
+        
+        /**
+         * To merge non multilang elements
+         * 
+         * @return \Muratsplat\Multilang\Element|null 
+         */
+        private function mergedNonMultilangElement() {
             /**
              * Creating non-multilang element
              */
-            $newElem= $this->element->newElement($this->getNonMultilangToArray());
+            $attributes = $this->getNonMultilangToArray();
+            // if attributes is empty it not neet to create new one!
+            if (empty($attributes)) { return; }
+            
+            $newElem= $this->element->newElement($attributes);
 
             $newElem->setMultilang(false);
-
-            $collection->push($newElem);           
             
-            $this->collection = $collection;          
-        }
-        
+            return  $newElem;      
+        }        
         
         /**
          * to get merged attributes of multilang elements
@@ -536,24 +544,33 @@ class Picker extends Base {
          */
         private function getPossibleNumberOfElements() {
             
-            $multilang = 0;
+            $multilangIds = [];
             
             $non_mulltilang = 0;
             
             foreach ($this->rawPost as $key => $value) {
-            
-                if($this->isMultilang($key)) {
+                
+                if ($this->isEmpty($value)) { continue;}
+                
+                if ($this->isMultilang($key)) {
+                     
+                    $multilangIds[] = $this->parserLangId($key);
                     
-                    $multilang++;
-                    
-                    return;
+                    continue;
                 }
                 
+                /**
+                 * One non-multilang elements exists or it is nothing!
+                 */
+                if($non_mulltilang >0) {
+                    
+                    continue;
+                }
+                                               
                 $non_mulltilang++;
-                
             }
             
-            return $multilang + $non_mulltilang;
+            return count(array_unique($multilangIds)) + $non_mulltilang ;
         }
         
         /**
@@ -573,12 +590,14 @@ class Picker extends Base {
          */
         protected function checkErrors() {
             
-            $same = $this->getPossibleNumberOfElements() === $this->getNumberOfElements();
+             $possibleNum = $this->getPossibleNumberOfElements();
+             
+             $currentNum  = $this->getNumberOfElements();
             
-            if($same) {
+            if($possibleNum !== $currentNum) {
                 
-                throw new PickerUnknownError('The number of created elements is not '
-                        . 'equals to the number of possible elements!');
+                throw new PickerUnknownError("[$currentNum] created elements is not "
+                        . "equals to [$possibleNum] possible elements!");
             }
             
         }

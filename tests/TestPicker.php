@@ -210,7 +210,7 @@ class TestPicker  extends UnitTest {
             $this->assertEquals(3, count($collection));           
         }
         
-        public function atestExampleUpdate2() {
+        public function testExampleUpdate2() {
             
             /*
              * Simple Post Data for updating
@@ -236,10 +236,10 @@ class TestPicker  extends UnitTest {
             //  after upate the number of items is 4!
             $collection = $this->obj->getCollection()->all();
                                   
-            $this->assertEquals(4, count($collection));           
+            $this->assertEquals(3, count($collection));           
         }
         
-        public function atestExampleUpdate3() {
+        public function testExampleUpdate3() {
             
             /*
              * Simple Post Data for updating
@@ -262,13 +262,13 @@ class TestPicker  extends UnitTest {
 
             $this->obj->import($rawPostUpdate);
            
-            //  after upate the number of items is 4!
+            //  after upate the number of items is 3!
             $collection = $this->obj->getCollection()->all();
                                   
-            $this->assertEquals(4, count($collection));           
+            $this->assertEquals(3, count($collection));           
         }
         
-        public function atestExampleUpdate4() {
+        public function testExampleUpdate4() {
             
             /*
              * Simple Post Data for updating
@@ -288,10 +288,10 @@ class TestPicker  extends UnitTest {
             );
 
             $this->obj->import($rawPostUpdate);
-           
-            //  after upate the number of items is 4!
+          
+            //  after upate the number of items is 2!
             $collection = $this->obj->getCollection()->all();
-                                  
+           
             $this->assertEquals(2, count($collection));           
         }
         
