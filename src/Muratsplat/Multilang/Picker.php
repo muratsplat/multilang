@@ -95,6 +95,8 @@ class Picker extends Base {
                  
             $this->mergedSameElements();
                  
+            $this->cleanCollection();
+            
             $this->checkErrors();
             
             return $this;
@@ -471,15 +473,8 @@ class Picker extends Base {
                 $newElem->setId($lang_id);
                 
                 $newElem->setMultilang(true);                
-                /**
-                 * If all keys is null, is not need to add it
-                 */
-                if ($newElem->allkeyNull()) {
-                    
-                    continue;
-                }
-                
-                $collection->push($newElem);          
+
+                $collection->push($newElem); 
             }
             
             $nonMultilang = $this->mergedNonMultilangElement();
@@ -639,6 +634,21 @@ class Picker extends Base {
         public function isPostMultiLang() {
             
             return 0 !== count($this->getMultilang());            
+        }       
+         
+        /**
+         * Delete all elements which are all keys is null
+         * 
+         * @return void
+         */
+        private function cleanCollection() {            
+            
+            $this->collection = $this->collection->filter(function(Element $item) {
+                
+                if (!$item->allKeyNull()) {
+                    
+                    return true;
+                }
+            });           
         }
-       
 }

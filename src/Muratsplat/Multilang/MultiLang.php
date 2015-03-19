@@ -258,8 +258,7 @@ class MultiLang extends Base implements MessageProviderInterface {
             foreach ($this->picker->getMultilangToArray() as $v) {
                                 
                 $existed = $this->existedInLangs($v[$this->getLangIdKey()]);
-                var_dump($v);             
-               if($existed !== null) {var_dump($existed->getAttributes());}
+                
                 if(!is_null($existed)) {
                     
                     $existed->update($v);

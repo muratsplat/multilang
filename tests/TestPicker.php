@@ -459,10 +459,16 @@ class TestPicker  extends UnitTest {
             
             $postFirst['title@2']   = '';
             
-            $postFirst['enable']    = 99;
+            $postFirst['enable']    = '';
             
-            $postFirst['visible']   = 88;            
+            $postFirst['visible']   = '';            
                       
+            $this->obj->import($postFirst);
+            
+            $postFirst['enable']    = 2;
+            
+            $postFirst['visible']   = 2;
+            
             $this->obj->import($postFirst);
                         
             $this->assertEquals($postFirst['enable'], $this->obj->getNonMultilang()->last()->enable);
@@ -472,6 +478,8 @@ class TestPicker  extends UnitTest {
             $this->assertNotNull($multilangElem); // A bug was founded !! 
                     
         }
+        
+        
         
         
         public function tearDown() {

@@ -86,7 +86,7 @@ class TestMultilang extends MigrateAndSeed {
             return $this->app->make('events');
         }
 
-        public function atestCheckMainImplement() {
+        public function testCheckMainImplement() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
@@ -106,7 +106,7 @@ class TestMultilang extends MigrateAndSeed {
     
         }
         
-        public function atestCheckContentsMigration() {
+        public function testCheckContentsMigration() {
             
             $content = new Content($this->nonMultilangPost);
             
@@ -118,7 +118,7 @@ class TestMultilang extends MigrateAndSeed {
             
         }
         
-        public function atestCheckContentLangRelation() {
+        public function testCheckContentLangRelation() {
             
             $content = new Content($this->nonMultilangPost);
             
@@ -127,7 +127,7 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertInstanceOf('Muratsplat\Multilang\Tests\Model\ContentLang', $content->ContentLangs()->getRelated());           
         }
         
-        public function atestTryCRUDContentLang() {        
+        public function testTryCRUDContentLang() {        
             
             $content = new Content($this->nonMultilangPost);
             
@@ -145,7 +145,7 @@ class TestMultilang extends MigrateAndSeed {
            $this->assertEquals(2, count($createdRecords));
         }
         
-        public function atestWithNonMultilangPost() {
+        public function testWithNonMultilangPost() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
@@ -172,7 +172,7 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertEquals($this->nonMultilangPost['visible'], Content::find(1)->visible);
         }
         
-        public function atestWithMultilangPost() {
+        public function testWithMultilangPost() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -202,7 +202,7 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\HasOneOrMany', $multiLang->getLangModels());
         }
         
-        public function atestCreateEmptyPostData() {
+        public function testCreateEmptyPostData() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
@@ -234,7 +234,7 @@ class TestMultilang extends MigrateAndSeed {
             }            
         }
         
-        public function atestSimpleUpdateWithNonMultilang() {
+        public function testSimpleUpdateWithNonMultilang() {
             
             $mockedConfig = $this->getMockedConfig();            
             $messageBag = $this->getMockedMessageBag();            
@@ -268,7 +268,7 @@ class TestMultilang extends MigrateAndSeed {
             
         }
         
-        public function atestSimpleUpdateWithMultilang() {
+        public function testSimpleUpdateWithMultilang() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -348,7 +348,7 @@ class TestMultilang extends MigrateAndSeed {
            
         }
         
-        public function atestUpdateWithAndMultilang1() {
+        public function testUpdateWithAndMultilang1() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -380,7 +380,7 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertEquals(2, count(Content::find(1)->ContentLangs));           
         }
         
-        public function atestDeleteWithAndMultilang() {
+        public function testDeleteWithAndMultilang() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -408,7 +408,7 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertEquals(0, ContentLang::all()->count());    
         }
         
-        public function atestMultilangAndWrapperSimple() {
+        public function testMultilangAndWrapperSimple() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -436,7 +436,7 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertEquals($this->multilangPost['content@2'], $wrapper->content);       
         }
         
-         public function atestMultilangAndWrapperSimpleWithEloquentCollection() {
+         public function testMultilangAndWrapperSimpleWithEloquentCollection() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -489,7 +489,7 @@ class TestMultilang extends MigrateAndSeed {
                        
         }
         
-        public function atestUpdateWithAndMultilangEmptyElements() {
+        public function testUpdateWithAndMultilangEmptyElements() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -542,7 +542,7 @@ class TestMultilang extends MigrateAndSeed {
         
        
           
-          public function atestCollectionsAsParameter() {
+          public function testCollectionsAsParameter() {
               
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -590,7 +590,7 @@ class TestMultilang extends MigrateAndSeed {
             }       
         }
         
-        public function atestEventControlOnMultilang() {
+        public function testEventControlOnMultilang() {
               
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -665,7 +665,7 @@ class TestMultilang extends MigrateAndSeed {
          * 
          * @return CheckerAttribute
          */
-        private function agetCheckerAttribute() {
+        private function getCheckerAttribute() {
             
             $config = $this->getMockedConfig();
             
@@ -724,10 +724,13 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertTrue($multiLang->update($post, $created));
             
             $updated = Content::find(1);
-            $content1 = $updated->ContentLangs()->getQuery()->where('__lang_id__', 1)->first();
+            $lang1 = $updated->ContentLangs()->getQuery()->where('__lang_id__', 1)->first();
             
-         //   var_dump($content1->toArray());
-            $this->assertEquals($content1->content, $post['content@1']);
+            $lang2 = $updated->ContentLangs()->getQuery()->where('__lang_id__', 2)->first();
+            
+            $this->assertEquals($lang1->content, $post['content@1']);
+            
+            $this->assertEquals($lang2->title, $post['title@2']);
             
          }
            
