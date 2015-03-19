@@ -125,9 +125,7 @@ class Picker extends Base {
             };
             
             $elements   = array_map($callback, array_keys($post), array_values($post));
-            
-            var_dump($elements);
-                     
+                             
             $this->addItemToCollection($elements);            
         }
         
@@ -438,6 +436,11 @@ class Picker extends Base {
          * @return void
          */
         private function addItemToCollection($items) {
+            
+            /**
+             * array_map can create null items
+             */
+            if (is_null($items)) { return; }
             
             if (!is_array($items)) {
                 
