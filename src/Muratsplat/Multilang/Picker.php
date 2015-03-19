@@ -291,7 +291,7 @@ class Picker extends Base {
             
             $filtered = $this->collection->filter(function(Element $item) use ($lang_id){
                 
-                if($item->getId() === $lang_id) {
+                if($item->getId() === (integer) $lang_id) {
                     
                     return true;
                 }     

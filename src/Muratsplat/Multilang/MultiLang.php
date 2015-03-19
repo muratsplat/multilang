@@ -244,7 +244,7 @@ class MultiLang extends Base implements MessageProviderInterface {
         protected function updateMainModel() {
                                    
             $result = $this->updatedMainModel->update($this->picker->getNonMultilangToArray());
-            
+           
             return is_int($result) && $result >= 1 ? true : $result;
         }
         
@@ -256,9 +256,9 @@ class MultiLang extends Base implements MessageProviderInterface {
         protected function updateLangModels() {           
 
             foreach ($this->picker->getMultilangToArray() as $v) {
-                
+                                
                 $existed = $this->existedInLangs($v[$this->getLangIdKey()]);
-                
+                              
                 if(!is_null($existed)) {
                     
                     $existed->update($v);
@@ -266,9 +266,12 @@ class MultiLang extends Base implements MessageProviderInterface {
                     continue;
                 }
                 
-                $this->getLangModels()->create($v);            
+                var_dump($v);
+                $this->getLangModels()->create($v);
+                
+                var_dump($this->existedInLangs($v['__lang_id__'])->toArray());
             }
-                     
+                                        
             return $this->elementsEqualsToLangModel();          
         }
         
@@ -282,7 +285,7 @@ class MultiLang extends Base implements MessageProviderInterface {
                        
             $existed = $this->getLangModels()->getResults()->filter(function($item) use($id) {
                 
-                if ($id === (integer) $item->{$this->getLangIdKey()}) {
+                if ((integer) $id === (integer) $item->{$this->getLangIdKey()}) {
                     
                     return true;
                 }                
@@ -300,9 +303,11 @@ class MultiLang extends Base implements MessageProviderInterface {
          
             $callback = function($item) {
                 
+                var_dump($item->{$this->getLangIdKey()});
+                
                 if(is_null($this->picker->getById($item->{$this->getLangIdKey()}))) {
                     
-                   // var_dump($item->title . ' dil ID: '. $item->__lang_id__);
+                   var_dump('silinen '. $item->__lang_id__);
                     $item->delete();               
                 }               
             };
@@ -323,7 +328,10 @@ class MultiLang extends Base implements MessageProviderInterface {
             // the nummber of multi language elements in post must be equal to ones in
             // the number of langauge model collections. So It can be sure everything
             // is ok by the result
-            return $this->picker->getMultilang()->count() === $this->getLangModels()->getResults()->count();
+            
+            var_dump($this->getLangModels()->getResults()->count() . ' Models');
+            var_dump($this->picker->getMultilang()->count() . ' Elemets');
+            return $this->picker->getMultilang()->count() === $this->getLangModels()->getQuery()->get()->count();
         }        
         
         /**
