@@ -363,7 +363,7 @@ class TestPicker  extends UnitTest {
             $this->assertCount(6, $this->obj->getMultilang());
         }
         
-        public function atestGetById() {
+        public function testGetById() {
             
             $this->obj->import($this->anotherPost);
             
@@ -386,7 +386,7 @@ class TestPicker  extends UnitTest {
             $this->assertEquals($this->anotherPost['about@4'], $frenchs->about);
         }
         
-        public function atestNonMultilangToArray() {
+        public function testNonMultilangToArray() {
             
             $this->obj->import($this->rawPost);
             
@@ -396,7 +396,7 @@ class TestPicker  extends UnitTest {
             
         }
         
-        public function atestMultilangToArray() {
+        public function testMultilangToArray() {
             
             $this->obj->import($this->rawPost);
             
@@ -417,7 +417,7 @@ class TestPicker  extends UnitTest {
             $this->assertEquals($shouldBe, $this->obj->getMultilangToArray());           
         }
         
-        public function atestIsPostMultilang() {
+        public function testIsPostMultilang() {
             
             $this->obj->import($this->rawPost);
             

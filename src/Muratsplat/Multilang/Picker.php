@@ -633,6 +633,19 @@ class Picker extends Base {
                     return true;
                 }
             });
-        }        
+        }
+        
+         /**
+         * to check that post data is multilang.
+         * If post data includes multi language elements,
+         * returns true
+         * 
+         * @return boolean
+         */
+        public function isPostMultiLang() {
+            
+            return 0 !== count($this->getMultilang());            
+            
+        }
        
 }
