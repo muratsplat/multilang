@@ -200,7 +200,7 @@ class TestPicker  extends UnitTest {
             $this->obj->import($this->rawPost);
             
             $this->obj->import($rawPostUpdate);
-            //  after upate the number of items is 4!
+            //  after upate the number of items is 3!
             $collection = $this->obj->getCollection();
             
             $this->assertEquals(3, count($collection));           

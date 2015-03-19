@@ -470,7 +470,14 @@ class Picker extends Base {
                 
                 $newElem->setId($lang_id);
                 
-                $newElem->setMultilang(true);
+                $newElem->setMultilang(true);                
+                /**
+                 * If all keys is null, is not need to add it
+                 */
+                if ($newElem->allkeyNull()) {
+                    
+                    continue;
+                }
                 
                 $collection->push($newElem);          
             }
@@ -478,7 +485,7 @@ class Picker extends Base {
             $nonMultilang = $this->mergedNonMultilangElement();
             
             if (!is_null($nonMultilang)) {
-                
+               
                  $collection->push($nonMultilang);                
             }           
             
@@ -598,7 +605,6 @@ class Picker extends Base {
              
              $currentNum  = $this->getNumberOfElements();
             
-             var_dump($this->getCollection()->toArray());
             if($possibleNum !== $currentNum) {
                 
                 throw new PickerUnknownError("[$currentNum] created elements is not "
