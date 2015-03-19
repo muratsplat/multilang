@@ -619,22 +619,7 @@ class Picker extends Base {
             });
         }
         
-        /**
-         * To get only non-multilang elements
-         * 
-         * @return \Illuminate\Support\Collection
-         */
-        public function getNonMultilangElements() {
-            
-            return $this->collection->filter(function(Element $item){
-                
-                if (!$item->isMultiLang()) {
-                    
-                    return true;
-                }
-            });
-        }
-        
+              
          /**
          * to check that post data is multilang.
          * If post data includes multi language elements,
@@ -645,7 +630,6 @@ class Picker extends Base {
         public function isPostMultiLang() {
             
             return 0 !== count($this->getMultilang());            
-            
         }
        
 }

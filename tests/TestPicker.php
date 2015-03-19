@@ -437,9 +437,8 @@ class TestPicker  extends UnitTest {
                       
         }
         
-        public function atestLostedExistLangThatsBug() {
-            
-            
+        public function testLostedExistLangThatsBug() {
+                       
             $postFirst = [ 
                 
                 'enable'    => 1, 
@@ -450,13 +449,11 @@ class TestPicker  extends UnitTest {
                 'title@2'   => 'Title 2',
                 ];
             
-            $this->assertTrue($this->obj->import($postFirst));
+            $this->obj->import($postFirst);
+                     
+            $this->assertEquals($postFirst['enable'], $this->obj->getNonMultilang()->last()->enable);
             
-            $allElement = $this->obj->getCollection();           
-          
-            $this->assertEquals($postFirst['enable'], $allElement[0]->enable);
-            
-            $this->assertEquals($postFirst['visible'], $allElement[1]->visible);
+            $this->assertEquals($postFirst['visible'], $this->obj->getNonMultilang()->last()->visible);
             
             $postFirst['content@1'] = '';
             
@@ -466,15 +463,13 @@ class TestPicker  extends UnitTest {
             
             $postFirst['visible']   = 88;            
                       
-            $this->assertTrue($this->obj->import($postFirst));
-            
-            $elementAfter = $this->obj->getCollection();
-            
-            $this->assertEquals($postFirst['enable'], $elementAfter[0]->enable);
-            $this->assertEquals($postFirst['visible'], $elementAfter[1]->visible);
+            $this->obj->import($postFirst);
+                        
+            $this->assertEquals($postFirst['enable'], $this->obj->getNonMultilang()->last()->enable);
+            $this->assertEquals($postFirst['visible'],$this->obj->getNonMultilang()->last()->visible);
             
             $multilangElem = $this->obj->getById(1);
-            $this->assertNull($multilangElem); // A bug was founded !! 
+            $this->assertNotNull($multilangElem); // A bug was founded !! 
                     
         }
         
