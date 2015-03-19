@@ -159,11 +159,10 @@ class Validator extends Base implements MessageProviderInterface {
                     continue;
                 }
                 // Is it multilang ? True, return language ID,
-                $pos = $this->picker->isMultilang($key);
                 // deleting the prefix and id is right side of the prefix
-                $rmkey = $this->picker->removePrefixAndId($key, $pos);
+                $rmkey = $this->picker->removePrefixAndId($key);
                 
-                if(is_numeric($pos) && $this->inMergedRules($rmkey) ) {
+                if($this->picker->isMultilang($key) && $this->inMergedRules($rmkey) ) {
                     // re-editing rules for rawPost data..
                     $this->addRulesIfNotExist($key, $this->mergedrules[$rmkey]);                   
                 }                

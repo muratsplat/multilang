@@ -220,7 +220,7 @@ class Picker extends Base {
          * @param string $key
          * @return bool.
          */
-        protected function isMultilang($key) {
+        public function isMultilang($key) {
             
             $result = $this->findPrefixPosition($key);            
            

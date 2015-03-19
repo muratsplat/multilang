@@ -86,7 +86,7 @@ class TestMultilang extends MigrateAndSeed {
             return $this->app->make('events');
         }
 
-        public function atestCheckMainImplement() {
+        public function testCheckMainImplement() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
@@ -145,7 +145,7 @@ class TestMultilang extends MigrateAndSeed {
            $this->assertEquals(2, count($createdRecords));
         }
         
-        public function atestWithNonMultilangPost() {
+        public function testWithNonMultilangPost() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
@@ -172,7 +172,7 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertEquals($this->nonMultilangPost['visible'], Content::find(1)->visible);
         }
         
-        public function atestWithMultilangPost() {
+        public function TestWithMultilangPost() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -202,7 +202,7 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\HasOneOrMany', $multiLang->getLangModels());
         }
         
-        public function atestCreateEmptyPostData() {
+        public function testCreateEmptyPostData() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get', 'multilang::prefix')->andReturn('@');
@@ -234,7 +234,7 @@ class TestMultilang extends MigrateAndSeed {
             }            
         }
         
-        public function atestSimpleUpdateWithNonMultilang() {
+        public function testSimpleUpdateWithNonMultilang() {
             
             $mockedConfig = $this->getMockedConfig();            
             $messageBag = $this->getMockedMessageBag();            
@@ -297,9 +297,6 @@ class TestMultilang extends MigrateAndSeed {
             
             $created->save();
             
-             
-            var_dump($this->multilangPost); 
-             
             $this->assertTrue($multiLang->update($this->multilangPost, $created));
                         
             $this->assertEquals(1, Content::find(1)->visible);

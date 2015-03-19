@@ -68,6 +68,8 @@ class TestValidator extends UnitTest {
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
             
             $mockedConfig->shouldReceive('get')->with('multilang::appLanguageModel')->andReturn('Lang');
+            
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
              
             $mockedConfig->shouldReceive('make')->andReturn(true); 
             
@@ -123,7 +125,8 @@ class TestValidator extends UnitTest {
                        
             $this->validator->make($this->picker, $main, array('title@1'   => 'max:100'));
             
-            $this->assertEquals($rulesShoudldBe,$this->validator->getRules());
+            var_dump($this->validator->getRules());
+            $this->assertEquals($rulesShoudldBe, $this->validator->getRules());
             
         }
         
