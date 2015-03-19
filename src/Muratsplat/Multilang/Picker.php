@@ -485,7 +485,7 @@ class Picker extends Base {
         /**
          * To merge non multilang elements
          * 
-         * @return \Muratsplat\Multilang\Element|null 
+         * @return \Muratsplat\Multilang\Element|null
          */
         private function mergedNonMultilangElement() {
             /**
@@ -500,7 +500,8 @@ class Picker extends Base {
             $newElem->setMultilang(false);
             
             return  $newElem;      
-        }        
+        }
+        
         
         /**
          * to get merged attributes of multilang elements
@@ -632,7 +633,6 @@ class Picker extends Base {
                     return true;
                 }
             });
-        }
-        
+        }        
        
 }

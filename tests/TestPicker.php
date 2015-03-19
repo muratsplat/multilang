@@ -41,47 +41,43 @@ class TestPicker  extends UnitTest {
      * @var type 
      */
     private $anotherPost = array( 
-        //1 | n-1 for array
-       'parent_id' => '0',
-        //2
-        'enable' => "1",
-         //3
-        'slug' => '',
-        //4
-        'alias' => '',
-        //5
-        'image_url' => 'image_url', 
-         // 6
+        //1
+        'parent_id'     => '0',
+        'enable'        => "1",
+        'slug'          => '',
+        'alias'         => '',
+        'image_url'     => 'image_url', 
+         // 2
         'name@1' => 'Türkçe Name',
         'tags@1' => 'TÜrkçe Tags',
         'meta_desc@1' => 'Türkçe Tanımlamalar',
         'meta_keys@1' => 'Türkçe Anahtarlar',
         'about@1' => 'Türkçe Hakkında',          
-         // 7
+         // 3
         'name@2' => '',
         'tags@2' => 'ingilizce Tags',
         'meta_desc@2' => 'İngilizce Tanımlamalar',
         'meta_keys@2' => 'İngilizce Anahtarlar',
         'about@2' => 'İngilizce Hakkında',
-         // 8
+         // 4
         'name@3' => 'Kategori İsmi Almanca',
         'tags@3' => 'Almanca Tags',
         'meta_desc@3' => 'Almanca Tanımlamalar',
         'meta_keys@3' => 'Almanca Anahtarlar',
         'about@3' => 'Almanca Hakkında',
-         //9
+         //5
         'name@4' => 'Kategori İsmi fransızca',
         'tags@4' => 'Fransızca Tags',
         'meta_desc@4' => 'Fransıca Tanımlamalar',
         'meta_keys@4' => 'Fransıca Anahtarlar',
         'about@4' => 'Fransıca Hakkında',
-         // 10
+         // 6
         'name@5' => 'Kategori İsmi rusça',
         'tags@5' => 'Rusça Tags',
         'meta_desc@5' => 'Rusça Tanımlamalar ',
         'meta_keys@5' => 'Rusça Anahtarlar',
         'about@5' => 'Rusça Hakkında',
-         // 11
+         // 7
         'name@6' => 'Kategori İsmi arapça',
         'tags@6' => 'Arapça Tags',
         'meta_desc@6' => 'Arapça Tanımlamalar',
@@ -295,7 +291,7 @@ class TestPicker  extends UnitTest {
             $this->assertEquals(2, count($collection));           
         }
         
-        public function atestExampleUpdate5() {
+        public function testExampleUpdate5() {
             
             /*
              * Simple Post Data for updating
@@ -322,10 +318,10 @@ class TestPicker  extends UnitTest {
           
             $collection = $this->obj->getCollection()->all();
                                   
-            $this->assertEquals(5, count($collection));           
+            $this->assertEquals(4, count($collection));           
         }
         
-        public function atestExampleUpdate6() {
+        public function testExampleUpdate6() {
             
             /*
              * Simple Post Data for updating
@@ -337,35 +333,32 @@ class TestPicker  extends UnitTest {
                 'Footest'   => 'Fıı',
             );
             
-            $resault = $this->obj->import($this->rawPost);
+            $this->obj->import($this->rawPost);           
             
-            $this->assertTrue($resault);
+            $this->assertEquals(4, count($this->obj->getCollection()->all()));   
             
-            $this->assertEquals(5, count($this->obj->getCollection()->all()));   
-            
-            $this->obj->import($rawPostUpdate, true);
+            $this->obj->import($rawPostUpdate);
           
             $collection = $this->obj->getCollection()->all();
               
-            //var_dump($collection);
-            $this->assertEquals(2, count($collection));           
+            $this->assertEquals(1, count($collection));           
         }
         
-        public function atestExampleCreateAndUpdateAgain() {
+        public function testExampleCreateAndUpdateAgain() {
             
             $this->obj->import($this->anotherPost);
             
             $collaction = $this->obj->getCollection();
             
-            $this->assertEquals(11,$collaction->count());
+            $this->assertEquals(7,$collaction->count());
             
-            $this->assertEquals('Fransızca Tags', $collaction->all()[8]->tags);
+            $this->assertEquals('Fransızca Tags', $this->obj->getById(4)->tags);
             
-            $this->assertEquals('Türkçe Tanımlamalar', $collaction->all()[5]->meta_desc);
+            $this->assertEquals('Türkçe Tanımlamalar', $this->obj->getById(1)->meta_desc);
             
-            $this->assertEquals('Arapça Hakkında', $collaction->last()->about);
+            $this->assertEquals('Arapça Hakkında', $this->obj->getById(6)->about);
             
-            $this->assertCount(5, $this->obj->getNonMultilang());
+            $this->assertCount(1, $this->obj->getNonMultilang());
             
             $this->assertCount(6, $this->obj->getMultilang());
         }
