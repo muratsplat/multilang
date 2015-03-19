@@ -302,13 +302,10 @@ class MultiLang extends Base implements MessageProviderInterface {
         private function cleanModelsNotInPost() {
          
             $callback = function($item) {
-                
-                var_dump($item->{$this->getLangIdKey()});
-                
+                               
                 if(is_null($this->picker->getById($item->{$this->getLangIdKey()}))) {
                     
-                   var_dump('silinen '. $item->__lang_id__);
-                    $item->delete();               
+                      $item->delete();               
                 }               
             };
             
@@ -329,8 +326,6 @@ class MultiLang extends Base implements MessageProviderInterface {
             // the number of langauge model collections. So It can be sure everything
             // is ok by the result
             
-            var_dump($this->getLangModels()->getResults()->count() . ' Models');
-            var_dump($this->picker->getMultilang()->count() . ' Elemets');
             return $this->picker->getMultilang()->count() === $this->getLangModels()->getQuery()->get()->count();
         }        
         
