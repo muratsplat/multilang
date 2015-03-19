@@ -185,5 +185,25 @@ class TestElement  extends UnitTest {
             
             $this->assertEquals($testArray, $this->obj->toArray());
         }
+        
+        
+        public function testAllkeyNullOnNonMultilang() {
+            
+            $this->obj->setMultilang(false);
+            
+            $this->obj->content = "bla bla bla";
+             
+            $this->obj->title = "bilmem ne";
+            
+            $this->assertFalse($this->obj->allkeyNull());
+            // uptating
+            
+            $this->obj->content = null;
+             
+            $this->obj->title = null;
+           
+            $this->assertTrue($this->obj->allkeyNull());          
+            
+        }
             
 }

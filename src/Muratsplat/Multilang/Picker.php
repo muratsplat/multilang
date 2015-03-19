@@ -111,7 +111,10 @@ class Picker extends Base {
              
             $callback   = function($key, $val) {
                 
-                if ($this->isEmpty($val)) { return; }            
+                if ($this->isEmpty($val)) {                    
+                    
+                    $val = null;
+                }            
                 
                 return $this->convertToElement($key, $val);           
             };
@@ -431,7 +434,7 @@ class Picker extends Base {
             
             if ( is_null($items)) { return; }
             
-            if (!is_array($items)) {
+            if (!is_array($items) && !$items->allkeyNull()) {
                 
                 $this->collection->push($items);
                                
@@ -440,7 +443,7 @@ class Picker extends Base {
             
             foreach ($items as $v) {
                 
-                if ( is_null($v)) { continue; }
+                if ( is_null($v) && $v->allkeyNull()) { continue; }
                 
                 $this->collection->push($v);                    
             }              
@@ -595,6 +598,7 @@ class Picker extends Base {
              
              $currentNum  = $this->getNumberOfElements();
             
+             var_dump($this->getCollection()->toArray());
             if($possibleNum !== $currentNum) {
                 
                 throw new PickerUnknownError("[$currentNum] created elements is not "

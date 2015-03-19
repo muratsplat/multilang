@@ -212,17 +212,7 @@ class Element implements ArrayableInterface {
         public function allkeyNull() {            
             
             return  0 === count(array_filter($this->data, function($property){                
-                
-                if (!$this->isMultiLang()) {
-                    
-                    return true;
-                }
-                
-                if(is_string($property)) {
-                    
-                    return true;
-                }
-                
+                                              
                 return !is_null($property);
                 
             }));           
