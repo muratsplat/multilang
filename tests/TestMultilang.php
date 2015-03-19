@@ -172,7 +172,7 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertEquals($this->nonMultilangPost['visible'], Content::find(1)->visible);
         }
         
-        public function TestWithMultilangPost() {
+        public function testWithMultilangPost() {
             
             $mockedConfig = $this->getMockedConfig();            
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
@@ -705,10 +705,10 @@ class TestMultilang extends MigrateAndSeed {
 //                    '_token'    =>'wqkjf9012r0f128f12f',
 //                    'enable'    => 1, 
 //                    'visible'   => 1, 
-//                    'content@1' => 'Content İki',
-//                    'title@1'   => 'Title Bir',
-//                    'content@2' => 'Content İki',
-//                    'title@2'   => 'Title İki',
+//                    'content@1' => 'Content 1',
+//                    'title@1'   => 'Title 1',
+//                    'content@2' => 'Content 2',
+//                    'title@2'   => 'Title 2',
             
             $created = Content::find(1);
             
@@ -720,12 +720,14 @@ class TestMultilang extends MigrateAndSeed {
             
             $post['content@1']  = '';
             $post['title@2']    = '';
-            \DB::flushQueryLog();
+            
             $this->assertTrue($multiLang->update($post, $created));
             
-            $lang2 = $created->ContentLangs()->getQuery()->where('__lang_id__', 1)->first();
+            $updated = Content::find(1);
+            $content1 = $updated->ContentLangs()->getQuery()->where('__lang_id__', 1)->first();
             
-           // $this->assertEquals($lang2->title, $post['title@1']);
+            var_dump($content1->toArray());
+            $this->assertEquals($content1->content, $post['content@1']);
             
          }
            

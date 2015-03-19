@@ -617,8 +617,7 @@ class Picker extends Base {
                     return true;
                 }
             });
-        }
-        
+        }        
               
          /**
          * to check that post data is multilang.

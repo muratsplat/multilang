@@ -257,6 +257,7 @@ class MultiLang extends Base implements MessageProviderInterface {
 
             foreach ($this->picker->getMultilangToArray() as $v) {
                                 
+                var_dump($v);
                 $existed = $this->existedInLangs($v[$this->getLangIdKey()]);
                               
                 if(!is_null($existed)) {
@@ -266,10 +267,7 @@ class MultiLang extends Base implements MessageProviderInterface {
                     continue;
                 }
                 
-                var_dump($v);
-                $this->getLangModels()->create($v);
-                
-                var_dump($this->existedInLangs($v['__lang_id__'])->toArray());
+                $this->getLangModels()->create($v);                
             }
                                         
             return $this->elementsEqualsToLangModel();          
