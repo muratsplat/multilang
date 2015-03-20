@@ -428,6 +428,13 @@ class TestMultilang extends MigrateAndSeed {
                     new Wrapper($mockedConfig, $this->getCheckerAttribute()));
             
             $multiLang->create($this->multilangPost, new Content);
+//             '_token'    =>'wqkjf9012r0f128f12f',
+//            'enable'    => 1, 
+//            'visible'   => 1, 
+//            'content@1' => 'Content 1',
+//            'title@1'   => 'Title 1',
+//            'content@2' => 'Content 2',
+//            'title@2'   => 'Title 2',
             
             $wrapper = $multiLang->makeWrapper(Content::find(1), 2,1);            
             

@@ -377,16 +377,31 @@ class Wrapper extends Base  {
          * @param bool $force  it is true, only returns wanted attribute,  
          * @return mixes
          */
-        private function getAttributeOnLang($name, $force = false) {
+        protected function getAttributeOnLang($name, $force = false) {
             
-            $wanted = $this->getWantedLangModel();          
+            $value = $this->getAttributeOnWantedLang($name);
             
-            if (!is_null($wanted)) {                
+            if (!is_null($value)) {
                 
-                return $wanted->getAttribute($name);
-                       
+                return $value;                
             }
-                        
+   
             return $force ? null : $this->getDefaultLangModel()->getAttribute($name);         
         }
+        
+        /**
+         * to get attibute on wanted lang model
+         * 
+         * @param string $name attribute name
+         * @param mixed|null
+         */
+        private function getAttributeOnWantedLang($name) {
+            
+            $wanted = $this->getWantedLangModel();
+            
+            return is_null($wanted) ? null : $wanted->getAttribute($name);
+        }
+                
+        
+        
 }

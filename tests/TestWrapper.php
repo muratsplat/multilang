@@ -41,12 +41,6 @@ class TestWrapper extends MigrateAndSeed {
      */
     private $wrapper;
     
-    /**
-     *
-     * @var array 
-     */
-    private $items;
-    
         
         public function setUp() {
             parent::setUp();
@@ -283,6 +277,44 @@ class TestWrapper extends MigrateAndSeed {
             $this->assertEquals($wrapper->wanted(3)->title, $postFirst['title']);
             
             $this->assertEquals($wrapper->title, $postFirst['title']); 
+           
+        }
+        
+        
+        public function testOnNullAttributesOnLangModels() {
+            
+            $this->assertTrue($this->createContentSoftDelete(3));
+                      
+            /* first */
+            $content = Content::find(1);
+            $postFirst = ['__lang_id__' => 1, 'title' => 'First Title', 'content' => 'First Content'];
+            $content->ContentLangs()->create($postFirst);
+            
+            /* second */
+            $postSecond = ['__lang_id__' => 2, 'title' => null, 'content' => 'Second Content'];            
+            $content->ContentLangs()->create($postSecond);
+            
+            /* third */            
+            $postThird = ['__lang_id__' => 3, 'title' => 'Third Title', 'content' => null];
+            
+            $content->ContentLangs()->create($postThird);
+           
+                                
+            $wrapper = $this->wrapper->createNew($content,2,1);            
+           
+            $this->assertEquals($wrapper->title, $postFirst['title']);           
+          
+            $this->assertEquals($wrapper->content, $postSecond['content']);
+
+            $this->assertEquals($wrapper->wanted(3)->force()->title, $postThird['title']);
+            
+            $wrapper->wanted(2);
+            
+            $this->assertEquals($wrapper->title, $postFirst['title']);
+            
+            $wrapper1 = $this->wrapper->createNew($content,3,1);           
+            
+            $this->assertEquals($wrapper1->title, $postThird['title']); 
            
         }
 }
