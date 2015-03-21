@@ -429,9 +429,26 @@ let's create a wrapper to access two models at one point
     echo $wrapper->content // returns: "Путинхороший человек. Он любит русские , я думаю, россияне любят его."
 
 ```
+
+You can force to show wanted language model like this
+
+```php
+
+    $wrapper->wanted(2)->force()->title; // "Foo Türkçe"
+    // 99 language id is not existed and so no record is on PageLang Model !
+    $wrapper->wanted(99)->force()->title; // null
+```
+
+##Events
+
+
+
 ##Todos
 
-
+- Caching Support
+- Clean and Simple Documentation
+- Fixing major bugs
+- Releasing Stable version for L4 and L5
 
 ##License
 
