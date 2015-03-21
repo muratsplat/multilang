@@ -423,7 +423,7 @@ let's create a wrapper to access two models at one point
 ```php
     $wantedLangId = 3;            
     $defaultLangId = 1; // if the value is null or empty, returns PageLang models by Language id
-    $wrapper = MultiLang::makeWarapper(Page::find(1), $wantedLangId,$defaultLangId);
+    $wrapper = MultiLang::makeWrapper(Page::find(1), $wantedLangId,$defaultLangId);
 
     echo $wrapper->title; // returns: "здравствуйте"
     echo $wrapper->content // returns: "Путинхороший человек. Он любит русские , я думаю, россияне любят его."
