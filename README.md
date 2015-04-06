@@ -441,6 +441,21 @@ You can force to show wanted language model like this
 
 ##Events
 
+You can set wanted language by using MultiLang Event
+
+```php
+
+    private function setMultilangWrapperByEvent($lang_id = 1) {
+        $events = App::make('events');
+        /* setting wanted lang by using event */
+        $events->listen('multilang.wrapper.creating',function(MultiLang $event) use($lang_id) {
+             
+             $event->getWrapperInstance()->setWantedLang($lang_id);
+        });
+        
+    }
+
+```
 
 
 ##Todos
