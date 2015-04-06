@@ -475,12 +475,30 @@ class TestPicker  extends UnitTest {
             $this->assertEquals($postFirst['visible'],$this->obj->getNonMultilang()->last()->visible);
             
             $multilangElem = $this->obj->getById(1);
-            $this->assertNotNull($multilangElem); // A bug was founded !! 
-                    
-        }
-        
-        
-        
+            $this->assertNotNull($multilangElem); // A bug was founded !!                     
+        }      
+          
+        public function testEmptyStringAttribute() {
+                       
+            $postFirst = [ 
+                
+                'enable'    => 1, 
+                'visible'   => 1,
+                'string'    => '',
+                'content@1' => 'Content 1',
+                'title@1'   => 'Title 1',
+                'content@2' => 'Content 2',
+                'title@2'   => 'Title 2',
+                ];
+            
+            $this->obj->import($postFirst);
+                     
+            $this->assertEquals($postFirst['enable'], $this->obj->getNonMultilang()->last()->enable);
+            
+            $this->assertEquals($postFirst['visible'], $this->obj->getNonMultilang()->last()->visible);
+                        
+            $this->assertEquals(null, $this->obj->getNonMultilang()->last()->string);                   
+        }        
         
         public function tearDown() {
         

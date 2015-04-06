@@ -6,7 +6,7 @@ use Illuminate\Support\MessageBag;
 
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Validator;
-use Muratsplat\Multilang\NewRules;
+use Muratsplat\Multilang\NewRule;
 use Muratsplat\Multilang\Wrapper;
 use Muratsplat\Multilang\CheckerAttribute;
 
@@ -75,10 +75,11 @@ class MultilangServiceProvider extends ServiceProvider {
          */
         private function addNewRules() {
   
-            $this->app['validator']->resolver(function($translator, $data, $rules, $messages) {
-                
-                return new NewRules($translator, $data, $rules, $messages);
-            });
+            $this->app['validator']->extend('RequiredForDefaultLang', 'Muratsplat\Multilang\NewRule@validateRequiredForDefaultLang');
+            
+            $newRule = new NewRule();
+            
+            $this->app['validator']->replacer('RequiredForDefaultLang', $newRule->replaceRequiredForDefaultLang());            
         }
 
 	/**

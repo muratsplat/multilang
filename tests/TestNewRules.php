@@ -2,6 +2,8 @@
 
 use \Mockery as m;
 use PHPUnit_Framework_TestCase as UnitTest;
+use Illuminate\Validation\Validator;
+use Muratsplat\Multilang\NewRule;
 
 /**
  * a test class for \Muratsplat\Multilang\NewRules
@@ -117,4 +119,6 @@ class TestNewRules extends UnitTest {
             
             $this->assertEquals('Title is required.', $v->messages()->getMessageBag()->first());
         }
+        
+       
 }
