@@ -2,8 +2,7 @@
 
 use \Mockery as m;
 use PHPUnit_Framework_TestCase as UnitTest;
-use Illuminate\Validation\Validator;
-use Muratsplat\Multilang\NewRule;
+
 
 /**
  * a test class for \Muratsplat\Multilang\NewRules
