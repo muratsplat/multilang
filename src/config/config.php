@@ -50,6 +50,6 @@ return array(
          * The value must be integer and positive number.
          * Time duration is minute.
          */
-        'rememberTime'      => 10,
+        'rememberTime'      => 120,
     
     );
