@@ -441,12 +441,12 @@ You can force to show wanted language model like this
 
 ##Events
 
-| Event Name                  |Event Parameter                        |Statement                                           | 
-| ----------------------------|---------------------------------------|--------------------------------------------------- |
-| multilang.wrapper.creating  |`Muratsplat\Multilag\MultiLang` Object | When new Wrapper is creating, this event is fired. |
-| multilang.crud.creating     |`Muratsplat\Multilag\MultiLang` Object | When new models is creating, this event is fired.  |
-| multilang.crud.updating     |`Muratsplat\Multilag\MultiLang` Object | When new models is updating, this event is fired.  |
-| multilang.crud.deleting     |`Muratsplat\Multilag\MultiLang` Object | When new models is deleting, this event is fired.  |
+| Event Name                  |Event Parameter                        |Statement                                               | 
+| ----------------------------|---------------------------------------|------------------------------------------------------- |
+| multilang.wrapper.creating  |`Muratsplat\Multilag\MultiLang` Object | When new Wrapper is creating, this event is fired.     |
+| multilang.crud.creating     |`Muratsplat\Multilag\MultiLang` Object | When new models is creating, this event is fired.      |
+| multilang.crud.updating     |`Muratsplat\Multilag\MultiLang` Object | When models is updating, this event is fired.          |
+| multilang.crud.deleting     |`Muratsplat\Multilag\MultiLang` Object | When models is deleting, this event is fired.          |
 
 
 
