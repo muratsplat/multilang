@@ -62,7 +62,8 @@ class MultilangServiceProvider extends ServiceProvider {
                                             $app['db']->connection()->getSchemaBuilder(), 
                                             $app['cache'], 
                                             $app['config']
-                                            )
+                                            ),
+                                    $app['cache']
                                     ),
                             $app['events']                           
                         );

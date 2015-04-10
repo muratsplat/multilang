@@ -5,6 +5,7 @@ use RuntimeException;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
+use Illuminate\Cache\CacheManager;
 
 use Muratsplat\Multilang\Exceptions\WrapperUndefinedProperty;
 use Muratsplat\Multilang\Base;
@@ -84,17 +85,39 @@ class Wrapper extends Base  {
      * @var bool
      */
     private $force = false;
+    
+    /**
+     * @var \Illuminate\Cache\Repository
+     */
+    private $cache;
+    
+    /**
+     * remember time for storing columns name 
+     * 
+     * The duration is minute.
+     * 
+     * @var int
+     */
+    private $rememberTime;
 
-        /**
-         * Constructer
-         * 
-         * @param Config $config
-         */
-        public function __construct(Config $config, CheckerAttribute $checker) {
+       
+         /**
+          * Constructer
+          * 
+          * @param \Illuminate\Config\Repository $config
+          * @param \Muratsplat\Multilang\CheckerAttribute $checker
+          * @param \Illuminate\Cache\CacheManager $cache
+          */
+        public function __construct(Config $config, CheckerAttribute $checker, CacheManager $cache) {
             
-            $this->config = $config;
+            $this->config           = $config;
             
             $this->checkerAttribute = $checker;
+            
+            $this->cache            = $cache;
+            
+            // getting remember time from the configuration..
+            $this->setRememberTime($this->getConfig('rememberTime'));        
         }
    
         /**
@@ -182,7 +205,7 @@ class Wrapper extends Base  {
             $wanted  = is_null($wantedLang) ? $this->getWantedLang() : $wantedLang;
             $default = is_null($defaultLang) ? $this->getDefaultLang() : $defaultLang;
             
-            $newOne  = new static($this->config, $this->checkerAttribute);
+            $newOne  = new static($this->config, $this->checkerAttribute, $this->cache);
             
             $newOne->setMainModel($mainModel)
                     ->setWantedLang($wanted)
@@ -270,7 +293,7 @@ class Wrapper extends Base  {
          */
         public function getWantedLangModel() {
             
-            return $this->getLangById($this->getWantedLang());  
+            return $this->getLangByIdOnCache($this->getWantedLang());  
         }        
         
         /**
@@ -280,7 +303,7 @@ class Wrapper extends Base  {
          */
         protected function getDefaultLangModel() {
             
-            $result = $this->getLangById($this->defaultLang);
+            $result = $this->getLangByIdOnCache($this->defaultLang);
             
             if(is_null($result)) {
                 
@@ -400,6 +423,80 @@ class Wrapper extends Base  {
             $wanted = $this->getWantedLangModel();
             
             return is_null($wanted) ? null : $wanted->getAttribute($name);
+        }
+        
+        /**
+         * To set remember time 
+         * 
+         * @param integer $time  duration is minute
+         */
+        private function setRememberTime($time) {
+            
+            $this->rememberTime = is_int($time) && $time > 0 ? $time : 1;
+        }
+        
+        /**
+         * TO get remember time
+         * 
+         * @return int
+         */
+        private function getRememberTime() {
+            
+            return (integer) $this->rememberTime;
+        }
+        
+        /**
+         * To get all lang models on the cache driver
+         * 
+         * @return \Illuminate\Database\Eloquent\Collection
+         */
+        protected function getCachedLangModels() {          
+            
+            $root  = $this->getConfig('cachePrefix');
+                        
+            $key = $root . '/cachedLangModels/'. spl_object_hash($this->getMainModel());
+            
+            return $this->cache->remember($key, $this->getRememberTime(), function() {
+                    
+                return $this->getAllLangModels()->getRelated()->get();
+            });
+        }        
+        
+        /**
+         * to get all lang models 
+         * 
+         * @return \Illuminate\Database\Eloquent\Relations\HasMany
+         */
+        protected function getAllLangModels() {
+            
+            return $this->getMainModel()->langModels();
+        }
+        
+        
+         /**
+         * To get mutli language model by ID
+         * 
+         * @param int $id
+         * @return \Illuminate\Database\Eloquent\Model|null
+         */
+        private function getLangByIdOnCache($id) {
+            
+            $column     = $this->getConfig('reservedAttribute');
+            
+            $main_id    = (integer) $this->getMainModel()->id;
+    
+            list(,$parent_key) = explode('.', $this->getMainModel()->langModels()->getForeignKey());
+                                                         
+            return $this->getCachedLangModels()->filter(function($item) use ($column, $id, $main_id, $parent_key) {
+                
+                if ($main_id !== (integer) $item->{$parent_key} ) {return;}
+                
+                if ((integer) $item->{$column} === (integer) $id) { 
+                     
+                     return true;      
+                 }
+            
+            })->first();
         }
                 
         

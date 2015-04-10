@@ -29,11 +29,6 @@ class CheckerAttribute extends Base {
     private $cache;
     
     /**
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    private $model;
-    
-    /**
      * Name of key to storing model columns in cache
      * 
      * @var string

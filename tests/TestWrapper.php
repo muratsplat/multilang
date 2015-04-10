@@ -53,13 +53,20 @@ class TestWrapper extends MigrateAndSeed {
             
             $mockedConfig = m::mock('Illuminate\Config\Repository')->shouldReceive('get')
                     ->with('multilang::reservedAttribute')
-                    ->andReturn('__lang_id__')->getMock();                       
+                    ->andReturn('__lang_id__')->getMock();
+            
+            $mockedConfig->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);
+            
+            $mockedConfig->shouldReceive('get')->with('multilang::cachePrefix')->andReturn('/test/multilang');
+            
+            
             $this->wrapper = new Wrapper(
                     $mockedConfig, 
                     new CheckerAttribute(
                             $this->app['db']->connection()->getSchemaBuilder(), 
                             $this->app['cache'],
-                            $configForChecker)
+                            $configForChecker),
+                    $this->app['cache']
                     );
             
             $this->content = new Content();
@@ -276,8 +283,7 @@ class TestWrapper extends MigrateAndSeed {
             
             $this->assertEquals($wrapper->wanted(3)->title, $postFirst['title']);
             
-            $this->assertEquals($wrapper->title, $postFirst['title']); 
-           
+            $this->assertEquals($wrapper->title, $postFirst['title']);       
         }
         
         
@@ -316,5 +322,49 @@ class TestWrapper extends MigrateAndSeed {
             
             $this->assertEquals($wrapper1->title, $postThird['title']); 
            
+        }
+        
+        public function testCachedFeatureFirst() {
+            
+            $this->createContent(10);
+            
+            $this->createContentLang(10);
+            
+            $this->assertCount(10, Content::all());
+            
+            $this->assertCount(100, Model\ContentLang::all());
+            
+            $collection = new \Illuminate\Support\Collection();
+            
+            \DB::flushQueryLog();
+            
+            Content::all()->each(function($item) use ($collection){
+                
+                $wrapper = $this->wrapper->createNew($item,1);
+                $collection->push($wrapper);
+            });
+            
+           
+            Content::all()->each(function($item) use ($collection){
+                
+                $wrapper = $this->wrapper->createNew($item,2);
+                $collection->push($wrapper);
+            });
+           
+            $this->assertCount(20, $collection);
+            
+            
+            for($i=0;$i< 10; $i++) {
+                
+                 foreach ($collection as $one) {
+                
+                    $one->title;
+                
+                    $one->content;                       
+                }               
+            }
+                     
+            $this->assertCount(22, \DB::getQueryLog());
+            
         }
 }

@@ -441,6 +441,11 @@ You can force to show wanted language model like this
 
 ##Events
 
+| Event Name                  |Event Parameter                        |Statement                                           | 
+| ----------------------------|---------------------------------------|--------------------------------------------------- |
+| multilang.wrapper.creating  |'Muratsplat\Multilag\MultiLang' Object | When new Wrapper is creating, this event is fired. |
+
+
 You can set wanted language by using MultiLang Event
 
 ```php
@@ -462,7 +467,7 @@ You can set wanted language by using MultiLang Event
 
 ##Todos
 
-- Caching Support
+- Caching Support :thumbsup:
 - Clean and Simple Documentation
 - Fixing major bugs
 - Releasing Stable version for L4 and L5
