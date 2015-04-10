@@ -1,6 +1,7 @@
 <?php namespace Muratsplat\Multilang;
 
 use Muratsplat\Multilang\Exceptions\MultiLangConfigNotCorrect;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Base Class includes common methods for all classes
@@ -37,5 +38,18 @@ abstract class Base {
             }
 
             return $name;   
-        }       
+        }
+        
+        /**
+         * To get hashed Lang Models name as key name for caching
+         * 
+         * @param \Muratsplat\Multilang\Model $model
+         * @return string
+         */
+        protected function getKeyOfCachedLangModel(Model $model) {
+            
+            $root  = $this->getConfig('cachePrefix');
+                        
+            return $root . '/cachedLangModels/'. md5(get_class($model));
+        }
 }

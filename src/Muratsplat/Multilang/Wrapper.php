@@ -90,7 +90,7 @@ class Wrapper extends Base  {
      * @var \Illuminate\Cache\Repository
      */
     private $cache;
-    
+
     /**
      * remember time for storing columns name 
      * 
@@ -108,13 +108,16 @@ class Wrapper extends Base  {
           * @param \Muratsplat\Multilang\CheckerAttribute $checker
           * @param \Illuminate\Cache\CacheManager $cache
           */
-        public function __construct(Config $config, CheckerAttribute $checker, CacheManager $cache) {
+        public function __construct(
+                Config          $config, 
+                CheckerAttribute$checker, 
+                CacheManager    $cache ) {
             
             $this->config           = $config;
             
             $this->checkerAttribute = $checker;
             
-            $this->cache            = $cache;
+            $this->cache            = $cache;           
             
             // getting remember time from the configuration..
             $this->setRememberTime($this->getConfig('rememberTime'));        
@@ -303,9 +306,14 @@ class Wrapper extends Base  {
          */
         protected function getDefaultLangModel() {
             
-            $result = $this->getLangByIdOnCache($this->defaultLang);
+            $result = $this->getLangByIdOnCache($this->getDefaultLang());
+            // If cached value is unreachable
+            if (is_null($result)) {
+                
+                $result = $this->getLangById($this->getDefaultLang());                
+            }
             
-            if(is_null($result)) {
+            if (is_null($result)) {
                 
                 throw new WrapperUndefinedProperty("Default langugage was not founded!. "
                         . "take require one language model record at the very least!.");
@@ -452,13 +460,11 @@ class Wrapper extends Base  {
          */
         protected function getCachedLangModels() {          
             
-            $root  = $this->getConfig('cachePrefix');
-                        
-            $key = $root . '/cachedLangModels/'. spl_object_hash($this->getMainModel());
+            $key = $this->getKeyOfCachedLangModel($this->getMainModel()->langModels()->getRelated());
             
             return $this->cache->remember($key, $this->getRememberTime(), function() {
                     
-                return $this->getAllLangModels()->getRelated()->get();
+                return $this->getAllLangModels()->getRelated()->all();
             });
         }        
         
@@ -470,8 +476,7 @@ class Wrapper extends Base  {
         protected function getAllLangModels() {
             
             return $this->getMainModel()->langModels();
-        }
-        
+        }        
         
          /**
          * To get mutli language model by ID
@@ -497,8 +502,5 @@ class Wrapper extends Base  {
                  }
             
             })->first();
-        }
-                
-        
-        
+        }     
 }

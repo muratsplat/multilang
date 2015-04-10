@@ -66,7 +66,8 @@ class TestWrapper extends MigrateAndSeed {
                             $this->app['db']->connection()->getSchemaBuilder(), 
                             $this->app['cache'],
                             $configForChecker),
-                    $this->app['cache']
+                    $this->app['cache'],
+                    $this->app['cache.store']
                     );
             
             $this->content = new Content();
@@ -81,6 +82,7 @@ class TestWrapper extends MigrateAndSeed {
             parent::tearDown();        
             
             m::close();
+             \Cache::flush();
         }       
         
         public function testSimpleFirst() {
@@ -304,7 +306,7 @@ class TestWrapper extends MigrateAndSeed {
             $postThird = ['__lang_id__' => 3, 'title' => 'Third Title', 'content' => null];
             
             $content->ContentLangs()->create($postThird);
-           
+         
                                 
             $wrapper = $this->wrapper->createNew($content,2,1);            
            
@@ -353,7 +355,7 @@ class TestWrapper extends MigrateAndSeed {
            
             $this->assertCount(20, $collection);
             
-            
+           
             for($i=0;$i< 10; $i++) {
                 
                  foreach ($collection as $one) {
@@ -364,7 +366,6 @@ class TestWrapper extends MigrateAndSeed {
                 }               
             }
                      
-            $this->assertCount(22, \DB::getQueryLog());
-            
+            $this->assertCount(5, \DB::getQueryLog());            
         }
 }

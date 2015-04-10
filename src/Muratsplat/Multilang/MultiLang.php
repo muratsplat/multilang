@@ -6,6 +6,7 @@ use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\MessageBag;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Cache\Repository;
 
 use Muratsplat\Multilang\Picker;
 use Muratsplat\Multilang\Base;
@@ -102,6 +103,12 @@ class MultiLang extends Base implements MessageProviderInterface {
      * @var \Illuminate\Events\Dispatcher
      */
     protected static $distpatcher;
+        
+    /**
+     * @var \Illuminate\Cache\FileStore
+     */
+    private $fileStore;
+    
 
         /**
          * Constructer
@@ -117,13 +124,17 @@ class MultiLang extends Base implements MessageProviderInterface {
                 Config      $config, 
                 MessageBag  $message, 
                 Validator   $validator, 
-                Wrapper     $wrapper) {
+                Wrapper     $wrapper,
+                Repository  $filestore) {
             
             $this->picker   = $picker;                       
             $this->config   = $config;            
             $this->message  = $message;            
             $this->validator= $validator;            
             $this->wrapper  = $wrapper;
+            $this->fileStore= $filestore;
+            
+            static::boot();
         }        
         
         /**
@@ -143,6 +154,8 @@ class MultiLang extends Base implements MessageProviderInterface {
             }
             
             $this->setMainModel($model);
+            
+            $this->fireOnCRUD('creating');
             
             if (!$this->picker->isPostMultiLang()) {
                 
@@ -227,6 +240,8 @@ class MultiLang extends Base implements MessageProviderInterface {
             $this->setMainModel($model);
             // it will make the model to update later
             $this->updatedMainModel = $model;
+            
+            $this->fireOnCRUD('updating');
             
             if(!$this->picker->isPostMultiLang()) {
                 
@@ -417,6 +432,8 @@ class MultiLang extends Base implements MessageProviderInterface {
             // we have to save model the property of object for each methods
             $this->deletedMainModel = $model;
             
+            $this->fireOnCRUD('deleting');
+            
             if ($this->deletedMainModel->isMultilang()) {
                 
                 return $this->deleteAllLangs() && $this->deletedMainModel->delete();               
@@ -587,6 +604,37 @@ class MultiLang extends Base implements MessageProviderInterface {
             $fullEventName = 'multilang.wrapper.' . $event;            
             
             return static::$distpatcher->fire($fullEventName, $this);           
+        }
+        
+        /**
+         * to fire the given event
+         * 
+         * @param string $event
+         * @return mixed
+         */
+        protected function fireOnCRUD($event) {
+            
+            if (!isset(static::$distpatcher)) {return;}
+            
+            $fullEventName = 'multilang.crud.' . $event;            
+            
+            return static::$distpatcher->fire($fullEventName, $this);           
+        }
+        
+        /**
+         * Todos on fistly
+         * 
+         * @return void
+         */
+        public static function boot() {
+            
+            static::$distpatcher->listen('multilang.crud.*', function(MultiLang $multilang) {
+                
+                $key = $multilang->getKeyOfCachedLangModel($multilang->mainModel->langModels()->getRelated());
+                
+                $multilang->fileStore->forget($key);                
+            });
+            
         }
         
 }

@@ -60,7 +60,15 @@ class TestMultilang extends MigrateAndSeed {
         
             parent::tearDown();        
             
-            m::close();
+            m::close();           
+            
+            \Cache::flush();
+        }
+        
+        public function setUp() {
+            parent::setUp();
+            // setting laravel events object
+            MultiLang::setEventDispatcher($this->app['events']);
         }
         
  
@@ -100,7 +108,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper);
+                    $wrapper,
+                    $this->app['cache.store']);
 
             $this->assertTrue($multiLang->create(['visible'=>1], new Content()));
     
@@ -162,7 +171,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper);
+                    $wrapper,
+                    $this->app['cache.store']);
 
             $this->assertTrue($multiLang->create($this->nonMultilangPost, new Content()));
             
@@ -189,7 +199,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper);
+                    $wrapper,
+                    $this->app['cache.store']);
 
             $this->assertTrue($multiLang->create($this->multilangPost, new Content()));            
             
@@ -218,7 +229,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper);
+                    $wrapper,
+                    $this->app['cache.store']);
 
             $post = [];
             try {
@@ -250,7 +262,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper);
+                    $wrapper,
+                    $this->app['cache.store']);
              
             $created = new Content();
             
@@ -286,7 +299,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper);
+                    $wrapper,
+                    $this->app['cache.store']);
 
              
             $created = new Content();
@@ -337,7 +351,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper);             
+                    $wrapper,
+                    $this->app['cache.store']);             
             $created = new Content();                    
             $created->save();             
             $this->assertTrue($multiLang->update($this->nonMultilangPost, $created));                     
@@ -366,7 +381,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper);
+                    $wrapper,
+                    $this->app['cache.store']);
              
             $created = new Content($this->nonMultilangPost);                     
             
@@ -398,7 +414,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper);
+                    $wrapper,
+                    $this->app['cache.store']);
                       
             $multiLang->create($this->multilangPost, new Content);            
             
@@ -425,7 +442,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    new Wrapper($mockedConfig, $this->getCheckerAttribute(),$this->app['cache']));
+                    new Wrapper($mockedConfig, $this->getCheckerAttribute(),$this->app['cache']),
+                    $this->app['cache.store']);
             
             $multiLang->create($this->multilangPost, new Content);
 //             '_token'    =>'wqkjf9012r0f128f12f',
@@ -460,7 +478,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    new Wrapper($mockedConfig,$this->getCheckerAttribute(),$this->app['cache']));
+                    new Wrapper($mockedConfig,$this->getCheckerAttribute(),$this->app['cache'],$this->app['cache.store']),
+                    $this->app['cache.store']);
            
             $this->createContentWithLanguages();
             
@@ -515,7 +534,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper);
+                    $wrapper,
+                    $this->app['cache.store']);
              
             $this->createContentWithLanguages();
           
@@ -555,7 +575,7 @@ class TestMultilang extends MigrateAndSeed {
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
             $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
             $mockedConfig->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);
-            $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute(),$this->app['cache']);
+            $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute(),$this->app['cache'],$this->app['cache.store']);
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -569,7 +589,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper
+                    $wrapper,
+                    $this->app['cache.store']
                     );
             
             $this->assertTrue($this->createContent(3));
@@ -604,7 +625,7 @@ class TestMultilang extends MigrateAndSeed {
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
             $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
             $mockedConfig->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);
-            $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute(), $this->app['cache']);
+            $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute(), $this->app['cache'], $this->app['cache.store']);
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -621,7 +642,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper
+                    $wrapper,
+                    $this->app['cache.store']
                     );
                        
                          
@@ -639,17 +661,18 @@ class TestMultilang extends MigrateAndSeed {
             /* third */            
             $postThird = ['__lang_id__' => 3, 'title' => 'Third Title', 'content' => 'Third Content'];
             $content->ContentLangs()->create($postThird);
-            
+           
             /* setting wanted lang by using event */    
             $this->app['events']->listen('multilang.wrapper.creating',function(MultiLang $event) {
                 
                 $event->getWrapperInstance()->setWantedLang(1);                
-            }); 
+            });           
+            
             /* first */
             $wrapper1 = $this->app['multilang']->makeWrapper($content);            
             $this->assertEquals($postFirst['title'], $wrapper1->title );
             
-            
+           
             /* setting wanted lang by using event */    
             $this->app['events']->listen('multilang.wrapper.creating',function(MultiLang $event) {
                 
@@ -707,7 +730,8 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    $wrapper);
+                    $wrapper,
+                    $this->app['cache.store']);
 
             $this->assertTrue($multiLang->create($this->multilangPost, new Content()));            
             

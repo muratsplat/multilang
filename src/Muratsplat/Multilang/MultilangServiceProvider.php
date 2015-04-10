@@ -63,7 +63,8 @@ class MultilangServiceProvider extends ServiceProvider {
                                             $app['cache'], 
                                             $app['config']
                                             ),
-                                    $app['cache']
+                                    $app['cache'],
+                                    $app['cache.store']
                                     ),
                             $app['events']                           
                         );
