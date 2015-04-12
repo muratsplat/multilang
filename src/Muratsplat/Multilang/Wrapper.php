@@ -479,18 +479,18 @@ class Wrapper extends Base  {
         }        
         
          /**
-         * To get mutli language model by ID
+         * To get multi language model by ID
          * 
          * @param int $id
          * @return \Illuminate\Database\Eloquent\Model|null
          */
-        private function getLangByIdOnCache($id) {
+        protected function getLangByIdOnCache($id) {
             
             $column     = $this->getConfig('reservedAttribute');
-            
+        
             $main_id    = (integer) $this->getMainModel()->id;
     
-            list(,$parent_key) = explode('.', $this->getMainModel()->langModels()->getForeignKey());
+            $parent_key = $this->getParentKeyOfParent();
                                                          
             return $this->getCachedLangModels()->filter(function($item) use ($column, $id, $main_id, $parent_key) {
                 
@@ -502,5 +502,40 @@ class Wrapper extends Base  {
                  }
             
             })->first();
-        }     
+        }
+        
+        /**
+         * To get parent key name on lang models
+         * 
+         * @return string  the name of Relationed column to main model
+         */
+        private function getParentKeyOfParent() {
+            
+            list(,$parent_key) = explode('.', $this->getMainModel()->langModels()->getForeignKey());
+            
+            return $parent_key;
+        }
+
+        
+        /**
+         * Todo: For all caching jobs a new RepoSitory Class will be writed to caching lang models and all main models
+         * Now current wrapper only caches lang models and so not main models 
+         */
+        
+//        /**
+//         * To get main model on cache driver
+//         * 
+//         * @return \Illuminate\Database\Eloquent\Model
+//         */
+//        private function getMainModelOnCache() {
+//            
+//            $key = $this->getKeyOfCachedMainModel($this->getMainModel());
+//            
+//            return $this->cache->remember($key, $this->getRememberTime(), function() {
+//                    
+//                return $this->getMainModel()->query()->get();
+//            });            
+//            
+//        }
+//
 }

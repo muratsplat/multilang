@@ -43,7 +43,7 @@ abstract class Base {
         /**
          * To get hashed Lang Models name as key name for caching
          * 
-         * @param \Muratsplat\Multilang\Model $model
+         * @param \Illuminate\Database\Eloquent\Model $model
          * @return string
          */
         protected function getKeyOfCachedLangModel(Model $model) {
@@ -52,4 +52,17 @@ abstract class Base {
                         
             return $root . '/cachedLangModels/'. md5(get_class($model));
         }
+        
+//        /**
+//         * To get hashed Main Models name as key name for caching
+//         * 
+//         * @param \Illuminate\Database\Eloquent\Model $model
+//         * @return string
+//         */
+//        protected function getKeyOfCachedMainModel(Model $model) {
+//            
+//            $root  = $this->getConfig('cachePrefix');
+//                        
+//            return $root . '/cachedLangModels/'. md5(get_class($model));
+//        }
 }

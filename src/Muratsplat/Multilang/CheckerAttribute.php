@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
 
 use Muratsplat\Multilang\Base;
-use Carbon\Carbon;
+
 
 /**
  * The class checks what exist of Eloquent model's attributes
@@ -71,37 +71,32 @@ class CheckerAttribute extends Base {
          * @return bool
          */
         public function check(Model $model, $name) {
-                       
-            $fullKey    = $this->getFullName($model); 
+            
+            return $this->search($model, $name);          
+        }
+        
+        
+        /**
+         * To get all columns on caching
+         * 
+         * @param \Illuminate\Database\Eloquent\Model $model
+         * @return array
+         */
+        protected function getColumnsOnCache(Model $model) {
+             
             /**
              * In normal scenario tables and  columns often is not changed. 
              * Therefore every time it is not need to access the database for knowing 
-             * columns name. We don't want make the database to preoccupy. 
-             */
-            if (!$this->cache->has($fullKey)) {
-                
-                $this->putColumns($model);
-            }
-            
-            return $this->search($this->cache->get($fullKey), $name);          
-        }
-        
-        /**
-         * to put model's columns list on cache
-         * 
-         * @param \Illuminate\Database\Eloquent\Model $model
-         */
-        protected function putColumns(Model $model) {
-            
+             * columns name. We don't want make preoccupy/busy to the database. 
+             */            
             $fullKey    = $this->getFullName($model);
             
-            $columns    = $this->builder->getColumnListing($model->getTable());
-            
-            $time       = Carbon::now()->addMinutes($this->getRememberTime());
-            
-            // storing all columns of given model using cache driver
-            $this->cache->put($fullKey, $columns, $time);           
-        }
+            return $this->cache->remember($fullKey, $this->getRememberTime(), function() use($model) {
+                
+                return $this->builder->getColumnListing($model->getTable());
+                
+            });            
+        }      
         
         /**
          * to get key name for storing in cache
@@ -119,17 +114,19 @@ class CheckerAttribute extends Base {
         }
         
         /**
-         * To search column name in gven array.
+         * To search column name in given model.
          * 
-         * It is found  returns true. 
+         * It is found  returns true.
          * 
-         * @param array $array
+         * @param \Illuminate\Database\Eloquent\Model $model
          * @param string $column
          * @return bool
          */
-        private function search($array, $column) {
+        private function search(Model $model, $column) {
             
-            return in_array($column, $array);                    
+            $columns = $this->getColumnsOnCache($model);
+            
+            return in_array($column, $columns);                    
         }
         
         /**

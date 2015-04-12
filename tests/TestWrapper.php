@@ -186,12 +186,13 @@ class TestWrapper extends MigrateAndSeed {
             
             $contentFirst->ContentLangs()->create($postFirst);
             
+                        
             $contentLast = Content::find(3);
             
             $postLast = ['__lang_id__' => 1, 'title' => 'Last Title', 'content' => 'Last Content'];
            
             $contentLast->ContentLangs()->create($postLast);
-            
+           
             //var_dump($contentLast->ContentLangs()->getQuery()->where('__lang_id__', 1)->get()->count());
             
             $wrapperFirst = $this->wrapper->createNew($contentFirst);
@@ -362,10 +363,13 @@ class TestWrapper extends MigrateAndSeed {
                 
                     $one->title;
                 
-                    $one->content;                       
+                    $one->content;
+                    
+                    $one->enable;
+                    
+                    $one->visible;                            
                 }               
-            }
-                     
+            }          
             $this->assertCount(5, \DB::getQueryLog());            
         }
 }
