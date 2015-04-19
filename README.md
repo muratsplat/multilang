@@ -472,7 +472,8 @@ You can set wanted language by using MultiLang Event
 
 ##Todos
 
-- Caching Support :thumbsup:
+- Partial Caching Support(without main model)
+- Full Caching Support
 - Clean and Simple Documentation
 - Fixing major bugs
 - Releasing Stable version for L4 and L5

@@ -518,7 +518,7 @@ class Wrapper extends Base  {
 
         
         /**
-         * Todo: For all caching jobs a new RepoSitory Class will be writed to caching lang models and all main models
+         * Todo: For all caching jobs a new RepoSitory Class will be writed to caching lang models and all main models.
          * Now current wrapper only caches lang models and so not main models 
          */
         
