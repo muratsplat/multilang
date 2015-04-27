@@ -153,9 +153,7 @@ class MultiLang extends Base implements MessageProviderInterface {
                 return false;   
             }
             
-            $this->setMainModel($model);
-            
-            $this->fireOnCRUD('creating');
+            $this->setMainModel($model);          
             
             if (!$this->picker->isPostMultiLang()) {
                 
@@ -175,6 +173,8 @@ class MultiLang extends Base implements MessageProviderInterface {
             $post = $this->picker->getNonMultilangToArray();
                         
             $this->createdMainModel = $model->create($post);
+            
+            $this->fireOnCRUD('creating');
                            
             return $this->createdMainModel->save();
         } 
@@ -239,9 +239,7 @@ class MultiLang extends Base implements MessageProviderInterface {
             
             $this->setMainModel($model);
             // it will make the model to update later
-            $this->updatedMainModel = $model;
-            
-            $this->fireOnCRUD('updating');
+            $this->updatedMainModel = $model;         
             
             if(!$this->picker->isPostMultiLang()) {
                 
@@ -259,6 +257,8 @@ class MultiLang extends Base implements MessageProviderInterface {
         protected function updateMainModel() {
                                    
             $result = $this->updatedMainModel->update($this->picker->getNonMultilangToArray());
+            
+            $this->fireOnCRUD('updating');
            
             return is_int($result) && $result >= 1 ? true : $result;
         }
@@ -626,11 +626,11 @@ class MultiLang extends Base implements MessageProviderInterface {
          * 
          * @return void
          */
-        public static function boot() {
+        public static function boot() {           
             
             static::$distpatcher->listen('multilang.crud.*', function(MultiLang $multilang) {
                 
-                $key = $multilang->getKeyOfCachedLangModel($multilang->mainModel->langModels()->getRelated());
+                $key = $multilang->getKeyOfCachedLangModel($multilang->getMainModel()->langModels()->getRelated());
                 
                 $multilang->fileStore->forget($key);                
             });
