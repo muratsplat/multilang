@@ -4,7 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\MessageBag;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Cache\Repository;
 
@@ -472,10 +472,10 @@ class MultiLang extends Base implements MessageProviderInterface {
          * wrapper and than new Collection is created by pussing created new wrappers.
          * You can use returned Collection like to use Eloquent Collection.
          * 
-         * @param Illuminate\Database\Eloquent\Collection|Illuminate\Database\Eloquent\Model $model
-         * @param Illuminate\Database\Eloquent\Model|int $wantedLang language id or specific language model
-         * @param Illuminate\Database\Eloquent\Model|int $defaultLang language id or specific language model
-         * @return \Muratsplat\Multilang\Wrapper|Illuminate\Database\Eloquent\Collection
+         * @param \Illuminate\Support\Collection|Illuminate\Database\Eloquent\Model $model
+         * @param \Illuminate\Database\Eloquent\Model|int $wantedLang language id or specific language model
+         * @param \Illuminate\Database\Eloquent\Model|int $defaultLang language id or specific language model
+         * @return \Muratsplat\Multilang\Wrapper|\Illuminate\Support\Collection
          */
         public function makeWrapper($model, $wantedLang=null, $defaultLang=null) {
             // firing creating wrapper event!
@@ -511,10 +511,10 @@ class MultiLang extends Base implements MessageProviderInterface {
         /**
          * to create a lot of wrapper by using models in Eloquent Collection
          * 
-         * @param Illuminate\Database\Eloquent\Collection $collection
-         * @param Illuminate\Database\Eloquent\Model|int $wantedLang language id or specific language model
-         * @param Illuminate\Database\Eloquent\Model|int $defaultLang language id or specific language model
-         * @return Illuminate\Database\Eloquent\Collection
+         * @param \Illuminate\Support\Collection $collection
+         * @param \Illuminate\Database\Eloquent\Model|int $wantedLang language id or specific language model
+         * @param \Illuminate\Database\Eloquent\Model|int $defaultLang language id or specific language model
+         * @return \Illuminate\Support\Collection
          */
         protected function createWrappersInCollection(Collection $collection, $wantedLang, $defaultLang) {
             
