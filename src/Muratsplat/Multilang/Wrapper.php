@@ -1,11 +1,13 @@
-<?php namespace Muratsplat\Multilang;
+<?php 
+
+namespace Muratsplat\Multilang;
 
 use LogicException;
 use RuntimeException;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
-use Illuminate\Cache\CacheManager;
+use Illuminate\Cache\Repository as Cache;
 
 use Muratsplat\Multilang\Exceptions\WrapperUndefinedProperty;
 use Muratsplat\Multilang\Base;
@@ -106,12 +108,12 @@ class Wrapper extends Base  {
           * 
           * @param \Illuminate\Config\Repository $config
           * @param \Muratsplat\Multilang\CheckerAttribute $checker
-          * @param \Illuminate\Cache\CacheManager $cache
+          * @param \Illuminate\Cache\Repository $cache
           */
         public function __construct(
                 Config          $config, 
                 CheckerAttribute$checker, 
-                CacheManager    $cache ) {
+                Cache           $cache ) {
             
             $this->config           = $config;
             

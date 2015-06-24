@@ -442,7 +442,7 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    new Wrapper($mockedConfig, $this->getCheckerAttribute(),$this->app['cache']),
+                    new Wrapper($mockedConfig, $this->getCheckerAttribute(),$this->app['cache.store']),
                     $this->app['cache.store']);
             
             $multiLang->create($this->multilangPost, new Content);
@@ -478,7 +478,7 @@ class TestMultilang extends MigrateAndSeed {
                     $mockedConfig, 
                     $messageBag,
                     $validator,
-                    new Wrapper($mockedConfig,$this->getCheckerAttribute(),$this->app['cache'],$this->app['cache.store']),
+                    new Wrapper($mockedConfig,$this->getCheckerAttribute(),$this->app['cache.store']),
                     $this->app['cache.store']);
            
             $this->createContentWithLanguages();
@@ -575,7 +575,7 @@ class TestMultilang extends MigrateAndSeed {
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
             $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
             $mockedConfig->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);
-            $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute(),$this->app['cache'],$this->app['cache.store']);
+            $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute(),$this->app['cache.store']);
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -625,7 +625,7 @@ class TestMultilang extends MigrateAndSeed {
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
             $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
             $mockedConfig->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);
-            $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute(), $this->app['cache'], $this->app['cache.store']);
+            $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute(), $this->app['cache.store']);
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
             
@@ -707,7 +707,7 @@ class TestMultilang extends MigrateAndSeed {
                     
                     $this->app['db']->connection()->getSchemaBuilder(), 
                     
-                    $this->app['cache'],                    
+                    $this->app['cache.store'],                    
                     $config                    
                     );
         }

@@ -1,12 +1,12 @@
-<?php namespace Muratsplat\Multilang;
+<?php 
+
+namespace Muratsplat\Multilang;
 
 use Illuminate\Database\Schema\Builder;
-use Illuminate\Cache\CacheManager;
+use Illuminate\Cache\Repository as Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Config\Repository as Config;
-
 use Muratsplat\Multilang\Base;
-
 
 /**
  * The class checks what exist of Eloquent model's attributes
@@ -51,7 +51,7 @@ class CheckerAttribute extends Base {
          * @param \Illuminate\Database\Schema\Builder $builder
          * @param \Illuminate\Cache\Repository $cache
          */
-        public function __construct(Builder $builder, CacheManager $cache, Config $config) {
+        public function __construct(Builder $builder, Cache $cache, Config $config) {
             
             $this->builder  = $builder;
             

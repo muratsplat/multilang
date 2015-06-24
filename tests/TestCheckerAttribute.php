@@ -49,7 +49,7 @@ class TestCheckerAttribute extends MigrateAndSeed {
             
             $this->checkerAttribute = new CheckerAttribute(
                     $this->app['db']->connection()->getSchemaBuilder(), 
-                    $this->app['cache'],
+                    $this->app['cache.store'],
                     $config
                     );            
         }        
