@@ -49,27 +49,47 @@ class MultilangServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-            $this->app->singleton('multilang', function($app) {               
+           
             
+            $this->app->singleton('multilang', function($app) {
+                
+                list($config, $schemaBuilder, $validator, $cache) = $this->getCoreObjects($app);
+                
                 return new MultiLang(
-                            new Picker(new Collection(), new Element(),$app['config']),
-                            $app['config'],
+                            new Picker(new Collection(), new Element(),$config),
+                            $config,
                             new MessageBag(),
-                            new Validator($app['validator'], $app['config']),
+                            new Validator($validator, $config),
                             new Wrapper(
-                                    $app['config'], 
+                                    $config, 
                                     new CheckerAttribute(
-                                            $app['db']->connection()->getSchemaBuilder(), 
-                                            $app['cache'], 
-                                            $app['config']
+                                            $schemaBuilder, 
+                                            $cache, 
+                                            $config
                                             ),
-                                    $app['cache']                                    
+                                    $cache                                    
                                     ),
-                            $app['cache.store']
+                            $cache
                         );
             });
           
 	}
+        
+        /**
+         * To get Laravel Core Objects
+         * 
+         * @param  Object   Laravel Objects
+         * @return array    Config, SchemaBuilder, Validator, Cache
+         */
+        protected function getCoreObjects($app)
+        {            
+            $config         = $app['config'];
+            $schemaBuilder  = $app['db']->connection()->getSchemaBuilder();
+            $validator      = $app['validator'];
+            $cache          = $app['cache.store'];
+            
+            return [$config, $schemaBuilder, $validator, $cache];
+        }
             
         /**
          * to add new rules to Laravel Validator object
