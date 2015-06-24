@@ -48,9 +48,7 @@ class MultilangServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function register()
-	{
-           
-            
+	{           
             $this->app->singleton('multilang', function($app) {
                 
                 list($config, $schemaBuilder, $validator, $cache) = $this->getCoreObjects($app);
