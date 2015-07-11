@@ -805,8 +805,8 @@ class TestMultilang extends MigrateAndSeed {
                 $v->title;
                 $v->content;            
             } 
-            
-            $this->assertCount($count, $collection); // Collection is empty by self!!!
+            // fixed !!!
+            $this->assertCount($count, $collection);
         }
            
 }
