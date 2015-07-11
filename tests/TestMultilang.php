@@ -766,5 +766,47 @@ class TestMultilang extends MigrateAndSeed {
             $this->assertEquals($lang2->title, $post['title@2']);
             
          }
+         
+         
+        public function testMultilangAndWrapperIssueOfMakedBeEmptySelf() {
+            
+            $mockedConfig = $this->getMockedConfig();            
+            $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
+            $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
+            $messageBag = $this->getMockedMessageBag();            
+            $validator = $this->getMockedValid();
+            
+            $mockedConfig->shouldReceive('get')->andReturn('Lang');
+            
+            $validator->shouldReceive('make')->andReturn(true);
+            
+            $multiLang =  new MultiLang(
+                    new Picker(new Collection(),new Element(), $mockedConfig),
+                    $mockedConfig, 
+                    $messageBag,
+                    $validator,
+                    new Wrapper($mockedConfig,$this->getCheckerAttribute(),$this->app['cache.store']),
+                    $this->app['cache.store']);
+           
+            $this->createContentWithLanguages();
+            
+            $collection = Content::all();
+            
+            $count      = $collection->count();
+            
+            $wrapperCollection = $multiLang->makeWrapper($collection, 2,1);
+            
+            $this->assertInstanceOf('Illuminate\Support\Collection', $wrapperCollection);
+            
+            foreach ($wrapperCollection as $v) {
+                
+                $v->enable;
+                $v->visible;
+                $v->title;
+                $v->content;            
+            } 
+            
+            $this->assertCount($count, $collection); // Collection is empty by self!!!
+        }
            
 }
