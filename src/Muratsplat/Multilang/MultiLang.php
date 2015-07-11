@@ -5,6 +5,7 @@ use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentColl;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Cache\Repository;
 
@@ -518,11 +519,13 @@ class MultiLang extends Base implements MessageProviderInterface {
          */
         protected function createWrappersInCollection(Collection $collection, $wantedLang, $defaultLang) {
             
-            $newCollection = $collection->make(array());
+            $newCollection =  new EloquentColl();
             
-            while (!$collection->isEmpty()) {
+            $tempCollection=  new EloquentColl($collection->all());
+            
+            while (!$tempCollection->isEmpty()) {
                 
-                $newCollection->add($this->wrapper->createNew($collection->shift(), $wantedLang, $defaultLang));
+                $newCollection->add($this->wrapper->createNew($tempCollection->shift(), $wantedLang, $defaultLang));
             }
             
             return $newCollection;      
