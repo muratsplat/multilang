@@ -379,16 +379,8 @@ class TestWrapper extends MigrateAndSeed {
             /* first */
             $content = Content::find(1);
             $postFirst = ['__lang_id__' => 1, 'title' => 'First Title', 'content' => 'First Content'];
-            $content->ContentLangs()->create($postFirst);
-            
-            /* second */
-            $postSecond = ['__lang_id__' => 2, 'title' => 'Second Title', 'content' => 'Second Content'];            
-            $content->ContentLangs()->create($postSecond);
-            
-            /* third */            
-            $postThird = ['__lang_id__' => 3, 'title' => 'Third Title', 'content' => 'Third Content'];
-            $content->ContentLangs()->create($postThird);
-            
+            $content->ContentLangs()->create($postFirst);            
+ 
             $wrapper = $this->wrapper->createNew($content,1);
             
             $this->assertEquals($postFirst['title'], $wrapper['title']);
@@ -403,14 +395,6 @@ class TestWrapper extends MigrateAndSeed {
             $content = Content::find(1);
             $postFirst = ['__lang_id__' => 1, 'title' => 'First Title', 'content' => 'First Content'];
             $lang1     =$content->ContentLangs()->create($postFirst);
-            
-            /* second */
-            $postSecond = ['__lang_id__' => 2, 'title' => 'Second Title', 'content' => 'Second Content'];            
-            $content->ContentLangs()->create($postSecond);
-            
-            /* third */            
-            $postThird = ['__lang_id__' => 3, 'title' => 'Third Title', 'content' => 'Third Content'];
-            $content->ContentLangs()->create($postThird);
             
             $wrapper = $this->wrapper->createNew($content,1);
             
@@ -428,21 +412,12 @@ class TestWrapper extends MigrateAndSeed {
             $postFirst = ['__lang_id__' => 1, 'title' => 'First Title', 'content' => 'First Content'];
             $lang1     =$content->ContentLangs()->create($postFirst);
             
-            /* second */
-            $postSecond = ['__lang_id__' => 2, 'title' => 'Second Title', 'content' => 'Second Content'];            
-            $content->ContentLangs()->create($postSecond);
-            
-            /* third */            
-            $postThird = ['__lang_id__' => 3, 'title' => 'Third Title', 'content' => 'Third Content'];
-            $content->ContentLangs()->create($postThird);
-            
             $wrapper = $this->wrapper->createNew($content,1);
             
             $attributes = array_merge($content->getAttributes(), $lang1->getAttributes());
             
             $this->assertEquals($attributes, $wrapper->toArray()); 
             
-            $wrapper->toJson(); // not need to check!!
-           
+            $wrapper->toJson(); // not need to check!!           
         }
 }
