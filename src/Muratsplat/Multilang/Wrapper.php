@@ -4,8 +4,12 @@ namespace Muratsplat\Multilang;
 
 use LogicException;
 use RuntimeException;
+use ArrayAccess;
+use JsonSerializable;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Contracts\ArrayableInterface;
+use Illuminate\Support\Contracts\JsonableInterface;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Cache\Repository as Cache;
 
@@ -46,7 +50,8 @@ use Muratsplat\Multilang\CheckerAttribute;
  * @link https://github.com/muratsplat/multilang Project Page
  * @license http://www.gnu.org/licenses/gpl-3.0.html GPLv3 
  */
-class Wrapper extends Base  {
+class Wrapper extends Base implements ArrayAccess, ArrayableInterface, JsonSerializable, JsonableInterface 
+{
     
     /**
      *  Main model
@@ -539,5 +544,90 @@ class Wrapper extends Base  {
 //            });            
 //            
 //        }
-//
+        
+	/**
+	 * Determine if the given attribute exists.
+	 *
+	 * @param  mixed  $offset
+	 * @return bool
+	 */
+        public function offsetExists($offset)
+        {
+            return isset($this->$offset);
+        }
+        
+	/**
+	 * Get the value for a given offset.
+	 *
+	 * @param  mixed  $offset
+	 * @return mixed
+	 */
+	public function offsetGet($offset)
+	{
+            return $this->$offset;
+	}
+        
+        /**
+	 * Set the value for a given offset.
+	 *
+	 * @param  mixed  $offset
+	 * @param  mixed  $value
+	 * @return void
+	 */
+	public function offsetSet($offset, $value)
+	{
+            // Wrapper doesnt support to write data            
+            //$this->$offset = $value;
+            
+            throw new RuntimeException('Wrapper doesnt support yet to write data!');
+	}
+        
+	/**
+	 * Unset the value for a given offset.
+	 *
+	 * @param  mixed  $offset
+	 * @return void
+	 */
+	public function offsetUnset($offset)
+	{
+            // Wrapper doesnt support to write data
+             
+            //unset($this->$offset);            
+            throw new RuntimeException('Wrapper doesnt support yet to write data!');
+	}
+        
+	/**
+	 * Convert the model instance to an array.
+	 *
+	 * @return array
+	 */
+	public function toArray()
+	{
+            $mainModelAttributes    = $this->getMainModel()->getAttributes();
+            
+            $langAttributes         = $this->getWantedLangModel()->getAttributes();            
+
+            return array_merge($mainModelAttributes, $langAttributes);
+	}
+        
+        /**
+         * To convert the object into something JSON serializable.
+         * 
+         * @return array
+         */
+        public function jsonSerialize()
+        {
+            return $this->toArray();
+        }
+        
+        /**
+	 * Convert the model instance to JSON.
+	 *
+	 * @param  int  $options
+	 * @return string
+	 */
+	public function toJson($options = 0)
+	{
+            return json_encode($this->toArray(), $options);
+	}
 }
