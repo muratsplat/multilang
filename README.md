@@ -472,7 +472,8 @@ You can set wanted language by using MultiLang Event
 
 ##Todos
 
-- Partial Caching Support(without main model)
+- Partial Caching Support(without main model) :+1:
+- To plan all language attributes stores in one table on database :point_left:
 - Full Caching Support
 - Clean and Simple Documentation
 - Fixing major bugs
