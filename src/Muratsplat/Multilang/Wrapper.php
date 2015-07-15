@@ -605,10 +605,24 @@ class Wrapper extends Base implements ArrayAccess, ArrayableInterface, JsonSeria
 	{
             $mainModelAttributes    = $this->getMainModel()->getAttributes();
             
-            $langAttributes         = $this->getWantedLangModel()->getAttributes();            
+            $langModel              = $this->getWantedLangOrDefaultLang();   
 
-            return array_merge($mainModelAttributes, $langAttributes);
+            return array_merge($mainModelAttributes, $langModel->getAttributes());
 	}
+        
+        /**
+         * To get wanted language model or default language model
+         * 
+         * @return \Illuminate\Database\Eloquent\Model
+         */
+        protected function getWantedLangOrDefaultLang()
+        {
+           $wantedLangModel = $this->getWantedLangModel();
+           
+           $defaultLangModel= $this->getDefaultLangModel();
+           
+           return is_null($wantedLangModel) ? $defaultLangModel : $wantedLangModel;            
+        }
         
         /**
          * To convert the object into something JSON serializable.

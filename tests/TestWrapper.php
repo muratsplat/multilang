@@ -420,4 +420,22 @@ class TestWrapper extends MigrateAndSeed {
             
             $wrapper->toJson(); // not need to check!!           
         }
+        
+        public function testJsonableInterfaceImplementWithDifferentLang() 
+        {            
+            $this->assertTrue($this->createContent(3));
+                      
+            /* first */
+            $content = Content::find(1);
+            $postFirst = ['__lang_id__' => 1, 'title' => 'First Title', 'content' => 'First Content'];
+            $lang1     =$content->ContentLangs()->create($postFirst);
+            
+            $wrapper = $this->wrapper->createNew($content,2);
+            
+            $attributes = array_merge($content->getAttributes(), $lang1->getAttributes());
+            
+            $this->assertEquals($attributes, $wrapper->toArray()); 
+            
+            $wrapper->toJson(); // not need to check!!           
+        }
 }
