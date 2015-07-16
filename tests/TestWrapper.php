@@ -436,6 +436,8 @@ class TestWrapper extends MigrateAndSeed {
             
             $this->assertEquals($attributes, $wrapper->toArray()); 
             
-            $wrapper->toJson(); // not need to check!!           
+            $wrapper->toJson(); // not need to check!!     
+            
+            // fixed!!
         }
 }
