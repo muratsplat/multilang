@@ -324,7 +324,12 @@ class Wrapper extends Base implements ArrayAccess, ArrayableInterface, JsonSeria
             
             $result = $this->cacheEnable 
                     ? $this->getLangByIdOnCache($this->getDefaultLang())
-                    : $this->getLangById($this->getDefaultLang());
+                    : null;
+            // If cached value is unreachable
+            if (is_null($result)) {
+                
+                $result = $this->getLangById($this->getDefaultLang());                
+            }
             
             if (is_null($result)) {
                 
