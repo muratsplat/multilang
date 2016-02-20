@@ -21,7 +21,8 @@
     "require-dev": {
         "mockery/mockery": "0.9.*@dev",
         "orchestra/testbench": "2.2.*",
-        "symfony/translation": "2.5.*"
+        "symfony/translation": "2.5.*",
+	"phpunit/phpunit": "4.8.*"
     },
     "autoload": {
         "classmap": [

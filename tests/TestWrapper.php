@@ -45,12 +45,9 @@ class TestWrapper extends MigrateAndSeed {
         public function setUp() {
             parent::setUp();
             
-            $configForChecker = $this->getMockedConfig();
-            
-            $configForChecker->shouldReceive('get')->with('multilang::cachePrefix')->andReturn('/test/multilang');
-            
-            $configForChecker->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);
-            
+            $configForChecker = $this->getMockedConfig();            
+            $configForChecker->shouldReceive('get')->with('multilang::cachePrefix')->andReturn('/test/multilang');            
+            $configForChecker->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);         
             $mockedConfig = m::mock('Illuminate\Config\Repository')->shouldReceive('get')
                     ->with('multilang::reservedAttribute')
                     ->andReturn('__lang_id__')->getMock();
@@ -58,6 +55,8 @@ class TestWrapper extends MigrateAndSeed {
             $mockedConfig->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);
             
             $mockedConfig->shouldReceive('get')->with('multilang::cachePrefix')->andReturn('/test/multilang');
+            $mockedConfig->shouldReceive('get')->with('multilang::cache')->andReturn(true);
+            
             
             
             $this->wrapper = new Wrapper(

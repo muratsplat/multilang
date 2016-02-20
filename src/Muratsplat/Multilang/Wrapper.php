@@ -97,6 +97,13 @@ class Wrapper extends Base implements ArrayAccess, ArrayableInterface, JsonSeria
      * @var \Illuminate\Cache\Repository
      */
     private $cache;
+    
+    
+    /**
+     *
+     * @var bool
+     */
+    private $cacheEnable = false;
 
     /**
      * remember time for storing columns name 
@@ -120,12 +127,10 @@ class Wrapper extends Base implements ArrayAccess, ArrayableInterface, JsonSeria
                 CheckerAttribute$checker, 
                 Cache           $cache ) {
             
-            $this->config           = $config;
-            
-            $this->checkerAttribute = $checker;
-            
-            $this->cache            = $cache;           
-            
+            $this->config           = $config;            
+            $this->checkerAttribute = $checker;            
+            $this->cache            = $cache;            
+            $this->cacheEnable      = $this->getConfig('cache');            
             // getting remember time from the configuration..
             $this->setRememberTime($this->getConfig('rememberTime'));        
         }
@@ -303,7 +308,11 @@ class Wrapper extends Base implements ArrayAccess, ArrayableInterface, JsonSeria
          */
         public function getWantedLangModel() {
             
-            return $this->getLangByIdOnCache($this->getWantedLang());  
+            if ($this->cacheEnable) {                
+                return $this->getLangByIdOnCache($this->getWantedLang());                  
+            }
+            
+            return $this->getLangById($this->getWantedLang());               
         }        
         
         /**
@@ -313,12 +322,9 @@ class Wrapper extends Base implements ArrayAccess, ArrayableInterface, JsonSeria
          */
         protected function getDefaultLangModel() {
             
-            $result = $this->getLangByIdOnCache($this->getDefaultLang());
-            // If cached value is unreachable
-            if (is_null($result)) {
-                
-                $result = $this->getLangById($this->getDefaultLang());                
-            }
+            $result = $this->cacheEnable 
+                    ? $this->getLangByIdOnCache($this->getDefaultLang())
+                    : $this->getLangById($this->getDefaultLang());
             
             if (is_null($result)) {
                 

@@ -36,6 +36,11 @@ return array(
          * This model will be used for detecting default language
          */
         'languageModel'     => 'Language',
+    
+        /**
+         * Enable or disable caching 
+         */
+        'cache'             => false,
          
         /**
          * To set a prefix for storing cache driver on your app.

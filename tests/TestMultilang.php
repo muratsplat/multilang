@@ -575,6 +575,7 @@ class TestMultilang extends MigrateAndSeed {
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
             $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
             $mockedConfig->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);
+            $mockedConfig->shouldReceive('get')->with('multilang::cache')->andReturn(true);
             $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute(),$this->app['cache.store']);
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
@@ -625,6 +626,7 @@ class TestMultilang extends MigrateAndSeed {
             $mockedConfig->shouldReceive('get')->with('multilang::prefix')->andReturn('@');
             $mockedConfig->shouldReceive('get')->with('multilang::reservedAttribute')->andReturn('__lang_id__');
             $mockedConfig->shouldReceive('get')->with('multilang::rememberTime')->andReturn(1);
+            $mockedConfig->shouldReceive('get')->with('multilang::cache')->andReturn(true);
             $wrapper = new Wrapper($mockedConfig, $this->getCheckerAttribute(), $this->app['cache.store']);
             $messageBag = $this->getMockedMessageBag();            
             $validator = $this->getMockedValid();
