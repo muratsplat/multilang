@@ -4,6 +4,8 @@
 
 A Laravel extension is make be easy to CRUD ORM proccess for multi languages contents.
 
+!! The development of this project is discontinued !!
+
 ##Requiretments
 
 - PHP >=5.4 or HHVM lastest
